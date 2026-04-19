@@ -1,0 +1,16 @@
+# Ignoring folders
+.idea
+dist
+temp
+node_modules
+build
+.env
+
+# Ignoring javascript files
+*.js
+!generator.js
+!*.config.js
+!migrations/*.js
+
+# Ignoring specific generated files
+openapi/openapi*.yaml

@@ -1,0 +1,51 @@
+{
+  "name": "ora-client",
+  "productName": "ORA – Graph-based Digital Edition",
+  "description": "Tool for creating graph-based digital editions based on RAMEN Suite.",
+  "license": "Apache-2.0",
+  "version": "2026.0.1",
+  "author": {
+    "name": "Sebastian Enns",
+    "email": "sebastian.enns@mni.thm.de",
+    "url": "https://www.sebenns.com"
+  },
+  "private": true,
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build"
+  },
+  "dependencies": {
+    "@angular/common": "^21.2.7",
+    "@angular/compiler": "^21.2.7",
+    "@angular/core": "^21.2.7",
+    "@angular/forms": "^21.2.7",
+    "@angular/platform-browser": "^21.2.7",
+    "@angular/router": "^21.2.7",
+    "@primeuix/themes": "^2.0.3",
+    "primeicons": "^7.0.0",
+    "primeng": "^21.1.6",
+    "rxjs": "~7.8.2",
+    "tailwindcss": "^4.2.2",
+    "tailwindcss-primeui": "^0.6.1",
+    "tslib": "^2.8.1"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.2.7",
+    "@angular/cli": "^21.2.7",
+    "@angular/compiler-cli": "^21.2.7",
+    "@tailwindcss/postcss": "^4.1.12",
+    "@types/jasmine": "~6.0.0",
+    "jasmine-core": "~6.2.0",
+    "karma": "~6.4.4",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.1",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.2.0",
+    "postcss": "^8.5.3",
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "tailwindcss": "^4.1.12",
+    "typescript": "~5.9.3"
+  }
+}
