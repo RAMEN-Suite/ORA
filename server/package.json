@@ -1,6 +1,6 @@
 {
   "name": "ora-server",
-  "productName": "ORA - Server Application",
+  "productName": "ORA - Graph-based Digital Edition Server",
   "description": "Server application for the ORA Graph-based Digital Edition based on RAMEN Suite.",
   "license": "Apache-2.0",
   "version": "2026.0.1",
@@ -12,15 +12,16 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "docs": "",
-    "build": "",
-    "dev:api:ora": "",
-    "prod:api:ora": ""
+    "docs": "node openapi/generator.js",
+    "build": "tsc -p ./ && webpack",
+    "dev:api:ora": "npx tsx src/ora.api.ts | pino-pretty",
+    "prod:api:ora": "node dist/ora.api.js"
   },
   "dependencies": {
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
     "helmet": "^8.1.0",
+    "neo4j-driver": "^6.0.1",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0"
   },
