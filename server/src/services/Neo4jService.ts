@@ -1,9 +1,9 @@
-import neo4j, {Driver, QueryResult, Session} from 'neo4j-driver';
-import {Nullable} from '../types/global';
-import {DatabaseError} from '../interfaces/utility/Error';
-import {ERROR_CODE} from '../constants/ERROR_CODE';
-import {logger} from '../utils/logger';
-import {Utils} from '../utils/Utils';
+import neo4j, { Driver, QueryResult, Session } from 'neo4j-driver';
+import { Nullable } from '../types/global';
+import { DatabaseError } from '../models/utility/Error';
+import { ERROR_CODE } from '../constants/ERROR_CODE';
+import { logger } from '../utils/logger';
+import { Utils } from '../utils/Utils';
 
 export class Neo4jService {
   public static client: Nullable<Driver>;

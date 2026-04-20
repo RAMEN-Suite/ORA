@@ -1,4 +1,4 @@
-name: ORALocal
+name: ORA-Local
 
 services:
   ora-api:
