@@ -3,16 +3,18 @@ import { Nullable } from '../../types/global';
 import { Collection } from '../../models/ramen/Collection';
 import { CollectionDAO } from '../../repositories/CollectionDAO';
 import { STATUS_CODE } from '../../constants/STATUS_CODE';
+import { ListOptions } from '../../models/utility/Options';
+import { Utils } from '../../utils/Utils';
 
 export async function getCollections(req: Request, res: Response): Promise<void> {
-  const specificType: Nullable<string> = req.query.type as Nullable<string>;
+  const specifiedNode: Nullable<string> = Utils.parseString(req.query.node);
+  const options: ListOptions = {
+    orderBy: Utils.parseString(req.query.orderBy),
+    asc: Utils.parseBoolean(req.query.asc),
+    limit: Utils.parseNumber(req.query.limit),
+    skip: Utils.parseNumber(req.query.skip),
+  };
 
-  if (specificType) {
-    const collections: Collection[] = await CollectionDAO.getTypedCollections(specificType);
-    res.status(STATUS_CODE.OK).json(collections);
-    return;
-  }
-
-  const collections: Collection[] = await CollectionDAO.getCollections();
+  const collections: Collection[] = await CollectionDAO.getCollections(specifiedNode, options);
   res.status(STATUS_CODE.OK).json(collections);
 }

@@ -12,8 +12,9 @@
   "private": true,
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build"
+    "start": "ng serve --proxy-config proxy.conf.json",
+    "host": "ng serve --proxy-config proxy.conf.json --host=0.0.0.0",
+    "build": "ng build --configuration production"
   },
   "dependencies": {
     "@angular/common": "^21.2.7",
@@ -23,8 +24,10 @@
     "@angular/platform-browser": "^21.2.7",
     "@angular/router": "^21.2.7",
     "@primeuix/themes": "^2.0.3",
+    "animate.css": "^4.1.1",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.6",
+    "remove-accents": "^0.5.0",
     "rxjs": "~7.8.2",
     "tailwindcss": "^4.2.2",
     "tailwindcss-primeui": "^0.6.1",
