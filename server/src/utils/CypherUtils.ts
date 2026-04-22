@@ -1,7 +1,7 @@
-import { ListOptions } from '../models/utility/Options';
+import { Options } from '../models/utility/Options';
 
 export class CypherUtils {
-  public static getListQuery(alias: string, options: ListOptions): string {
+  public static getListQuery(alias: string, options: Options): string {
     const query: string[] = [];
     if (options.orderBy) query.push(`ORDER BY ${alias}.${options.orderBy}`);
     if (options.asc !== undefined) query.push(options.asc ? `ASC` : `DESC`);

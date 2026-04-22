@@ -1,4 +1,4 @@
-export interface ListOptions {
+export interface Options {
   limit?: number;
   skip?: number;
   orderBy?: string;

@@ -14,7 +14,7 @@
   "scripts": {
     "docs": "node openapi/generator.js",
     "build": "tsc -p ./ && webpack",
-    "dev:api:ora": "npx tsx src/ora.api.ts | pino-pretty",
+    "dev:api:ora": "tsx watch src/ora.api.ts | pino-pretty",
     "prod:api:ora": "node dist/ora.api.js"
   },
   "dependencies": {

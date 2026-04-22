@@ -10,7 +10,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     providePrimeNG({
       theme: { preset: SuitePreset, options: { darkModeSelector: '.dark' } },
-      ripple: true,
     }),
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
