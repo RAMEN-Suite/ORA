@@ -1,4 +1,4 @@
 import { Routes } from '@angular/router';
-import { RegisterScreen } from './view/pages/register-screen/register.screen';
+import { EntitiesScreen } from './view/pages/entities-screen/entities.screen';
 
-export const routes: Routes = [{ path: '', component: RegisterScreen }];
+export const routes: Routes = [{ path: '', component: EntitiesScreen }];

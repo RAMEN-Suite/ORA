@@ -1,7 +1,6 @@
 import { Component, computed, effect, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { IftaLabel } from 'primeng/iftalabel';
 import { InputText } from 'primeng/inputtext';
-import { Button } from 'primeng/button';
 import { ScrollTop } from 'primeng/scrolltop';
 import removeAccents from 'remove-accents';
 import { Entity } from '../../../models/ramen/Entity';
@@ -11,6 +10,9 @@ import { Select } from 'primeng/select';
 import { DataService } from '../../../services/data.service';
 import { ListOptions } from '../../../models/utility/Options';
 import { HttpResourceRef } from '@angular/common/http';
+import { Button } from 'primeng/button';
+import { DataView } from 'primeng/dataview';
+import { Divider } from 'primeng/divider';
 
 interface Category extends MenuItem {
   value: string;
@@ -18,11 +20,11 @@ interface Category extends MenuItem {
 
 @Component({
   selector: 'app-entity',
-  imports: [IftaLabel, InputText, Button, ScrollTop, FormsModule, Select],
-  templateUrl: './register.screen.html',
-  styleUrl: './register.screen.scss',
+  imports: [IftaLabel, InputText, ScrollTop, FormsModule, Select, Button, DataView, Divider],
+  templateUrl: './entities.screen.html',
+  styleUrl: './entities.screen.scss',
 })
-export class RegisterScreen {
+export class EntitiesScreen {
   private readonly data: DataService = inject(DataService);
 
   public currentCategory: WritableSignal<Category> = signal({

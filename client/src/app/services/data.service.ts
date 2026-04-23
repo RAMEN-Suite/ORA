@@ -4,6 +4,7 @@ import { Nullable } from 'primeng/ts-helpers';
 import { ListOptions } from '../models/utility/Options';
 import { Entity } from '../models/ramen/Entity';
 import { Collection } from '../models/ramen/Collection';
+import { withCache } from '@ngneat/cashew';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,7 @@ export class DataService {
         url: `${this.baseUrl}/entities`,
         params: this.getHttpListParams(type(), options?.()),
         method: 'GET',
+        context: withCache(),
       }),
       { defaultValue: [] },
     );
@@ -28,6 +30,7 @@ export class DataService {
         url: `${this.baseUrl}/collections`,
         params: this.getHttpListParams(type(), options?.()),
         method: 'GET',
+        context: withCache(),
       }),
       { defaultValue: [] },
     );

@@ -1,0 +1,83 @@
+@let isSearching = searchPhrase() !== '';
+
+<main class="min-h-screen px-6 py-10">
+  <div class="mx-auto grid max-w-7xl grid-cols-1 gap-6 lg:grid-cols-[350px_minmax(0,1fr)]">
+    <aside class="self-start lg:sticky lg:top-10">
+      <div class="flex flex-col gap-5">
+        <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
+          <p-ifta-label>
+            <p-select [options]="categories" [(ngModel)]="currentCategory" optionLabel="label" id="category" fluid>
+              <ng-template #item let-item>
+                <div class="flex flex-row items-center gap-4 px-1 py-1">
+                  <i class="pi {{ item.icon }}"></i>
+                  <span class="">{{ item.label }}</span>
+                </div>
+              </ng-template>
+              <ng-template #selectedItem let-item>
+                <div class="flex flex-row items-center gap-4 px-1 py-1">
+                  <i class="pi {{ item.icon }}"></i>
+                  <span class="">{{ item.label }}</span>
+                </div>
+              </ng-template>
+            </p-select>
+            <label for="category">Register auswählen:</label>
+          </p-ifta-label>
+        </div>
+
+        <nav class="border-surface-300 bg-surface-0 flex flex-col gap-5 rounded-md border p-5 select-none">
+          <p-ifta-label>
+            <input pInputText id="search" fluid autocomplete="off" type="search" [(ngModel)]="searchPhrase" />
+            <label for="search">Register durchsuchen:</label>
+          </p-ifta-label>
+
+          @if (!$entities.isLoading()) {
+            <div class="animate__animated animate__fadeIn flex flex-row flex-wrap justify-center gap-3">
+              @for (character of characters(); track character) {
+                @if (character === currentCharacter() && !isSearching) {
+                  <p-button [label]="character" outlined severity="contrast" />
+                } @else {
+                  <p-button
+                    [label]="character"
+                    [disabled]="isSearching"
+                    (click)="currentCharacter.set(character)"
+                    severity="secondary"
+                    text
+                  />
+                }
+              }
+            </div>
+          }
+        </nav>
+      </div>
+    </aside>
+
+    <section class="border-surface-300 bg-surface-0/75 rounded-md border p-5">
+      <header class="border-surface-300 border-b-2 pb-5 select-none">
+        <h1 class="text-4xl font-semibold tracking-tight">{{ currentCategory().label }}</h1>
+        <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
+          Einträge zu: {{ isSearching ? searchPhrase() : currentCharacter() }}
+        </p>
+      </header>
+      @if (!$entities.isLoading()) {
+        <div class="animate__animated animate__fadeIn pt-6">
+          <p-data-view [value]="filteredEntities()">
+            <ng-template #list let-items>
+              <ul class="space-y-4">
+                @for (entity of filteredEntities(); track entity.uuid; let last = $last) {
+                  <li class="flex cursor-pointer flex-row items-center gap-3 transition-opacity duration-200 hover:opacity-70">
+                    <i class="pi pi-angle-right text-xs!"></i>
+                    <span class="text-lg">{{ entity.label }}</span>
+                  </li>
+                  <p-divider [hidden]="last" />
+                }
+              </ul>
+            </ng-template>
+            <ng-template #emptymessage> Keine Einträge gefunden. </ng-template>
+          </p-data-view>
+        </div>
+      }
+    </section>
+  </div>
+
+  <p-scroll-top threshold="100" />
+</main>
