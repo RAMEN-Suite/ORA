@@ -3,9 +3,11 @@ import { ExpressUtils } from './utils/ExpressUtils';
 import { httpLogger, logger } from './utils/logger';
 import { APIRouter } from './routes/APIRouter';
 import { initNeo4jService } from './services/Neo4jService';
+import { initConfigService } from './services/ConfigService';
 
 const ORA_SERVER_PORT: string = process.env.ORA_SERVER_PORT ?? '3000';
 
+await initConfigService();
 await initNeo4jService();
 
 const application: Express = express();

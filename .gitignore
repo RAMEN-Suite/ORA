@@ -1,18 +1,21 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# COMPILED AND GENERATED OUTPUT
+dist
+tmp
+out-tsc
+bazel-out
+out
+openapi/openapi*.yaml
 
-# Compiled output
-/dist
-/tmp
-/out-tsc
-/bazel-out
-/out
-
-# Node
-*/node_modules
+# NODE ENGINE AND JAVASCRIPT FILES
+node_modules
 npm-debug.log
 yarn-error.log
+*.js
+!generator.js
+!*.config.js
+!migrations/*.js
 
-# IDEs and editors
+# IDEs AND EDITORS
 .idea/
 .vscode/
 .project
@@ -22,7 +25,7 @@ yarn-error.log
 .settings/
 *.sublime-workspace
 
-# Visual Studio Code
+# VISUAL STUDIO CODE
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -30,7 +33,7 @@ yarn-error.log
 !.vscode/extensions.json
 .history/*
 
-# Miscellaneous
+# MISC FILES AND FOLDERS
 /.angular/cache
 .sass-cache/
 /connect.lock
@@ -40,6 +43,10 @@ testem.log
 /typings
 __screenshots__/
 
-# System files
+# SYSTEM FILES
 .DS_Store
 Thumbs.db
+
+# ENVIRONMENT AND CONFIG FILES
+.env
+config/*.config.json

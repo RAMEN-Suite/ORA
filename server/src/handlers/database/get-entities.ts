@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { Entity } from '../../models/ramen/Entity';
-import { EntityDAO } from '../../storage/EntityDAO';
+import { EntityDAO } from '../../database/EntityDAO';
 import { STATUS_CODE } from '../../constants/STATUS_CODE';
 import { Nullable } from '../../types/global';
 import { Utils } from '../../utils/Utils';
 import { Options } from '../../models/utility/Options';
+import { Entity } from '../../models/RAMEN';
 
 export async function getEntities(req: Request, res: Response): Promise<void> {
   const specifiedType: Nullable<string> = Utils.parseString(req.query.type);

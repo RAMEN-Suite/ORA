@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { Nullable } from '../../types/global';
-import { Collection } from '../../models/ramen/Collection';
-import { CollectionDAO } from '../../storage/CollectionDAO';
+import { CollectionDAO } from '../../database/CollectionDAO';
 import { STATUS_CODE } from '../../constants/STATUS_CODE';
 import { Options } from '../../models/utility/Options';
 import { Utils } from '../../utils/Utils';
+import { Collection } from '../../models/RAMEN';
 
 export async function getCollections(req: Request, res: Response): Promise<void> {
   const specifiedType: Nullable<string> = Utils.parseString(req.query.type);

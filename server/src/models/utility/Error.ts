@@ -9,10 +9,10 @@ abstract class AbstractError extends Error {
   }
 }
 
-export class DatabaseError extends AbstractError {
+export class ServiceError extends AbstractError {
   constructor(errorCode: ERROR_CODE, context?: string) {
     super(errorCode, context);
-    Object.setPrototypeOf(this, DatabaseError.prototype);
+    Object.setPrototypeOf(this, ServiceError.prototype);
   }
 }
 
