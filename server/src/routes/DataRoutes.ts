@@ -1,32 +1,23 @@
-import {Router} from 'express';
-import {query} from 'express-validator';
-import {getEntities} from '../handlers/database/get-entities';
-import {ExpressUtils} from '../utils/ExpressUtils';
-import {getCollections} from '../handlers/database/get-collections';
-import {REGEXP} from '../constants/REGEXP';
+import { Router } from 'express';
+import { query, ValidationChain } from 'express-validator';
+import { ExpressUtils } from '../utils/ExpressUtils';
+import { REGEXP } from '../constants/REGEXP';
+import { getList } from '../handlers/get-list';
+import { Listable } from '../database/ListDAO';
 
 const router: Router = Router();
 
-router.get(
-  '/entities',
-  query('type').isString().isLength({ min: 1, max: 48 }).matches(REGEXP.PROPERTY).escape().optional(),
-  query('limit').isInt({ min: 1, max: 200 }).optional(),
-  query('skip').isInt({ min: 0 }).optional(),
-  query('orderBy').isString().isLength({ min: 1, max: 48 }).matches(REGEXP.PROPERTY).escape().optional(),
-  query('asc').isBoolean().optional(),
-  ExpressUtils.handleValidationResult,
-  getEntities,
-);
+const validatePagination: ValidationChain[] = [
+  query('type').optional().isString().isLength({ min: 1, max: 48 }).trim().escape().matches(REGEXP.PROPERTY),
+  query('limit').optional().isInt({ min: 0, max: 500 }),
+  query('skip').optional().isInt({ min: 0 }),
+  query('orderBy').optional().isString().isLength({ min: 1, max: 48 }).trim().escape().matches(REGEXP.PROPERTY),
+  query('asc').optional().isBoolean(),
+  query('search').optional().isString().isLength({ min: 1, max: 240 }).trim().escape(),
+  query('field').optional().isString().isLength({ min: 1, max: 48 }).trim().escape().matches(REGEXP.PROPERTY),
+];
 
-router.get(
-  '/collections',
-  query('type').isString().isLength({ min: 1, max: 48 }).matches(REGEXP.PROPERTY).escape().optional(),
-  query('limit').isInt({ min: 1, max: 200 }).optional(),
-  query('skip').isInt({ min: 0 }).optional(),
-  query('orderBy').isString().isLength({ min: 1, max: 48 }).matches(REGEXP.PROPERTY).escape().optional(),
-  query('asc').isBoolean().optional(),
-  ExpressUtils.handleValidationResult,
-  getCollections,
-);
+router.get('/entities', validatePagination, ExpressUtils.handleValidationResult, getList.bind(null, Listable.ENTITY));
+router.get('/collections', validatePagination, ExpressUtils.handleValidationResult, getList.bind(null, Listable.COLLECTION));
 
 export const DataRoutes: Router = router;

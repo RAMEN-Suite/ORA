@@ -6,10 +6,11 @@ import path from 'node:path';
 import fs from 'fs/promises';
 import screens from '../../config/screens.config.json';
 import layout from '../../config/layout.config.json';
+import { Config } from '../models/Config';
 
-type JSON = Record<string, unknown>;
+export type JSON = Record<string, unknown>;
 
-const DEFAULT_CONFIG: JSON = { screens, layout };
+const DEFAULT_CONFIG: Config.Root = { screens, layout };
 const CONFIG_FILES: string[] = ['screens.config.json', 'layout.config.json'];
 
 export class ConfigService {

@@ -4,7 +4,7 @@ tmp
 out-tsc
 bazel-out
 out
-openapi/openapi*.yaml
+**/openapi/openapi*.yaml
 
 # NODE ENGINE AND JAVASCRIPT FILES
 node_modules

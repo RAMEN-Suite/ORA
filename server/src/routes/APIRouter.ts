@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { DataRoutes } from './DataRoutes';
-import { getConfig } from '../handlers/config/get-config';
+import { getConfig } from '../handlers/get-config';
 
 const router: Router = Router();
 
