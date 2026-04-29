@@ -1,0 +1,28 @@
+export enum Listable {
+  COLLECTION = 'collections',
+  ENTITY = 'entities',
+  CONTENT = 'Content',
+}
+
+export interface List<T> {
+  data: T[];
+  pagination: Pagination;
+}
+
+export interface Pagination {
+  skip: number;
+  limit: number;
+  count: number;
+  total: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
+export interface ListOptions {
+  limit: number;
+  skip: number;
+  orderBy?: string;
+  asc?: boolean;
+  search?: string;
+  field?: string;
+}

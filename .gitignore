@@ -16,6 +16,7 @@ yarn-error.log
 !migrations/*.js
 
 # IDEs AND EDITORS
+.angular
 .idea/
 .vscode/
 .project

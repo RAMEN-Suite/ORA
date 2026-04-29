@@ -1,16 +1,16 @@
-@let isSearching = searchPhrase() !== '';
+@let isSearching = searchPhrase() !== "";
 
 <main class="min-h-screen px-6 py-10">
   <div class="mx-auto grid max-w-7xl grid-cols-1 gap-6 lg:grid-cols-[350px_minmax(0,1fr)]">
     <aside class="self-start lg:sticky lg:top-10">
       <div class="flex flex-col gap-5">
-        <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
+        <div class="border-surface-300 bg-surface-0 flex flex-col gap-5 rounded-md border p-5 select-none">
           <p-ifta-label>
             <p-select
               id="category"
               optionLabel="label"
-              [options]="categories"
-              [ngModel]="currentCategory"
+              [options]="categories()"
+              [ngModel]="selectedCategory()"
               (ngModelChange)="handleCategory($event)"
               fluid
             >
@@ -48,9 +48,9 @@
           <app-character-list
             [isDisabled]="isSearching"
             [items]="labels()"
-            [currentCharacter]="currentCharacter()"
+            [currentCharacter]="selectedCharacter()"
             (currentCharacterChange)="handleCharacter($event)"
-            [hidden]="$entities.isLoading()"
+            [hidden]="$list.isLoading()"
           />
         </nav>
       </div>
@@ -58,18 +58,32 @@
 
     <section class="border-surface-300 bg-surface-0/75 rounded-md border p-5">
       <header class="border-surface-300 border-b-2 pb-5 select-none">
-        <h1 class="text-4xl font-semibold tracking-tight">{{ currentCategory().label }}</h1>
+        <h1 class="text-4xl font-semibold tracking-tight">{{ selectedCategory()?.label }}</h1>
         <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
-          Einträge zu: {{ isSearching ? searchPhrase() : currentCharacter() }}
+          Einträge zu: {{ isSearching ? searchPhrase() : selectedCharacter() }}
         </p>
       </header>
-      <div class="animate__animated animate__fadeIn pt-6" [hidden]="$entities.isLoading()">
+      <div class="animate__animated animate__fadeIn pt-6" [hidden]="$list.isLoading()">
         <p-data-view [value]="filteredEntities()">
           <ng-template #list let-items>
             @for (entity of filteredEntities(); track entity.uuid; let last = $last) {
               <a class="flex cursor-pointer flex-row items-center gap-3 transition-opacity duration-200 hover:opacity-70">
                 <i class="pi pi-angle-right text-xs!"></i>
-                <span class="text-lg">{{ entity.label }}</span>
+                <span>
+                  <span class="text-lg">{{ entity.label }}</span>
+                  <span [hidden]="properties().length === 0">
+                    (
+                    @for (property of properties(); track property.name; let last = $last) {
+                      <span [ngClass]="getEmphasisClass(property.emphasis)">
+                        {{ getEntityProperty(entity, property.name) }}
+                        @if (!$last) {
+                          ,
+                        }
+                      </span>
+                    }
+                    )
+                  </span>
+                </span>
               </a>
               <p-divider [hidden]="last" />
             }
@@ -79,6 +93,4 @@
       </div>
     </section>
   </div>
-
-  <p-scroll-top threshold="100" />
 </main>

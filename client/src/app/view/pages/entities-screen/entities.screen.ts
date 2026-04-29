@@ -1,13 +1,9 @@
 import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { IftaLabel } from 'primeng/iftalabel';
 import { InputText } from 'primeng/inputtext';
-import { ScrollTop } from 'primeng/scrolltop';
-import { Entity } from '../../../models/ramen/Entity';
 import { FormsModule } from '@angular/forms';
-import { MenuItem } from 'primeng/api';
 import { Select } from 'primeng/select';
-import { DataService } from '../../../services/data.service';
-import { ListOptions } from '../../../models/utility/Options';
+import { ListService } from '../../../services/api/list.service';
 import { HttpResourceRef } from '@angular/common/http';
 import { DataView } from 'primeng/dataview';
 import { Divider } from 'primeng/divider';
@@ -16,89 +12,73 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Nullable } from 'primeng/ts-helpers';
 import { Utils } from '../../../utils/Utils';
 import { NavigationService } from '../../../services/navigation.service';
+import { RAMEN } from '../../../models/RAMEN';
+import { List, Listable, ListOptions } from '../../../models/List';
+import { ConfigService } from '../../../services/api/config.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Config } from '../../../models/Config';
+import { NgClass } from '@angular/common';
+import Entity = RAMEN.Entity;
+import Category = Config.Category;
+import Property = Config.Property;
+import TextEmphasis = Config.TextEmphasis;
 
-interface Category extends MenuItem {
-  value: string;
-}
+const DEFAULT_CATEGORY: Category = {
+  icon: 'pi pi-folder-open',
+  label: 'Alle Register',
+  type: '',
+};
 
 @Component({
   selector: 'app-entity',
-  imports: [IftaLabel, InputText, ScrollTop, FormsModule, Select, DataView, Divider, CharacterListComponent],
+  imports: [IftaLabel, InputText, FormsModule, Select, DataView, Divider, CharacterListComponent, NgClass],
   templateUrl: './entities.screen.html',
   styleUrl: './entities.screen.scss',
 })
 export class EntitiesScreen {
-  private readonly data: DataService = inject(DataService);
+  private readonly data: ListService = inject(ListService);
+  private readonly config: ConfigService = inject(ConfigService);
   private readonly navigation: NavigationService = inject(NavigationService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
-  public currentCategory: WritableSignal<Category> = signal({
-    icon: 'pi pi-user',
-    label: 'Personenregister',
-    value: 'Person',
-  });
-  public currentCategoryValue: Signal<string> = computed((): string => this.currentCategory().value);
-  public currentCategoryOptions: Signal<ListOptions> = signal({ orderBy: 'label', asc: true });
+  private readonly settings: Signal<Config.EntitiesScreen> = computed(() => this.config.screens().entities);
 
   public searchPhrase: WritableSignal<string> = signal('');
-  public currentCharacter: WritableSignal<string> = signal('');
+  public selectedCharacter: WritableSignal<string> = signal('');
   public filteredEntities: Signal<Entity[]> = computed((): Entity[] => this.filterEntityList());
 
-  public categories: Category[] = [
-    {
-      icon: 'pi pi-user',
-      label: 'Personenregister',
-      value: 'Person',
-    },
-    {
-      icon: 'pi pi-map',
-      label: 'Ortsregister',
-      value: 'Place',
-    },
-    {
-      icon: 'pi pi-book',
-      label: 'Bibelstellenregister',
-      value: 'BibleVerse',
-    },
-    {
-      icon: 'pi pi-tags',
-      label: 'Sachregister',
-      value: 'Term',
-    },
-    {
-      icon: 'pi pi-folder-open',
-      label: 'Alle Register',
-      value: '',
-    },
-  ];
+  public properties: Signal<Property[]> = computed((): Property[] => this.settings().properties);
+  public categories: Signal<Category[]> = computed((): Category[] => [...this.settings().categories, DEFAULT_CATEGORY]);
+  public selectedCategory: WritableSignal<Category> = signal(this.getInitialCategory());
+
+  public selectedType: Signal<string> = computed((): string => this.selectedCategory()?.type ?? '');
+  public options: Signal<ListOptions> = signal({ orderBy: 'label', asc: true, limit: 0, skip: 0 });
+  public readonly $list: HttpResourceRef<List<Entity>> = this.data.fetchList(Listable.ENTITY, this.selectedType, this.options);
 
   public readonly labels: Signal<string[]> = computed((): string[] => {
-    if (!this.$entities.hasValue()) return [];
-    return this.$entities.value().map((e: Entity): string => e.label);
+    if (!this.$list.hasValue()) return [];
+    return this.$list.value().data.map((e: Entity): string => e.label);
   });
 
-  public readonly $entities: HttpResourceRef<Entity[]> = this.data.fetchEntities(
-    this.currentCategoryValue,
-    this.currentCategoryOptions,
-  );
-
   constructor() {
-    this.route.queryParams.subscribe((params: Params): void => {
+    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe((params: Params): void => {
       const character: Nullable<string> = params['char'];
       const searchPhrase: Nullable<string> = params['search'];
+      const type: Nullable<string> = params['type'];
 
+      if (type !== null && type !== undefined) this.selectedCategory.set(this.getCategory(type) ?? this.getInitialCategory());
       if (searchPhrase) this.searchPhrase.set(searchPhrase);
-      if (character) this.currentCharacter.set(character.toLocaleUpperCase());
+      if (character) this.selectedCharacter.set(character.toLocaleUpperCase());
     });
   }
 
   public handleCategory($event: Category): void {
-    this.currentCategory.set($event);
-    this.navigation.updateQuery(this.route, { type: $event.value });
+    this.selectedCategory.set($event);
+    this.navigation.updateQuery(this.route, { type: $event.type });
   }
 
   public handleCharacter($event: string): void {
-    this.currentCharacter.set($event);
+    this.selectedCharacter.set($event);
     this.navigation.updateQuery(this.route, { char: this.searchPhrase() === '' ? $event : null });
   }
 
@@ -107,16 +87,36 @@ export class EntitiesScreen {
     if (phrase !== '' && phrase.length < 2) return;
 
     this.searchPhrase.set(phrase);
-    const char: Nullable<string> = phrase === '' ? this.currentCharacter() : null;
+    const char: Nullable<string> = phrase === '' ? this.selectedCharacter() : null;
     this.navigation.updateQuery(this.route, { char, search: phrase || null });
   }
 
+  public getEntityProperty(entity: Entity, property: string): string {
+    const value: Nullable<unknown> = entity[property as unknown as keyof Entity];
+    return value === null || value === undefined || value === '' ? '–' : String(value);
+  }
+
+  public getEmphasisClass(emphasis?: TextEmphasis): string {
+    switch (emphasis) {
+      case 'bold':
+        return 'font-bold';
+      case 'italic':
+        return 'italic';
+      case 'underline':
+        return 'underline';
+      case 'strike':
+        return 'line-through';
+      default:
+        return '';
+    }
+  }
+
   private filterEntityList(): Entity[] {
-    if (!this.$entities.hasValue()) return [];
+    if (!this.$list.hasValue()) return [];
 
     const searchPhrase: string = Utils.normalize(this.searchPhrase(), { toLower: true });
-    const entities: Entity[] = this.$entities.value();
-    const currentCharacter: string = this.currentCharacter();
+    const entities: Entity[] = this.$list.value().data;
+    const currentCharacter: string = this.selectedCharacter();
 
     if (searchPhrase !== '') {
       return entities.filter((e: Entity): boolean => {
@@ -129,6 +129,15 @@ export class EntitiesScreen {
       const character: string = this.getFirstCharacter(e.label);
       return currentCharacter === '' || currentCharacter === character;
     });
+  }
+
+  private getInitialCategory(): Category {
+    const initialType: string = this.settings().initialType;
+    return this.getCategory(initialType) ?? DEFAULT_CATEGORY;
+  }
+
+  private getCategory(type: string): Nullable<Category> {
+    return this.categories().find((c: Category): boolean => c.type === type);
   }
 
   private getFirstCharacter(value: string): string {

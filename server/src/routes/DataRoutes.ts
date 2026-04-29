@@ -3,7 +3,7 @@ import { query, ValidationChain } from 'express-validator';
 import { ExpressUtils } from '../utils/ExpressUtils';
 import { REGEXP } from '../constants/REGEXP';
 import { getList } from '../handlers/get-list';
-import { Listable } from '../database/ListDAO';
+import { Listable } from '../models/List';
 
 const router: Router = Router();
 

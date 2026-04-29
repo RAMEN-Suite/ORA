@@ -3,15 +3,7 @@ import { Utils } from '../utils/Utils';
 import { Request, Response } from 'express';
 import { STATUS_CODE } from '../constants/STATUS_CODE';
 import { Listable, ListDAO, ListOptions } from '../database/ListDAO';
-
-interface Pagination {
-  skip: number;
-  limit: number;
-  count: number;
-  total: number;
-  hasNext: boolean;
-  hasPrevious: boolean;
-}
+import { List, Pagination } from '../models/List';
 
 export async function getList<T>(resource: Listable, req: Request, res: Response): Promise<void> {
   const specifiedType: Nullable<string> = Utils.parseString(req.query.type);
@@ -35,5 +27,6 @@ export async function getList<T>(resource: Listable, req: Request, res: Response
     hasNext: options.skip + data.length < total,
     hasPrevious: options.skip > 0,
   };
-  res.status(STATUS_CODE.OK).json({ data, pagination });
+  const response: List<T> = { data, pagination };
+  res.status(STATUS_CODE.OK).json(response);
 }

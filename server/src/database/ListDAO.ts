@@ -1,21 +1,7 @@
 import { Nullable } from '../types/global';
 import neo4j, { QueryResult } from 'neo4j-driver';
 import { Neo4jService } from '../services/Neo4jService';
-
-export enum Listable {
-  COLLECTION = 'Collection',
-  ENTITY = 'Entity',
-  CONTENT = 'Content',
-}
-
-export interface ListOptions {
-  limit: number;
-  skip: number;
-  orderBy?: string;
-  asc?: boolean;
-  search?: string;
-  field?: string;
-}
+import { Listable, ListOptions } from '../models/List';
 
 export class ListDAO {
   public static async getList<T>(resource: Listable, label: Nullable<string>, options: ListOptions): Promise<T[]> {

@@ -1,24 +1,4 @@
 {
-  "printWidth": 120,
-  "tabWidth": 2,
-  "useTabs": false,
-
-  "singleQuote": true,
-  "jsxSingleQuote": true,
-  "quoteProps": "as-needed",
-
-  "semi": true,
-  "trailingComma": "all",
-
-  "bracketSpacing": true,
-  "bracketSameLine": false,
-
-  "arrowParens": "always",
-  "endOfLine": "lf",
-
-  "htmlWhitespaceSensitivity": "css",
-  "singleAttributePerLine": false,
-
   "overrides": [
     {
       "files": "*.html",

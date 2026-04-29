@@ -1,5 +1,9 @@
-import { NormalizeOptions } from '../models/utility/Options';
 import removeAccents from 'remove-accents';
+
+interface NormalizeOptions {
+  toLower?: boolean;
+  toUpper?: boolean;
+}
 
 export class Utils {
   public static normalize(value: string, options: NormalizeOptions): string {

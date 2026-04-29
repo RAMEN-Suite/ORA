@@ -1,6 +1,7 @@
 {
   "entities": {
     "categories": [],
-    "initialType": ""
+    "initialType": "",
+    "properties": []
   }
 }
