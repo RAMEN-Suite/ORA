@@ -1,0 +1,18 @@
+<p-ifta-label>
+  <p-select id="select" optionLabel="label" [options]="items()" [(ngModel)]="active" fluid>
+    <ng-template #item let-item>
+      <div class="flex flex-row items-center gap-4 px-1 py-1">
+        <i class="pi {{ item.icon }}"></i>
+        <span>{{ item.label }}</span>
+      </div>
+    </ng-template>
+
+    <ng-template #selectedItem let-item>
+      <div class="flex flex-row items-center gap-4 px-1 py-1">
+        <i class="pi {{ item.icon }}"></i>
+        <span>{{ item.label }}</span>
+      </div>
+    </ng-template>
+  </p-select>
+  <label for="select">{{ label() }}</label>
+</p-ifta-label>

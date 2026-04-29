@@ -7,7 +7,6 @@ import { Utils } from '../../../utils/Utils';
   selector: 'app-character-list',
   imports: [Button],
   templateUrl: './character-list.component.html',
-  styleUrl: './character-list.component.scss',
 })
 export class CharacterListComponent {
   public readonly isDisabled: InputSignal<boolean> = input(false);

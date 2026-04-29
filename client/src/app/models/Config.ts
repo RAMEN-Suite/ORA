@@ -17,14 +17,15 @@ export namespace Config {
   }
 
   export interface Category {
-    label: string;
-    type: string;
     icon?: string;
+    label: string;
+    value: string;
   }
 
   export interface Property {
     name: string;
-    emphasis?: TextEmphasis;
+    display?: string;
+    emphasis?: TextEmphasis[];
   }
 
   export interface Layout {}

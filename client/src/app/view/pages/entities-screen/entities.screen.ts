@@ -2,13 +2,12 @@ import { Component, computed, inject, Signal, signal, WritableSignal } from '@an
 import { IftaLabel } from 'primeng/iftalabel';
 import { InputText } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
-import { Select } from 'primeng/select';
 import { ListService } from '../../../services/api/list.service';
 import { HttpResourceRef } from '@angular/common/http';
 import { DataView } from 'primeng/dataview';
 import { Divider } from 'primeng/divider';
 import { CharacterListComponent } from '../../components/character-list/character-list.component';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, RouterLink } from '@angular/router';
 import { Nullable } from 'primeng/ts-helpers';
 import { Utils } from '../../../utils/Utils';
 import { NavigationService } from '../../../services/navigation.service';
@@ -17,21 +16,31 @@ import { List, Listable, ListOptions } from '../../../models/List';
 import { ConfigService } from '../../../services/api/config.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Config } from '../../../models/Config';
-import { NgClass } from '@angular/common';
+import { SelectComponent } from '../../components/select/select.component';
+import { PropertyListComponent } from '../../components/property-list/property-list.component';
 import Entity = RAMEN.Entity;
 import Category = Config.Category;
 import Property = Config.Property;
-import TextEmphasis = Config.TextEmphasis;
 
 const DEFAULT_CATEGORY: Category = {
   icon: 'pi pi-folder-open',
   label: 'Alle Register',
-  type: '',
+  value: '',
 };
 
 @Component({
   selector: 'app-entity',
-  imports: [IftaLabel, InputText, FormsModule, Select, DataView, Divider, CharacterListComponent, NgClass],
+  imports: [
+    IftaLabel,
+    InputText,
+    FormsModule,
+    DataView,
+    Divider,
+    CharacterListComponent,
+    SelectComponent,
+    PropertyListComponent,
+    RouterLink,
+  ],
   templateUrl: './entities.screen.html',
   styleUrl: './entities.screen.scss',
 })
@@ -51,7 +60,7 @@ export class EntitiesScreen {
   public categories: Signal<Category[]> = computed((): Category[] => [...this.settings().categories, DEFAULT_CATEGORY]);
   public selectedCategory: WritableSignal<Category> = signal(this.getInitialCategory());
 
-  public selectedType: Signal<string> = computed((): string => this.selectedCategory()?.type ?? '');
+  public selectedType: Signal<string> = computed((): string => this.selectedCategory()?.value ?? '');
   public options: Signal<ListOptions> = signal({ orderBy: 'label', asc: true, limit: 0, skip: 0 });
   public readonly $list: HttpResourceRef<List<Entity>> = this.data.fetchList(Listable.ENTITY, this.selectedType, this.options);
 
@@ -72,9 +81,10 @@ export class EntitiesScreen {
     });
   }
 
-  public handleCategory($event: Category): void {
+  public handleCategory($event: Nullable<Category>): void {
+    if (!$event) return;
     this.selectedCategory.set($event);
-    this.navigation.updateQuery(this.route, { type: $event.type });
+    this.navigation.updateQuery(this.route, { type: $event.value });
   }
 
   public handleCharacter($event: string): void {
@@ -91,28 +101,8 @@ export class EntitiesScreen {
     this.navigation.updateQuery(this.route, { char, search: phrase || null });
   }
 
-  public getEntityProperty(entity: Entity, property: string): string {
-    const value: Nullable<unknown> = entity[property as unknown as keyof Entity];
-    return value === null || value === undefined || value === '' ? '–' : String(value);
-  }
-
-  public getEmphasisClass(emphasis?: TextEmphasis): string {
-    switch (emphasis) {
-      case 'bold':
-        return 'font-bold';
-      case 'italic':
-        return 'italic';
-      case 'underline':
-        return 'underline';
-      case 'strike':
-        return 'line-through';
-      default:
-        return '';
-    }
-  }
-
   private filterEntityList(): Entity[] {
-    if (!this.$list.hasValue()) return [];
+    if (!this.$list.hasValue() || this.selectedCharacter() === '') return [];
 
     const searchPhrase: string = Utils.normalize(this.searchPhrase(), { toLower: true });
     const entities: Entity[] = this.$list.value().data;
@@ -137,7 +127,7 @@ export class EntitiesScreen {
   }
 
   private getCategory(type: string): Nullable<Category> {
-    return this.categories().find((c: Category): boolean => c.type === type);
+    return this.categories().find((c: Category): boolean => c.value === type);
   }
 
   private getFirstCharacter(value: string): string {

@@ -11,6 +11,7 @@ export const routes: Routes = [
     children: [
       { path: 'collections', component: CollectionsScreen },
       { path: 'entities', component: EntitiesScreen },
+      { path: 'entity/:id', redirectTo: '' },
     ],
   },
   { path: 'error', component: ErrorScreen },

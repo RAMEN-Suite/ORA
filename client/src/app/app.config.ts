@@ -13,6 +13,7 @@ import { SuitePreset } from '../styles/suite-preset.js';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideHttpCache, withHttpCacheInterceptor, withLocalStorage } from '@ngneat/cashew';
 import { ConfigService } from './services/api/config.service';
+import { provideMarkdown } from 'ngx-markdown';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,7 +22,8 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })),
-    provideHttpCache(withLocalStorage()),
     provideHttpClient(withInterceptors([withHttpCacheInterceptor()])),
+    provideHttpCache(withLocalStorage()),
+    provideMarkdown(),
   ],
 };
