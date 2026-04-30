@@ -6,3 +6,12 @@ body {
   margin: 0;
   background: var(--p-ground-background);
 }
+
+.p-paginator .p-paginator-page {
+  transition: none !important;
+}
+
+.spinner-base {
+  width: 65px !important;
+  height: 65px !important;
+}

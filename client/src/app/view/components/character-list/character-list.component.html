@@ -1,9 +1,9 @@
 <div class="animate__animated animate__fadeIn grid grid-cols-[repeat(auto-fit,minmax(2.5rem,max-content))] justify-between gap-3">
   @for (character of characters(); track character) {
-    @if (character === currentCharacter() && !isDisabled()) {
+    @if (character === activeCharacter() && !isDisabled()) {
       <p-button [label]="character" outlined severity="contrast" />
     } @else {
-      <p-button [label]="character" [disabled]="isDisabled()" (click)="currentCharacter.set(character)" severity="secondary" text />
+      <p-button [label]="character" [disabled]="isDisabled()" (click)="activeCharacter.set(character)" severity="secondary" text />
     }
   }
 </div>

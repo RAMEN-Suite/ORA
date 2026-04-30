@@ -2,8 +2,8 @@ import { Injectable, Signal } from '@angular/core';
 import { HttpParams, httpResource, HttpResourceRef, HttpResourceRequest } from '@angular/common/http';
 import { Nullable } from 'primeng/ts-helpers';
 import { withCache } from '@ngneat/cashew';
-import { List, Listable, ListOptions } from '../../models/List';
-import { environment } from '../../../environments/environment';
+import { List, Listable, ListOptions } from '../models/List';
+import { environment } from '../../environments/environment';
 
 const DEFAULT_PAGINATION = {
   skip: 0,

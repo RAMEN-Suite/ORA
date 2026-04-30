@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-error',
+  selector: 'screen-error',
   imports: [],
   templateUrl: './error.screen.html',
   styleUrl: './error.screen.scss',

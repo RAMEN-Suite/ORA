@@ -11,12 +11,12 @@ interface Selectable {
 }
 
 @Component({
-  selector: 'app-select',
+  selector: 'shared-select',
   imports: [IftaLabel, Select, FormsModule],
   templateUrl: './select.component.html',
 })
 export class SelectComponent {
-  public readonly label: InputSignal<string> = input('');
+  public readonly selectLabel: InputSignal<string> = input('');
   public readonly items: InputSignal<Selectable[]> = input<Selectable[]>([]);
-  public readonly active: ModelSignal<Nullable<Selectable>> = model<Nullable<Selectable>>(null);
+  public activeItem: ModelSignal<Nullable<Selectable>> = model<Nullable<Selectable>>(null);
 }

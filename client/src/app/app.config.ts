@@ -12,7 +12,7 @@ import { providePrimeNG } from 'primeng/config';
 import { SuitePreset } from '../styles/suite-preset.js';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideHttpCache, withHttpCacheInterceptor, withLocalStorage } from '@ngneat/cashew';
-import { ConfigService } from './services/api/config.service';
+import { ConfigService } from './services/config.service';
 import { provideMarkdown } from 'ngx-markdown';
 
 export const appConfig: ApplicationConfig = {

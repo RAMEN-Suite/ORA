@@ -4,16 +4,17 @@ import { Button } from 'primeng/button';
 import { Utils } from '../../../utils/Utils';
 
 @Component({
-  selector: 'app-character-list',
+  selector: 'shared-character-list',
   imports: [Button],
   templateUrl: './character-list.component.html',
 })
 export class CharacterListComponent {
   public readonly isDisabled: InputSignal<boolean> = input(false);
-  public readonly items: InputSignal<string[]> = input<string[]>([]);
 
-  public readonly characters: WritableSignal<string[]> = signal([]);
-  public readonly currentCharacter: ModelSignal<string> = model('');
+  public readonly items: InputSignal<string[]> = input<string[]>([]);
+  public readonly activeCharacter: ModelSignal<string> = model('');
+
+  protected readonly characters: WritableSignal<string[]> = signal([]);
 
   constructor() {
     effect((): void => {
@@ -21,9 +22,9 @@ export class CharacterListComponent {
       if (characters.length === 0) return;
       this.characters.set(characters);
 
-      const currentCharacter: Nullable<string> = this.currentCharacter();
+      const currentCharacter: Nullable<string> = this.activeCharacter();
       if (currentCharacter && characters.includes(currentCharacter)) return;
-      this.currentCharacter.set(characters[0] ?? '');
+      this.activeCharacter.set(characters[0] ?? '');
     });
   }
 

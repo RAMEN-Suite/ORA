@@ -1,4 +1,4 @@
-@for (property of properties(); track property.name) {
-  <markdown [data]="this.getFormattedString(object(), property)" [inline]="true" />
-  <span [hidden]="$last">,</span>
+@for (property of formattedStrings(); track property) {
+  <span [hidden]="$first">, </span>
+  <markdown [data]="property" [inline]="true" />
 }

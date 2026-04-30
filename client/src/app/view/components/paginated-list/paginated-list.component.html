@@ -1,0 +1,24 @@
+<p-data-view
+  class="select-none"
+  paginatorPosition="both"
+  paginatorStyleClass="border-0! p-0!"
+  [value]="items()"
+  [rows]="rows()"
+  [first]="skip()"
+  [totalRecords]="totalRecords()"
+  [rowsPerPageOptions]="[10, 50, 100]"
+  [lazyLoadOnInit]="false"
+  (onLazyLoad)="handleLazyLoad($event)"
+  paginator
+  lazy
+>
+  <ng-template #list let-items>
+    <div class="my-8">
+      <shared-nodes-view [nodes]="items" [isLoading]="isLoading()" />
+    </div>
+  </ng-template>
+
+  <ng-template #paginatorleft let-item>
+    <span class="text-surface-600 tracking-wide"> ({{ item.first + 1 }} — {{ Math.min(item.first + item.rows, totalRecords()) }}) </span>
+  </ng-template>
+</p-data-view>

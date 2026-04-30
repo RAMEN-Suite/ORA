@@ -5,11 +5,11 @@
     <aside class="self-start lg:sticky lg:top-10">
       <div class="space-y-5">
         <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
-          <app-select
-            label="Register auswählen:"
+          <shared-select
+            selectLabel="Register auswählen:"
             [items]="categories()"
-            [active]="selectedCategory()"
-            (activeChange)="handleCategory($event)"
+            [activeItem]="activeCategory()"
+            (activeItemChange)="handleCategory($event)"
           />
         </div>
 
@@ -27,51 +27,39 @@
             <label for="search">Register durchsuchen:</label>
           </p-ifta-label>
 
-          <app-character-list
-            [hidden]="$list.isLoading()"
-            [isDisabled]="isSearching"
-            [items]="labels()"
-            [currentCharacter]="selectedCharacter()"
-            (currentCharacterChange)="handleCharacter($event)"
-          />
+          @if (!$list.isLoading()) {
+            <shared-character-list
+              [isDisabled]="isSearching"
+              [items]="entityLabels()"
+              [activeCharacter]="activeCharacter()"
+              (activeCharacterChange)="handleCharacter($event)"
+            />
+          } @else {
+            <div class="flex justify-center py-10">
+              <p-progress-spinner class="spinner-base" />
+            </div>
+          }
         </nav>
       </div>
     </aside>
 
     <section class="border-surface-300 bg-surface-0/75 rounded-md border p-5">
-      <header class="border-surface-300 border-b-2 pb-5 select-none">
+      <header class="mb-6 pb-5 select-none">
         <h1 class="text-4xl font-semibold tracking-tight">
-          {{ selectedCategory().label }}
+          {{ activeCategory().label }}
         </h1>
 
         <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
-          Einträge zu: {{ isSearching ? searchPhrase() : selectedCharacter() }}
+          Einträge zu: {{ isSearching ? searchPhrase() : activeCharacter() }}
         </p>
       </header>
 
-      <div class="animate__animated animate__fadeIn pt-6" [hidden]="$list.isLoading()">
+      <div class="animate__animated animate__fadeIn">
         <p-data-view [value]="filteredEntities()">
           <ng-template #list let-items>
-            @for (entity of items; track entity.uuid; let last = $last) {
-              <a
-                class="flex cursor-pointer items-center gap-3 transition-opacity duration-200 hover:opacity-70"
-                [routerLink]="['/entity', entity.uuid]"
-              >
-                <i class="pi pi-angle-right text-xs!"></i>
-
-                <span class="text-lg">
-                  {{ entity.label }}
-                  <span class="align-text-top text-sm" [hidden]="properties().length === 0">
-                    (<app-property-list [properties]="properties()" [object]="entity" />)
-                  </span>
-                </span>
-              </a>
-
-              <p-divider [hidden]="last" />
-            }
+            <shared-nodes-view [nodes]="items" [properties]="properties()" [isLoading]="$list.isLoading()" [route]="ROUTES.ENTITY" />
           </ng-template>
-
-          <ng-template #emptymessage> Keine Einträge gefunden. </ng-template>
+          <ng-template #emptymessage>Es konnten keine Einträge gefunden werden. </ng-template>
         </p-data-view>
       </div>
     </section>

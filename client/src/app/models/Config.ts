@@ -8,12 +8,18 @@ export namespace Config {
 
   export interface Screens {
     entities: EntitiesScreen;
+    collections: CollectionsScreen;
   }
 
   export interface EntitiesScreen {
     categories: Category[];
     initialType: string;
     properties: Property[];
+  }
+
+  export interface CollectionsScreen {
+    categories: Category[];
+    initialType: string;
   }
 
   export interface Category {

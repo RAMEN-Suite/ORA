@@ -1,0 +1,24 @@
+<div class="relative" [class.opacity-50]="isLoading()">
+  @if (isLoading()) {
+    <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+      <p-progress-spinner class="spinner-base" />
+    </div>
+  }
+
+  @for (node of nodes(); track node.uuid; let last = $last) {
+    <a [routerLink]="route() ? ['/', route(), node.uuid] : null">
+      <div class="flex cursor-pointer items-center gap-3 transition-opacity select-none hover:opacity-70">
+        <div class="px-3"><i class="pi pi-angle-right text-xs!"></i></div>
+
+        <div class="flex flex-col">
+          <span class="text-lg">{{ node.label }}</span>
+          <small class="text-sm">
+            <shared-property-list [hidden]="properties().length === 0" [object]="node" [properties]="properties()" />
+          </small>
+        </div>
+      </div>
+    </a>
+
+    <p-divider [hidden]="last" />
+  }
+</div>

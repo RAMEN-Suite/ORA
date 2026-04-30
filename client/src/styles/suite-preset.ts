@@ -5,35 +5,20 @@ import Aura from '@primeuix/themes/Aura';
 export const SuitePreset: Preset = definePreset(Aura, {
   semantic: {
     primary: {
-      50: '{surface.50}',
-      100: '{surface.100}',
-      200: '{surface.200}',
-      300: '{surface.300}',
-      400: '{surface.400}',
-      500: '{surface.500}',
-      600: '{surface.600}',
-      700: '{surface.700}',
-      800: '{surface.800}',
-      900: '{surface.900}',
-      950: '{surface.950}',
+      50: '#f2f4f8',
+      100: '#d6dce8',
+      200: '#b3bfd4',
+      300: '#8f9fc1',
+      400: '#6b7fad',
+      500: '#4a5f8f',
+      600: '#37486e',
+      700: '#25314d',
+      800: '#1b2438',
+      900: '#161b2c',
+      950: '#0f121d',
     },
     colorScheme: {
       light: {
-        primary: {
-          color: '{surface.950}',
-          inverseColor: '{surface.0}',
-          hoverColor: '{surface.900}',
-          activeColor: '{surface.800}',
-        },
-        highlight: {
-          background: '{surface.950}',
-          focusBackground: '{surface.700}',
-          color: '{surface.0}',
-          focusColor: '{surface.0}',
-        },
-        ground: {
-          background: '{surface.50}',
-        },
         surface: {
           0: '#ffffff',
           50: '{slate.50}',
@@ -48,23 +33,23 @@ export const SuitePreset: Preset = definePreset(Aura, {
           900: '{slate.900}',
           950: '{slate.950}',
         },
-      },
-      dark: {
         primary: {
-          color: '{surface.0}',
-          inverseColor: '{surface.950}',
-          hoverColor: '{surface.100}',
-          activeColor: '{surface.200}',
+          color: '{primary.900}',
+          inverseColor: '#ffffff',
+          hoverColor: '{primary.800}',
+          activeColor: '{primary.950}',
         },
         highlight: {
-          background: '{surface.950}',
-          focusBackground: '{surface.700}',
-          color: '{surface.0}',
-          focusColor: '{surface.0}',
+          background: '{primary.900}',
+          focusBackground: '{primary.800}',
+          color: '#ffffff',
+          focusColor: '#ffffff',
         },
         ground: {
-          background: '{surface.950}',
+          background: '{surface.50}',
         },
+      },
+      dark: {
         surface: {
           0: '#f6f2ec',
           50: '{neutral.50}',
@@ -77,7 +62,22 @@ export const SuitePreset: Preset = definePreset(Aura, {
           700: '{neutral.700}',
           800: '{neutral.800}',
           900: '{neutral.900}',
-          950: '{neutral.950}',
+          950: '#0f121d',
+        },
+        primary: {
+          color: '{primary.100}',
+          inverseColor: '{primary.950}',
+          hoverColor: '{primary.50}',
+          activeColor: '{primary.200}',
+        },
+        highlight: {
+          background: '{primary.800}',
+          focusBackground: '{primary.700}',
+          color: '#ffffff',
+          focusColor: '#ffffff',
+        },
+        ground: {
+          background: '{surface.950}',
         },
       },
     },
