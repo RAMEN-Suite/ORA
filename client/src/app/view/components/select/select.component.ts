@@ -1,7 +1,6 @@
 import { Component, input, InputSignal, model, ModelSignal } from '@angular/core';
 import { IftaLabel } from 'primeng/iftalabel';
 import { Select } from 'primeng/select';
-import { Nullable } from 'primeng/ts-helpers';
 import { FormsModule } from '@angular/forms';
 import { Config } from '../../../models/Config';
 
@@ -15,5 +14,5 @@ type Selectable = Config.Category;
 export class SelectComponent {
   public readonly label: InputSignal<string> = input('');
   public readonly items: InputSignal<Selectable[]> = input<Selectable[]>([]);
-  public activeItem: ModelSignal<Nullable<Selectable>> = model<Nullable<Selectable>>(null);
+  public activeItem: ModelSignal<Selectable | undefined> = model<Selectable | undefined>(undefined);
 }

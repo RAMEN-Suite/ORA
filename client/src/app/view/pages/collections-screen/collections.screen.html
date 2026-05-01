@@ -30,6 +30,40 @@
               (activeItemChange)="handleCategoryChange($event)"
             />
           </div>
+
+          <div class="border-surface-300 bg-surface-0 space-y-3 rounded-md border p-5 select-none">
+            <p-ifta-label>
+              <input
+                id="search"
+                pInputText
+                fluid
+                type="search"
+                autocomplete="off"
+                [ngModel]="options().search ?? ''"
+                (ngModelChange)="handleSearchChange($event)"
+              />
+              <label for="search">Sammlung durchsuchen:</label>
+            </p-ifta-label>
+
+            <div class="flex flex-row gap-3">
+              <p-ifta-label class="w-full">
+                <p-select id="sort" fluid />
+                <label for="sort">Sortieren nach:</label>
+              </p-ifta-label>
+
+              <p-button
+                styleClass="h-full! w-12!"
+                icon="pi {{ options().asc ? 'pi-sort-amount-down' : 'pi-sort-amount-up' }}"
+                (click)="handleSortingChange({ asc: !options().asc })"
+                outlined
+              />
+            </div>
+
+            <p-ifta-label class="w-full">
+              <p-select id="sort" fluid />
+              <label for="sort">Filtern nach:</label>
+            </p-ifta-label>
+          </div>
         </div>
       </aside>
     </div>

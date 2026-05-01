@@ -1,12 +1,11 @@
-import { Nullable } from '../types/global';
 import { Utils } from '../utils/Utils';
 import { Request, Response } from 'express';
 import { STATUS_CODE } from '../constants/STATUS_CODE';
-import { Listable, ListDAO, ListOptions } from '../database/ListDAO';
-import { List, Pagination } from '../models/List';
+import { ListDAO } from '../database/ListDAO';
+import { List, Listable, ListOptions, Pagination } from '../models/List';
 
 export async function getList<T>(resource: Listable, req: Request, res: Response): Promise<void> {
-  const specifiedType: Nullable<string> = Utils.parseString(req.query.type);
+  const specifiedType: string | undefined = Utils.parseString(req.query.type);
   const options: ListOptions = {
     orderBy: Utils.parseString(req.query.orderBy),
     asc: Utils.parseBoolean(req.query.asc),

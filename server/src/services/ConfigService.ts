@@ -1,4 +1,3 @@
-import { Nullable } from '../types/global';
 import { ServiceError } from '../models/utility/Error';
 import { ERROR_CODE } from '../constants/ERROR_CODE';
 import { logger } from '../utils/logger';
@@ -15,10 +14,10 @@ const DEFAULT_CONFIG: Config.Root = { screens, layout };
 const CONFIG_FILES: string[] = ['screens.config.json', 'layout.config.json'];
 
 export class ConfigService {
-  private static overridesPath: Nullable<string>;
+  private static overridesPath: string | undefined;
 
   public static async initService(): Promise<void> {
-    const overridesPath: Nullable<string> = process.env.OVERRIDES_PATH;
+    const overridesPath: string | undefined = process.env.OVERRIDES_PATH;
     if (!overridesPath) throw new ServiceError(ERROR_CODE.MISSING_ENV_VAR, 'Missing OVERRIDES_PATH');
     this.overridesPath = path.resolve(process.cwd(), overridesPath);
 

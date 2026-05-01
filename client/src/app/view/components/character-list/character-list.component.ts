@@ -1,5 +1,4 @@
 import { Component, effect, input, InputSignal, model, ModelSignal, signal, WritableSignal } from '@angular/core';
-import { Nullable } from 'primeng/ts-helpers';
 import { Button } from 'primeng/button';
 import { StringUtils } from '../../../utils/StringUtils';
 
@@ -21,7 +20,7 @@ export class CharacterListComponent {
       if (characters.length === 0) return;
       this.characters.set(characters);
 
-      const currentCharacter: Nullable<string> = this.activeCharacter();
+      const currentCharacter: string | undefined = this.activeCharacter();
       if (currentCharacter && characters.includes(currentCharacter)) return;
       this.activeCharacter.set(characters[0] ?? '');
     });

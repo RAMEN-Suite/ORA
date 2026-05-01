@@ -1,22 +1,21 @@
 import neo4j, { Driver, QueryResult, Session } from 'neo4j-driver';
-import { Nullable } from '../types/global';
 import { ServiceError } from '../models/utility/Error';
 import { ERROR_CODE } from '../constants/ERROR_CODE';
 import { logger } from '../utils/logger';
 import { Utils } from '../utils/Utils';
 
 export class Neo4jService {
-  public static client: Nullable<Driver>;
+  public static client: Driver | undefined;
   private static retries: number = 3;
 
   public static async initConnection(): Promise<void> {
-    const host: Nullable<string> = process.env.NEO4J_HOST;
+    const host: string | undefined = process.env.NEO4J_HOST;
     if (!host) throw new ServiceError(ERROR_CODE.MISSING_ENV_VAR, 'Missing NEO4J_HOST');
 
-    const username: Nullable<string> = process.env.NEO4J_USERNAME;
+    const username: string | undefined = process.env.NEO4J_USERNAME;
     if (!username) throw new ServiceError(ERROR_CODE.MISSING_ENV_VAR, 'Missing NEO4J_USERNAME');
 
-    const password: Nullable<string> = process.env.NEO4J_PASSWORD;
+    const password: string | undefined = process.env.NEO4J_PASSWORD;
     if (!password) throw new ServiceError(ERROR_CODE.MISSING_ENV_VAR, 'Missing NEO4J_PASSWORD');
 
     try {
@@ -31,10 +30,10 @@ export class Neo4jService {
     }
   }
 
-  public static async run(query: string, ...args: unknown[]): Promise<Nullable<QueryResult>> {
+  public static async run(query: string, ...args: unknown[]): Promise<QueryResult | null> {
     if (!this.client) throw new ServiceError(ERROR_CODE.NOT_INITIALIZED, 'Neo4jService not initialized');
     const session: Session = this.client.session();
-    let result: Nullable<QueryResult> = null;
+    let result: QueryResult | null = null;
 
     try {
       logger.debug({ query, args }, 'Neo4jService: Performing a query.');

@@ -1,5 +1,4 @@
 import { Component, computed, input, InputSignal, Signal } from '@angular/core';
-import { Nullable } from 'primeng/ts-helpers';
 import { sprintf } from 'sprintf-js';
 import { MarkdownComponent } from 'ngx-markdown';
 import { Config } from '../../../models/Config';
@@ -22,14 +21,14 @@ export class PropertyListComponent {
   });
 
   protected getFormattedString(item: Record<string, unknown>, property: Property): string {
-    const value: Nullable<string | string[]> = this.getPropertyValue(item, property.name);
+    const value: string | string[] | null = this.getPropertyValue(item, property.name);
     if (value === null || value === undefined) return '';
     const mapped: string[] = this.getMappedValues(value, property);
     return property.display ? sprintf(property.display, ...mapped) : mapped.join(',');
   }
 
-  protected getPropertyValue(item: Record<string, unknown>, property: string): Nullable<string | string[]> {
-    const value: Nullable<unknown> = item[property];
+  protected getPropertyValue(item: Record<string, unknown>, property: string): string | string[] | null {
+    const value: unknown | undefined = item[property];
     if (value === null || value === undefined || value === '') return null;
     return Array.isArray(value) ? value.map(String) : String(value);
   }

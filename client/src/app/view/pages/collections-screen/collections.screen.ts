@@ -14,15 +14,19 @@ import { ROUTES } from '../../../app.routes';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationUtils } from '../../../utils/PaginationUtils';
 import { SelectComponent } from '../../components/select/select.component';
-import { Nullable } from 'primeng/ts-helpers';
 import { Categories, Properties } from '../../../utils/ConfigUtils';
+import { FormsModule } from '@angular/forms';
+import { IftaLabel } from 'primeng/iftalabel';
+import { InputText } from 'primeng/inputtext';
+import { Select } from 'primeng/select';
+import { Button } from 'primeng/button';
 import Collection = RAMEN.Collection;
 import Property = Config.Property;
 import Category = Config.Category;
 
 @Component({
   selector: 'screen-collections',
-  imports: [TableModule, PaginatedListComponent, SelectComponent],
+  imports: [TableModule, PaginatedListComponent, SelectComponent, FormsModule, IftaLabel, InputText, Select, Button],
   templateUrl: './collections.screen.html',
   styleUrl: './collections.screen.scss',
 })
@@ -42,9 +46,7 @@ export class CollectionsScreen {
     Properties.scoped(this.config().properties, this.activeType()),
   );
 
-  protected readonly searchPhrase: WritableSignal<string> = signal('');
   protected readonly activeCategory: WritableSignal<Category> = signal(Categories.initial(this.categories(), this.initialType()));
-
   protected readonly activeType: Signal<string> = computed((): string => this.activeCategory().value);
   protected readonly options: WritableSignal<ListOptions> = signal({ orderBy: 'label', asc: true, limit: 25, skip: 0 });
   public readonly $list: HttpResourceRef<List<Collection>> = this.listService.fetchList(
@@ -70,14 +72,16 @@ export class CollectionsScreen {
       const limit: number = PaginationUtils.parseLimit(params['limit']);
       const page: number = PaginationUtils.parsePage(params['page']);
       const skip: number = PaginationUtils.pageToSkip(page, limit);
-      const type: Nullable<string> = params['type'];
+
+      const search: string | undefined = params['search'];
+      const type: string | undefined = params['type'];
 
       if (type !== null && type !== undefined) {
-        const existing: Nullable<Category> = Categories.find(this.categories(), type);
+        const existing: Category | undefined = Categories.find(this.categories(), type);
         if (existing) this.activeCategory.set(existing);
       }
 
-      this.options.update((current: ListOptions): ListOptions => ({ ...current, limit, skip }));
+      this.options.update((current: ListOptions): ListOptions => ({ ...current, limit, skip, search }));
     });
   }
 
@@ -94,11 +98,34 @@ export class CollectionsScreen {
     });
   }
 
-  protected handleCategoryChange(category: Nullable<Category>): void {
+  protected handleCategoryChange(category: Category | undefined): void {
     if (!category) return;
     this.activeCategory.set(category);
     this.options.update((current: ListOptions): ListOptions => ({ ...current, skip: 0 }));
     this.navigationService.updateQuery(this.route, { type: category.value, limit: this.options().limit, page: 1 });
+  }
+
+  protected handleSearchChange(searchPhrase: string): void {
+    const search: string = searchPhrase.trim();
+    if (search.length < 3 && search !== '') return;
+
+    this.options.update((current: ListOptions): ListOptions => {
+      const next: ListOptions = { ...current, search: search || undefined, skip: 0, field: 'label' };
+      this.navigationService.updateQuery(this.route, { search: search || null, page: 1 });
+      return next;
+    });
+  }
+
+  protected handleSortingChange(change: Partial<Pick<ListOptions, 'asc' | 'orderBy'>>): void {
+    this.options.update((current: ListOptions): ListOptions => {
+      const next: ListOptions = { ...current, ...change, skip: 0 };
+      const orderBy: string = next.orderBy || 'label';
+      const asc: string = String(next.asc);
+
+      const params: Record<string, string | number> = { orderBy, asc, page: 1 };
+      this.navigationService.updateQuery(this.route, params);
+      return next;
+    });
   }
 
   protected readonly ROUTES: typeof ROUTES = ROUTES;

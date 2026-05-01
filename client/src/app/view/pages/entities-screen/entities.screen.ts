@@ -7,7 +7,6 @@ import { HttpResourceRef } from '@angular/common/http';
 import { DataView } from 'primeng/dataview';
 import { CharacterListComponent } from '../../components/character-list/character-list.component';
 import { ActivatedRoute, Params } from '@angular/router';
-import { Nullable } from 'primeng/ts-helpers';
 import { StringUtils } from '../../../utils/StringUtils';
 import { NavigationService } from '../../../services/navigation.service';
 import { RAMEN } from '../../../models/RAMEN';
@@ -93,12 +92,12 @@ export class EntitiesScreen {
 
   constructor() {
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe((params: Params): void => {
-      const character: Nullable<string> = params['char'];
-      const searchPhrase: Nullable<string> = params['search'];
-      const type: Nullable<string> = params['type'];
+      const character: string | undefined = params['char'];
+      const searchPhrase: string | undefined = params['search'];
+      const type: string | undefined = params['type'];
 
-      if (type !== null && type !== undefined) {
-        const existing: Nullable<Category> = Categories.find(this.categories(), type);
+      if (type !== undefined) {
+        const existing: Category | undefined = Categories.find(this.categories(), type);
         if (existing) this.activeCategory.set(existing);
       }
       if (searchPhrase) this.searchPhrase.set(searchPhrase);
@@ -106,7 +105,7 @@ export class EntitiesScreen {
     });
   }
 
-  protected handleCategoryChange(category: Nullable<Category>): void {
+  protected handleCategoryChange(category: Category | undefined): void {
     if (!category) return;
     this.activeCategory.set(category);
     this.navigationService.updateQuery(this.route, { type: category.value });
@@ -122,7 +121,7 @@ export class EntitiesScreen {
     if (phrase !== '' && phrase.length < 2) return;
 
     this.searchPhrase.set(phrase);
-    const char: Nullable<string> = phrase === '' ? this.activeCharacter() : null;
+    const char: string | null = phrase === '' ? this.activeCharacter() : null;
     this.navigationService.updateQuery(this.route, { char, search: phrase || null });
   }
 

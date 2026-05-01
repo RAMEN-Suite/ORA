@@ -1,10 +1,9 @@
-import { Nullable } from '../types/global';
 import neo4j, { QueryResult } from 'neo4j-driver';
 import { Neo4jService } from '../services/Neo4jService';
 import { Listable, ListOptions } from '../models/List';
 
 export class ListDAO {
-  public static async getList<T>(resource: Listable, label: Nullable<string>, options: ListOptions): Promise<T[]> {
+  public static async getList<T>(resource: Listable, label: string | undefined, options: ListOptions): Promise<T[]> {
     const query: string[] = label ? [`MATCH (r:${resource}:${label})`] : [`MATCH (r:${resource})`];
     const params: Partial<Record<keyof Partial<Pick<ListOptions, 'skip' | 'limit' | 'search'>>, unknown>> = {};
 
@@ -30,11 +29,11 @@ export class ListDAO {
     }
 
     query.push(`RETURN collect(r {.*, _types: labels(r)}) as resource`);
-    const result: Nullable<QueryResult> = await Neo4jService.run(query.join(' '), params);
+    const result: QueryResult | null = await Neo4jService.run(query.join(' '), params);
     return result?.records[0]?.get('resource') ?? [];
   }
 
-  public static async getCount(resource: Listable, label: Nullable<string>, options: ListOptions): Promise<number> {
+  public static async getCount(resource: Listable, label: string | undefined, options: ListOptions): Promise<number> {
     const query: string[] = label ? [`MATCH (r:${resource}:${label})`] : [`MATCH (r:${resource})`];
     const params: Partial<Pick<ListOptions, 'search'>> = {};
 
@@ -45,7 +44,7 @@ export class ListDAO {
     }
 
     query.push(`RETURN count(r) as total`);
-    const result: Nullable<QueryResult> = await Neo4jService.run(query.join(' '), params);
+    const result: QueryResult | null = await Neo4jService.run(query.join(' '), params);
     return result?.records[0]?.get('total') ?? 0;
   }
 
