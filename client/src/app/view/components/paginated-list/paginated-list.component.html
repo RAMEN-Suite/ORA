@@ -6,7 +6,7 @@
   [rows]="rows()"
   [first]="skip()"
   [totalRecords]="totalRecords()"
-  [rowsPerPageOptions]="[10, 50, 100]"
+  [rowsPerPageOptions]="PAGE_LIMITS"
   [lazyLoadOnInit]="false"
   (onLazyLoad)="handleLazyLoad($event)"
   paginator
@@ -14,7 +14,7 @@
 >
   <ng-template #list let-items>
     <div class="my-8">
-      <shared-nodes-view [nodes]="items" [isLoading]="isLoading()" />
+      <shared-nodes-view [nodes]="items" [properties]="properties()" [routeTarget]="routeTarget()" [isLoading]="isLoading()" />
     </div>
   </ng-template>
 

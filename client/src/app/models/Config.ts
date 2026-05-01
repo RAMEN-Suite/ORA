@@ -1,6 +1,4 @@
 export namespace Config {
-  export type TextEmphasis = 'bold' | 'italic' | 'underline' | 'strike';
-
   export interface Root {
     screens: Screens;
     layout: Layout;
@@ -20,6 +18,7 @@ export namespace Config {
   export interface CollectionsScreen {
     categories: Category[];
     initialType: string;
+    properties: Property[];
   }
 
   export interface Category {
@@ -31,7 +30,8 @@ export namespace Config {
   export interface Property {
     name: string;
     display?: string;
-    emphasis?: TextEmphasis[];
+    scope?: string[];
+    valueMap?: Record<string, string>;
   }
 
   export interface Layout {}

@@ -3,11 +3,10 @@ import { Divider } from 'primeng/divider';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { PropertyListComponent } from '../../property-list/property-list.component';
 import { RouterLink } from '@angular/router';
-import { ROUTES } from '../../../../app.routes';
-import { Nullable } from 'primeng/ts-helpers';
+import { Config } from '../../../../models/Config';
 
 type LabeledNode = { label: string; uuid: string };
-type Property = { name: string; display?: string };
+type Property = Config.Property;
 
 @Component({
   selector: 'shared-nodes-view',
@@ -15,9 +14,9 @@ type Property = { name: string; display?: string };
   templateUrl: './nodes-view.component.html',
 })
 export class NodesViewComponent {
-  public nodes: InputSignal<LabeledNode[]> = input<LabeledNode[]>([]);
-  public properties: InputSignal<Property[]> = input<Property[]>([]);
-  public route: InputSignal<Nullable<ROUTES>> = input<Nullable<ROUTES>>(null);
+  public readonly nodes: InputSignal<LabeledNode[]> = input<LabeledNode[]>([]);
+  public readonly properties: InputSignal<Property[]> = input<Property[]>([]);
+  public readonly routeTarget: InputSignal<string[]> = input<string[]>([]);
 
-  public isLoading: InputSignal<boolean> = input(false);
+  public readonly isLoading: InputSignal<boolean> = input(false);
 }

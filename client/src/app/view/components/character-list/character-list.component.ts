@@ -1,7 +1,7 @@
 import { Component, effect, input, InputSignal, model, ModelSignal, signal, WritableSignal } from '@angular/core';
 import { Nullable } from 'primeng/ts-helpers';
 import { Button } from 'primeng/button';
-import { Utils } from '../../../utils/Utils';
+import { StringUtils } from '../../../utils/StringUtils';
 
 @Component({
   selector: 'shared-character-list',
@@ -9,9 +9,8 @@ import { Utils } from '../../../utils/Utils';
   templateUrl: './character-list.component.html',
 })
 export class CharacterListComponent {
-  public readonly isDisabled: InputSignal<boolean> = input(false);
-
   public readonly items: InputSignal<string[]> = input<string[]>([]);
+  public readonly isDisabled: InputSignal<boolean> = input(false);
   public readonly activeCharacter: ModelSignal<string> = model('');
 
   protected readonly characters: WritableSignal<string[]> = signal([]);
@@ -40,7 +39,7 @@ export class CharacterListComponent {
   }
 
   private getFirstCharacter(value: string): string {
-    const normalized: string = Utils.normalize(value, { toUpper: true });
+    const normalized: string = StringUtils.normalize(value, { toUpper: true });
     const firstChar: string = normalized.charAt(0);
     return /^\p{L}$/u.test(firstChar) ? firstChar : '#';
   }

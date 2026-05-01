@@ -6,14 +6,14 @@
   }
 
   @for (node of nodes(); track node.uuid; let last = $last) {
-    <a [routerLink]="route() ? ['/', route(), node.uuid] : null">
+    <a [routerLink]="routeTarget().length > 0 ? [...routeTarget(), node.uuid] : null">
       <div class="flex cursor-pointer items-center gap-3 transition-opacity select-none hover:opacity-70">
         <div class="px-3"><i class="pi pi-angle-right text-xs!"></i></div>
 
         <div class="flex flex-col">
           <span class="text-lg">{{ node.label }}</span>
           <small class="text-sm">
-            <shared-property-list [hidden]="properties().length === 0" [object]="node" [properties]="properties()" />
+            <shared-property-list [hidden]="properties().length === 0" [item]="node" [properties]="properties()" />
           </small>
         </div>
       </div>

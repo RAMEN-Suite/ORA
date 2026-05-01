@@ -10,17 +10,26 @@
         <div class="animate__animated animate__fadeIn">
           <shared-paginated-list
             [items]="list.data"
+            [properties]="propertyList()"
             [totalRecords]="list.pagination.total"
             [rows]="list.pagination.limit"
             [skip]="list.pagination.skip"
+            [routeTarget]="['/', ROUTES.COLLECTION]"
             [isLoading]="$list.isLoading()"
-            (onPageChange)="handleOptionsChange($event)"
+            (onPageChange)="handlePaginationChange($event)"
           />
         </div>
       </section>
-      <aside class="order-1 self-start lg:order-2">
-        <div class="flex flex-col gap-5">
-          <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none"></div>
+      <aside class="order-1 lg:order-2">
+        <div class="space-y-5">
+          <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
+            <shared-select
+              label="Sammlung auswählen:"
+              [items]="categories()"
+              [activeItem]="activeCategory()"
+              (activeItemChange)="handleCategoryChange($event)"
+            />
+          </div>
         </div>
       </aside>
     </div>

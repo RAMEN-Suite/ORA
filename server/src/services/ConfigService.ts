@@ -7,6 +7,7 @@ import fs from 'fs/promises';
 import screens from '../../config/screens.config.json';
 import layout from '../../config/layout.config.json';
 import { Config } from '../models/Config';
+import { deepmerge } from 'deepmerge-ts';
 
 export type JSON = Record<string, unknown>;
 
@@ -32,8 +33,7 @@ export class ConfigService {
     for (const file of CONFIG_FILES) {
       const key: string = file.replace('.config.json', '');
       const override: JSON = await this.accessJSON(path.join(this.overridesPath, file));
-      const base: JSON = this.isObject(config[key]) ? config[key] : {};
-      config[key] = this.merge(base, override);
+      config[key] = deepmerge(config[key], override);
     }
 
     return config;
@@ -49,20 +49,6 @@ export class ConfigService {
     return isAccessible ? this.readJSON(filePath) : {};
   }
 
-  private static merge(a: JSON, b: JSON): JSON {
-    const output: JSON = { ...a };
-
-    for (const [key, value] of Object.entries(b)) {
-      if (this.isObject(output[key]) && this.isObject(value)) {
-        output[key] = this.merge(output[key], value);
-      } else {
-        output[key] = value;
-      }
-    }
-
-    return output;
-  }
-
   private static async exists(filePath: string): Promise<boolean> {
     try {
       await fs.access(filePath);
@@ -71,10 +57,6 @@ export class ConfigService {
       logger.warn(error, 'ConfigService: Failed to access.');
       return false;
     }
-  }
-
-  private static isObject(value: unknown): value is JSON {
-    return typeof value === 'object' && value !== null && !Array.isArray(value);
   }
 }
 

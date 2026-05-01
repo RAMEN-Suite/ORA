@@ -6,10 +6,10 @@
       <div class="space-y-5">
         <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
           <shared-select
-            selectLabel="Register auswählen:"
+            label="Register auswählen:"
             [items]="categories()"
             [activeItem]="activeCategory()"
-            (activeItemChange)="handleCategory($event)"
+            (activeItemChange)="handleCategoryChange($event)"
           />
         </div>
 
@@ -22,7 +22,7 @@
               type="search"
               autocomplete="off"
               [ngModel]="searchPhrase()"
-              (ngModelChange)="handleSearch($event)"
+              (ngModelChange)="handleSearchChange($event)"
             />
             <label for="search">Register durchsuchen:</label>
           </p-ifta-label>
@@ -32,7 +32,7 @@
               [isDisabled]="isSearching"
               [items]="entityLabels()"
               [activeCharacter]="activeCharacter()"
-              (activeCharacterChange)="handleCharacter($event)"
+              (activeCharacterChange)="handleCharacterChange($event)"
             />
           } @else {
             <div class="flex justify-center py-10">
@@ -57,7 +57,12 @@
       <div class="animate__animated animate__fadeIn">
         <p-data-view [value]="filteredEntities()">
           <ng-template #list let-items>
-            <shared-nodes-view [nodes]="items" [properties]="properties()" [isLoading]="$list.isLoading()" [route]="ROUTES.ENTITY" />
+            <shared-nodes-view
+              [nodes]="items"
+              [properties]="propertyList()"
+              [isLoading]="$list.isLoading()"
+              [routeTarget]="['/', ROUTES.ENTITY]"
+            />
           </ng-template>
           <ng-template #emptymessage>Es konnten keine Einträge gefunden werden. </ng-template>
         </p-data-view>

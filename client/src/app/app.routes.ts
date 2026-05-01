@@ -19,6 +19,7 @@ export const routes: Routes = [
       { path: ROUTES.COLLECTIONS, component: CollectionsScreen },
       { path: ROUTES.ENTITIES, component: EntitiesScreen },
       { path: `${ROUTES.ENTITY}/:id`, redirectTo: '' },
+      { path: `${ROUTES.COLLECTION}/:id`, redirectTo: '' },
     ],
   },
   { path: 'error', component: ErrorScreen },
