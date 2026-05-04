@@ -1,12 +1,10 @@
 import { Component, input, InputSignal } from '@angular/core';
 import { Divider } from 'primeng/divider';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { PropertyListComponent } from '../../property-list/property-list.component';
+import { Property, PropertyListComponent } from '../../property-list/property-list.component';
 import { RouterLink } from '@angular/router';
-import { Config } from '../../../../models/Config';
 
 type LabeledNode = { label: string; uuid: string };
-type Property = Config.Property;
 
 @Component({
   selector: 'shared-nodes-view',

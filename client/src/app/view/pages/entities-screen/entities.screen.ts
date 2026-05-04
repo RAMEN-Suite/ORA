@@ -19,12 +19,13 @@ import { ROUTES } from '../../../app.routes';
 import { NodesViewComponent } from '../../components/data-view/nodes-view/nodes-view.component';
 import { PreviousLinkedValue } from '../../../../types/global';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { Categories, Properties } from '../../../utils/ConfigUtils';
+import { AppConfig } from '../../../models/AppConfig';
 import Entity = RAMEN.Entity;
-import Category = Config.Category;
 import Property = Config.Property;
+import MultiNode = Config.MultiNode;
+import NodeOption = Config.NodeOption;
 
-const DEFAULT_CATEGORY: Category = {
+const DEFAULT_OPTION: NodeOption = {
   icon: 'pi pi-folder-open',
   label: 'Alle Register',
   value: '',
@@ -51,21 +52,19 @@ export class EntitiesScreen {
   private readonly listService: ListService = inject(ListService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
-  private readonly config: Signal<Config.EntitiesScreen> = computed(
-    (): Config.EntitiesScreen => this.configService.screens().entities,
-  );
+  private readonly config: Signal<AppConfig> = computed((): AppConfig => this.configService.config());
+  private readonly screen: Signal<MultiNode> = computed((): MultiNode => this.config().screen('entities'));
 
-  protected readonly initialType: Signal<string> = computed((): string => this.config().initialType);
-  protected readonly categories: Signal<Category[]> = computed((): Category[] => [...this.config().categories, DEFAULT_CATEGORY]);
-  protected readonly properties: Signal<Property[]> = computed((): Property[] =>
-    Properties.scoped(this.config().properties, this.activeType()),
+  protected readonly nodes: Signal<NodeOption[]> = computed((): NodeOption[] => [...this.screen().nodes, DEFAULT_OPTION]);
+  protected readonly activeNode: WritableSignal<NodeOption> = signal<NodeOption>(this.config().initialNode(this.screen()));
+  protected readonly activeType: Signal<string> = computed((): string => this.activeNode().value);
+  protected readonly rawProperties: Signal<Property[]> = computed((): Property[] =>
+    this.config().properties(this.screen(), this.activeNode()),
   );
 
   protected readonly searchPhrase: WritableSignal<string> = signal('');
   protected readonly activeCharacter: WritableSignal<string> = signal('');
-  protected readonly activeCategory: WritableSignal<Category> = signal(Categories.initial(this.categories(), this.initialType()));
 
-  protected readonly activeType: Signal<string> = computed((): string => this.activeCategory().value);
   protected readonly options: Signal<ListOptions> = signal({ orderBy: 'label', asc: true, limit: 0, skip: 0 });
   protected readonly $list: HttpResourceRef<List<Entity>> = this.listService.fetchList(
     Listable.ENTITY,
@@ -73,42 +72,31 @@ export class EntitiesScreen {
     this.options,
   );
 
-  protected readonly entityList: Signal<List<Entity>> = linkedSignal({
+  protected readonly entities: Signal<List<Entity>> = linkedSignal({
     source: (): List<Entity> => this.$list.value(),
     computation: (source: List<Entity>, previous: PreviousLinkedValue<List<Entity>>): List<Entity> =>
       this.$list.isLoading() ? (previous?.value ?? source) : source,
   });
 
-  protected readonly propertyList: Signal<Property[]> = linkedSignal({
-    source: (): Property[] => this.properties(),
+  protected readonly properties: Signal<Property[]> = linkedSignal({
+    source: (): Property[] => this.rawProperties(),
     computation: (source: Property[], previous: PreviousLinkedValue<Property[]>): Property[] =>
       this.$list.isLoading() ? (previous?.value ?? source) : source,
   });
 
   protected readonly filteredEntities: Signal<Entity[]> = computed((): Entity[] => this.filterEntityList());
   protected readonly entityLabels: Signal<string[]> = computed((): string[] =>
-    this.entityList().data.map((e: Entity): string => e.label),
+    this.entities().data.map((e: Entity): string => e.label),
   );
 
   constructor() {
-    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe((params: Params): void => {
-      const character: string | undefined = params['char'];
-      const searchPhrase: string | undefined = params['search'];
-      const type: string | undefined = params['type'];
-
-      if (type !== undefined) {
-        const existing: Category | undefined = Categories.find(this.categories(), type);
-        if (existing) this.activeCategory.set(existing);
-      }
-      if (searchPhrase) this.searchPhrase.set(searchPhrase);
-      if (character) this.activeCharacter.set(character.toLocaleUpperCase());
-    });
+    this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(this.applyQueryParams.bind(this));
   }
 
-  protected handleCategoryChange(category: Category | undefined): void {
-    if (!category) return;
-    this.activeCategory.set(category);
-    this.navigationService.updateQuery(this.route, { type: category.value });
+  protected handleNodeChange(option: NodeOption | undefined): void {
+    if (!option) return;
+    this.activeNode.set(option);
+    this.navigationService.updateQuery(this.route, { type: option.value || null });
   }
 
   protected handleCharacterChange(character: string): void {
@@ -126,10 +114,10 @@ export class EntitiesScreen {
   }
 
   private filterEntityList(): Entity[] {
-    if (!this.entityList || this.activeCharacter() === '') return [];
+    if (this.activeCharacter() === '') return [];
 
     const searchPhrase: string = StringUtils.normalize(this.searchPhrase(), { toLower: true });
-    const entities: Entity[] = this.entityList().data;
+    const entities: Entity[] = this.entities().data;
     const currentCharacter: string = this.activeCharacter();
 
     if (searchPhrase !== '') {
@@ -143,6 +131,20 @@ export class EntitiesScreen {
       const character: string = StringUtils.firstCharacter(e.label);
       return currentCharacter === '' || currentCharacter === character;
     });
+  }
+
+  private applyQueryParams(params: Params): void {
+    const character: string | undefined = params['char'];
+    const searchPhrase: string | undefined = params['search'];
+    const type: string | undefined = params['type'];
+
+    if (type !== null && type !== undefined) {
+      const existing: NodeOption | undefined = this.config().node(this.screen(), type);
+      if (existing) this.activeNode.set(existing);
+    }
+
+    this.searchPhrase.set(searchPhrase ?? '');
+    this.activeCharacter.set(character?.toLocaleUpperCase() ?? '');
   }
 
   protected readonly ROUTES: typeof ROUTES = ROUTES;

@@ -5,6 +5,7 @@ import { HttpClient, HttpContext } from '@angular/common/http';
 import { withCache } from '@ngneat/cashew';
 import { Nullable } from 'primeng/ts-helpers';
 import { firstValueFrom } from 'rxjs';
+import { AppConfig } from '../models/AppConfig';
 
 @Injectable({
   providedIn: 'root',
@@ -20,14 +21,11 @@ export class ConfigService {
   public readonly hasConfig: Signal<boolean> = computed((): boolean => this.configState() !== null);
   public readonly error: Signal<unknown> = this.errorState.asReadonly();
 
-  public readonly config: Signal<Config.Root> = computed((): Config.Root => {
+  public readonly config: Signal<AppConfig> = computed((): AppConfig => {
     const config: Nullable<Config.Root> = this.configState();
     if (!config) throw new Error('Application cannot start without configuration.');
-    return config;
+    return new AppConfig(config);
   });
-
-  public readonly screens: Signal<Config.Screens> = computed((): Config.Screens => this.config().screens);
-  public readonly layout: Signal<Config.Layout> = computed((): Config.Layout => this.config().layout);
 
   public async init(): Promise<void> {
     try {

@@ -7,9 +7,9 @@
         <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
           <shared-select
             label="Register auswählen:"
-            [items]="categories()"
-            [activeItem]="activeCategory()"
-            (activeItemChange)="handleCategoryChange($event)"
+            [items]="nodes()"
+            [activeItem]="activeNode()"
+            (activeItemChange)="handleNodeChange($event)"
           />
         </div>
 
@@ -46,7 +46,7 @@
     <section class="border-surface-300 bg-surface-0/75 rounded-md border p-5">
       <header class="mb-6 pb-5 select-none">
         <h1 class="text-4xl font-semibold tracking-tight">
-          {{ activeCategory().label }}
+          {{ activeNode().label }}
         </h1>
 
         <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
@@ -59,7 +59,7 @@
           <ng-template #list let-items>
             <shared-nodes-view
               [nodes]="items"
-              [properties]="propertyList()"
+              [properties]="properties()"
               [isLoading]="$list.isLoading()"
               [routeTarget]="['/', ROUTES.ENTITY]"
             />

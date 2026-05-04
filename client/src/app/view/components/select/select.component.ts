@@ -2,9 +2,8 @@ import { Component, input, InputSignal, model, ModelSignal } from '@angular/core
 import { IftaLabel } from 'primeng/iftalabel';
 import { Select } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
-import { Config } from '../../../models/Config';
 
-type Selectable = Config.Category;
+type Selectable = { icon?: string; label: string; value: string };
 
 @Component({
   selector: 'shared-select',

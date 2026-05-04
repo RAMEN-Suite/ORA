@@ -2,11 +2,10 @@ import { Component, input, InputSignal, output, OutputEmitterRef } from '@angula
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { DataView } from 'primeng/dataview';
 import { NodesViewComponent } from '../data-view/nodes-view/nodes-view.component';
-import { Config } from '../../../models/Config';
 import { PAGE_LIMITS, PaginationUtils } from '../../../utils/PaginationUtils';
+import { Property } from '../property-list/property-list.component';
 
 type TableRow = Record<string, unknown>;
-type Property = Config.Property;
 
 @Component({
   selector: 'shared-paginated-list',

@@ -1,5 +1,5 @@
 <main class="min-h-screen px-6 py-10">
-  @if (collectionList(); as list) {
+  @if (collections(); as list) {
     <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_350px]">
       <section class="border-surface-300 bg-surface-0/75 order-2 rounded-md border p-5 lg:order-1!">
         <header class="mb-3 pb-5 select-none">
@@ -10,7 +10,7 @@
         <div class="animate__animated animate__fadeIn">
           <shared-paginated-list
             [items]="list.data"
-            [properties]="propertyList()"
+            [properties]="properties()"
             [totalRecords]="list.pagination.total"
             [rows]="list.pagination.limit"
             [skip]="list.pagination.skip"
@@ -25,9 +25,9 @@
           <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
             <shared-select
               label="Sammlung auswählen:"
-              [items]="categories()"
-              [activeItem]="activeCategory()"
-              (activeItemChange)="handleCategoryChange($event)"
+              [items]="nodes()"
+              [activeItem]="activeNode()"
+              (activeItemChange)="handleNodeChange($event)"
             />
           </div>
 

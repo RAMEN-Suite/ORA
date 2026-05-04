@@ -49,6 +49,6 @@ export class ListDAO {
   }
 
   private static getSearchQuery(field: string): string {
-    return `WHERE toLower(r.${field}) CONTAINS toLower($search)`;
+    return `WHERE apoc.text.clean(r.${field}) CONTAINS apoc.text.clean($search)`;
   }
 }

@@ -1,9 +1,8 @@
 import { Component, computed, input, InputSignal, Signal } from '@angular/core';
 import { sprintf } from 'sprintf-js';
 import { MarkdownComponent } from 'ngx-markdown';
-import { Config } from '../../../models/Config';
 
-type Property = Config.Property;
+export type Property = { name: string; display?: string; valueMap?: Record<string, string> };
 
 @Component({
   selector: 'shared-property-list',

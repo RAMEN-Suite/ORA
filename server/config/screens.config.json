@@ -1,12 +1,10 @@
 {
   "entities": {
-    "categories": [],
-    "initialType": "",
-    "properties": []
+    "nodes": [],
+    "initial": ""
   },
   "collections": {
-    "categories": [],
-    "initialType": "",
-    "properties": []
+    "nodes": [],
+    "initial": ""
   }
 }

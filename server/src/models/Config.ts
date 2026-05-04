@@ -1,27 +1,42 @@
 export namespace Config {
   export interface Root {
     screens: Screens;
-    layout: Layout;
   }
 
   export interface Screens {
-    entities: EntitiesScreen;
-    collections: CollectionsScreen;
+    entities: Entities;
+    collections: Collections;
   }
 
-  export interface EntitiesScreen {
-    categories: Category[];
-    initialType: string;
-    properties: Property[];
+  export interface MultiNode {
+    initial: string;
+    nodes: Option[];
+    properties?: Property[];
   }
 
-  export interface CollectionsScreen {
-    categories: Category[];
-    initialType: string;
-    properties: Property[];
+  export interface Entities extends MultiNode {
+    nodes: (Option & Properties)[];
   }
 
-  export interface Category {
+  export interface Collections extends MultiNode {
+    nodes: (Option & Properties & ListControls)[];
+  }
+
+  export interface Properties {
+    properties?: Property[];
+  }
+
+  export interface ListControls {
+    sort: Selection & { direction: 'asc' | 'desc' };
+    filter: Selection;
+  }
+
+  export interface Selection {
+    initial: string;
+    options: Option[];
+  }
+
+  export interface Option {
     icon?: string;
     label: string;
     value: string;
@@ -30,9 +45,6 @@ export namespace Config {
   export interface Property {
     name: string;
     display?: string;
-    scope?: string[];
     valueMap?: Record<string, string>;
   }
-
-  export interface Layout {}
 }
