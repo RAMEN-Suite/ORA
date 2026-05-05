@@ -5,6 +5,7 @@ import MultiNode = Config.MultiNode;
 import Option = Config.Option;
 import NodeOption = Config.NodeOption;
 import Property = Config.Property;
+import Selection = Config.Selection;
 
 export class AppConfig {
   constructor(private readonly config: Root) {}
@@ -21,10 +22,19 @@ export class AppConfig {
     return this.mergeProperties(screen.properties, node.properties);
   }
 
+  public option(options: Option[], value: string): Option | undefined {
+    return options.find((o: Option): boolean => o.value === value);
+  }
+
   public initialNode(screen: MultiNode): NodeOption {
     const node: Option | undefined = screen.nodes.find((o: NodeOption): boolean => o.value === screen.initial);
     if (!node) throw Error(`Missing initial node: ${screen.initial}`);
     return node;
+  }
+
+  public initialOption(selection: Selection | undefined): Option | undefined {
+    if (!selection) return undefined;
+    return selection.options.find((o: Option): boolean => o.value === selection.initial) ?? selection.options[0];
   }
 
   private mergeProperties(global: Property[] = [], local: Property[] = []): Property[] {

@@ -4,31 +4,26 @@ export namespace Config {
   }
 
   export interface Screens {
-    entities: Entities;
-    collections: Collections;
+    entities: MultiNode;
+    collections: MultiNode;
   }
 
   export interface MultiNode {
     initial: string;
-    nodes: Option[];
+    nodes: NodeOption[];
     properties?: Property[];
   }
 
-  export interface Entities extends MultiNode {
-    nodes: (Option & Properties)[];
+  export interface Option {
+    icon?: string;
+    label: string;
+    value: string;
   }
 
-  export interface Collections extends MultiNode {
-    nodes: (Option & Properties & ListControls)[];
-  }
-
-  export interface Properties {
+  export interface NodeOption extends Option {
     properties?: Property[];
-  }
-
-  export interface ListControls {
-    sort: Selection & { direction: 'asc' | 'desc' };
-    filter: Selection;
+    sort?: SortSelection;
+    filter?: Selection;
   }
 
   export interface Selection {
@@ -36,10 +31,8 @@ export namespace Config {
     options: Option[];
   }
 
-  export interface Option {
-    icon?: string;
-    label: string;
-    value: string;
+  export interface SortSelection extends Selection {
+    direction: 'asc' | 'desc';
   }
 
   export interface Property {

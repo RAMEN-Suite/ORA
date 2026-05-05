@@ -20,11 +20,11 @@ const DEFAULT_PAGINATION = {
 export class ListService {
   private readonly baseUrl: string = `${environment.apiBaseUrl}${environment.apiPaths.data}`;
 
-  public fetchList<T>(list: Listable, type: Signal<string>, options?: Signal<ListOptions>): HttpResourceRef<List<T>> {
+  public fetchList<T>(list: Listable, label: Signal<string>, options?: Signal<ListOptions>): HttpResourceRef<List<T>> {
     return httpResource(
       (): HttpResourceRequest => ({
         url: `${this.baseUrl}/${list}`,
-        params: this.getHttpListParams(type(), options?.()),
+        params: this.getHttpListParams(label(), options?.()),
         method: 'GET',
         context: withCache(),
       }),
@@ -32,10 +32,10 @@ export class ListService {
     );
   }
 
-  private getHttpListParams(type?: Nullable<string>, options?: ListOptions): HttpParams {
+  private getHttpListParams(label?: Nullable<string>, options?: ListOptions): HttpParams {
     let params: HttpParams = new HttpParams();
 
-    if (type) params = params.set('type', type);
+    if (label) params = params.set('label', label);
     if (options?.limit !== undefined) params = params.set('limit', String(options.limit));
     if (options?.skip !== undefined) params = params.set('skip', String(options.skip));
     if (options?.orderBy) params = params.set('orderBy', options.orderBy);

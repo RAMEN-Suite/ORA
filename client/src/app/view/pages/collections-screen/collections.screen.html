@@ -3,7 +3,7 @@
     <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_350px]">
       <section class="border-surface-300 bg-surface-0/75 order-2 rounded-md border p-5 lg:order-1!">
         <header class="mb-3 pb-5 select-none">
-          <h1 class="text-4xl font-semibold tracking-tight">Gesamtkorpus</h1>
+          <h1 class="text-4xl font-semibold tracking-tight">{{ activeNode().label }}</h1>
           <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">Insgesamt {{ list.pagination.total }} Einträge verfügbar</p>
         </header>
 
@@ -46,19 +46,27 @@
             </p-ifta-label>
 
             <div class="flex flex-row gap-3">
-              <p-ifta-label class="w-full">
-                <p-select id="sort" fluid />
-                <label for="sort">Sortieren nach:</label>
-              </p-ifta-label>
+              <shared-select
+                class="w-full"
+                label="Sortieren nach:"
+                [items]="sortOptions()"
+                [activeItem]="activeSort()"
+                (activeItemChange)="handleSortChange({ orderBy: $event?.value })"
+              />
 
               <p-button
+                icon="pi {{ options().asc ? 'pi-sort-amount-up' : 'pi-sort-amount-down-alt' }}"
                 styleClass="h-full! w-12!"
-                icon="pi {{ options().asc ? 'pi-sort-amount-down' : 'pi-sort-amount-up' }}"
-                (click)="handleSortingChange({ asc: !options().asc })"
+                tooltipPosition="bottom"
+                positionTop="5"
+                [pTooltip]="options().asc ? 'aufsteigend' : 'absteigend'"
+                (click)="handleSortChange({ asc: !options().asc })"
                 outlined
               />
             </div>
+          </div>
 
+          <div class="border-surface-300 bg-surface-0 space-y-3 rounded-md border p-5 select-none">
             <p-ifta-label class="w-full">
               <p-select id="sort" fluid />
               <label for="sort">Filtern nach:</label>

@@ -22,13 +22,17 @@ export namespace Config {
 
   export interface NodeOption extends Option {
     properties?: Property[];
-    sort?: Selection & { direction: 'asc' | 'desc' };
+    sort?: SortSelection;
     filter?: Selection;
   }
 
   export interface Selection {
     initial: string;
     options: Option[];
+  }
+
+  export interface SortSelection extends Selection {
+    direction: 'asc' | 'desc';
   }
 
   export interface Property {

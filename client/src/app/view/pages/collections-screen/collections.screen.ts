@@ -19,15 +19,18 @@ import {IftaLabel} from 'primeng/iftalabel';
 import {InputText} from 'primeng/inputtext';
 import {Select} from 'primeng/select';
 import {Button} from 'primeng/button';
-import { AppConfig } from '../../../models/AppConfig';
+import {AppConfig} from '../../../models/AppConfig';
+import {StringUtils} from '../../../utils/StringUtils';
+import { Tooltip } from 'primeng/tooltip';
 import Collection = RAMEN.Collection;
 import Property = Config.Property;
 import NodeOption = Config.NodeOption;
 import MultiNode = Config.MultiNode;
+import Option = Config.Option;
 
 @Component({
   selector: 'screen-collections',
-  imports: [TableModule, PaginatedListComponent, SelectComponent, FormsModule, IftaLabel, InputText, Select, Button],
+  imports: [TableModule, PaginatedListComponent, SelectComponent, FormsModule, IftaLabel, InputText, Select, Button, Tooltip],
   templateUrl: './collections.screen.html',
   styleUrl: './collections.screen.scss',
 })
@@ -42,15 +45,23 @@ export class CollectionsScreen {
 
   protected readonly nodes: Signal<NodeOption[]> = computed((): NodeOption[] => this.screen().nodes);
   protected readonly activeNode: WritableSignal<NodeOption> = signal<NodeOption>(this.config().initialNode(this.screen()));
-  protected readonly activeType: Signal<string> = computed((): string => this.activeNode().value);
+  protected readonly activeNodeLabel: Signal<string> = computed((): string => this.activeNode().value);
   protected readonly rawProperties: Signal<Property[]> = computed((): Property[] =>
     this.config().properties(this.screen(), this.activeNode()),
   );
 
-  protected readonly options: WritableSignal<ListOptions> = signal({ orderBy: 'label', asc: true, limit: 25, skip: 0 });
+  protected readonly sortOptions: Signal<Option[]> = computed((): Option[] => this.activeNode().sort?.options ?? []);
+  protected readonly activeSort: WritableSignal<Option | undefined> = signal(this.config().initialOption(this.activeNode().sort));
+
+  protected readonly options: WritableSignal<ListOptions> = signal({
+    orderBy: this.activeSort()?.value ?? 'label',
+    asc: this.activeNode().sort?.direction === 'asc',
+    limit: 25,
+    skip: 0,
+  });
   public readonly $list: HttpResourceRef<List<Collection>> = this.listService.fetchList(
     Listable.COLLECTION,
-    this.activeType,
+    this.activeNodeLabel,
     this.options,
   );
 
@@ -71,47 +82,40 @@ export class CollectionsScreen {
   }
 
   protected handlePaginationChange(change: Partial<Pick<ListOptions, 'limit' | 'skip'>>): void {
-    this.options.update((current: ListOptions): ListOptions => {
-      const next: ListOptions = { ...current, ...change };
+    const current: ListOptions = this.options();
+    const next: ListOptions = { ...current, ...change };
 
-      const limit: number = PaginationUtils.parseLimit(next.limit);
-      const page: number = PaginationUtils.skipToPage(next.skip, limit);
-      const skip: number = PaginationUtils.pageToSkip(page, limit);
+    const limit: number = PaginationUtils.parseLimit(next.limit);
+    const page: number = PaginationUtils.skipToPage(next.skip, limit);
 
-      const params: Record<string, number> = { page, limit };
-      this.navigationService.updateQuery(this.route, params);
-      return { ...next, limit, skip };
-    });
+    const params: Params = { page, limit };
+    this.navigationService.updateQuery(this.route, params);
   }
 
   protected handleNodeChange(option: NodeOption | undefined): void {
     if (!option) return;
-    this.activeNode.set(option);
-    this.options.update((current: ListOptions): ListOptions => ({ ...current, skip: 0 }));
-    this.navigationService.updateQuery(this.route, { type: option.value, limit: this.options().limit, page: 1 });
+
+    const params: Params = { label: option.value, limit: this.options().limit, page: 1, orderBy: null };
+    this.navigationService.updateQuery(this.route, params);
   }
 
   protected handleSearchChange(searchPhrase: string): void {
     const search: string = searchPhrase.trim();
     if (search.length < 3 && search !== '') return;
 
-    this.options.update((current: ListOptions): ListOptions => {
-      const next: ListOptions = { ...current, search: search || undefined, skip: 0 };
-      this.navigationService.updateQuery(this.route, { search: search || null, page: 1 });
-      return next;
-    });
+    const params: Params = { search: search || null, page: 1 };
+    this.navigationService.updateQuery(this.route, params);
   }
 
-  protected handleSortingChange(change: Partial<Pick<ListOptions, 'asc' | 'orderBy'>>): void {
-    this.options.update((current: ListOptions): ListOptions => {
-      const next: ListOptions = { ...current, ...change, skip: 0 };
-      const orderBy: string = next.orderBy || 'label';
-      const asc: string = String(next.asc);
+  protected handleSortChange(change: Partial<Pick<ListOptions, 'asc' | 'orderBy'>>): void {
+    const current: ListOptions = this.options();
+    const next: ListOptions = { ...current, ...change };
 
-      const params: Record<string, string | number> = { orderBy, asc, page: 1 };
-      this.navigationService.updateQuery(this.route, params);
-      return next;
-    });
+    const orderBy: string = next.orderBy || 'label';
+    const asc: string = String(next.asc);
+
+    const params: Record<string, string | number> = { orderBy, asc, page: 1 };
+    this.navigationService.updateQuery(this.route, params);
   }
 
   private applyQueryParams(params: Params): void {
@@ -119,15 +123,23 @@ export class CollectionsScreen {
     const page: number = PaginationUtils.parsePage(params['page']);
     const skip: number = PaginationUtils.pageToSkip(page, limit);
 
-    const search: string | undefined = params['search'];
-    const type: string | undefined = params['type'];
+    const search: string | undefined = StringUtils.parseString(params['search']);
+    const label: string | undefined = StringUtils.parseString(params['label']);
 
-    if (type !== null && type !== undefined) {
-      const existing: NodeOption | undefined = this.config().node(this.screen(), type);
+    if (label !== null && label !== undefined) {
+      const existing: NodeOption | undefined = this.config().node(this.screen(), label);
       if (existing) this.activeNode.set(existing);
     }
 
-    this.options.update((current: ListOptions): ListOptions => ({ ...current, limit, skip, search }));
+    const rawOrderBy: string | undefined = StringUtils.parseString(params['orderBy']);
+    const existing: Option | undefined = this.config().option(this.activeNode().sort?.options ?? [], rawOrderBy ?? '');
+    const initial: Option | undefined = this.config().initialOption(this.activeNode().sort);
+    this.activeSort.set(existing ?? initial);
+
+    const orderBy: string = this.activeSort()?.value ?? 'label';
+    const asc: boolean | undefined = StringUtils.parseBoolean(params['asc']) ?? this.activeNode().sort?.direction === 'asc';
+
+    this.options.update((current: ListOptions): ListOptions => ({ ...current, limit, skip, search, orderBy, asc }));
   }
 
   protected readonly ROUTES: typeof ROUTES = ROUTES;

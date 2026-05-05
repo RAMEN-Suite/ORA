@@ -57,7 +57,7 @@ export class EntitiesScreen {
 
   protected readonly nodes: Signal<NodeOption[]> = computed((): NodeOption[] => [...this.screen().nodes, DEFAULT_OPTION]);
   protected readonly activeNode: WritableSignal<NodeOption> = signal<NodeOption>(this.config().initialNode(this.screen()));
-  protected readonly activeType: Signal<string> = computed((): string => this.activeNode().value);
+  protected readonly activeNodeLabel: Signal<string> = computed((): string => this.activeNode().value);
   protected readonly rawProperties: Signal<Property[]> = computed((): Property[] =>
     this.config().properties(this.screen(), this.activeNode()),
   );
@@ -68,7 +68,7 @@ export class EntitiesScreen {
   protected readonly options: Signal<ListOptions> = signal({ orderBy: 'label', asc: true, limit: 0, skip: 0 });
   protected readonly $list: HttpResourceRef<List<Entity>> = this.listService.fetchList(
     Listable.ENTITY,
-    this.activeType,
+    this.activeNodeLabel,
     this.options,
   );
 
@@ -96,7 +96,7 @@ export class EntitiesScreen {
   protected handleNodeChange(option: NodeOption | undefined): void {
     if (!option) return;
     this.activeNode.set(option);
-    this.navigationService.updateQuery(this.route, { type: option.value || null });
+    this.navigationService.updateQuery(this.route, { label: option.value || null });
   }
 
   protected handleCharacterChange(character: string): void {
@@ -136,10 +136,10 @@ export class EntitiesScreen {
   private applyQueryParams(params: Params): void {
     const character: string | undefined = params['char'];
     const searchPhrase: string | undefined = params['search'];
-    const type: string | undefined = params['type'];
+    const label: string | undefined = params['label'];
 
-    if (type !== null && type !== undefined) {
-      const existing: NodeOption | undefined = this.config().node(this.screen(), type);
+    if (label !== null && label !== undefined) {
+      const existing: NodeOption | undefined = this.config().node(this.screen(), label);
       if (existing) this.activeNode.set(existing);
     }
 

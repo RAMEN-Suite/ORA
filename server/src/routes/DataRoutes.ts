@@ -8,10 +8,10 @@ import { Listable } from '../models/List';
 const router: Router = Router();
 
 const validatePagination: ValidationChain[] = [
-  query('type').optional().isString().isLength({ min: 1, max: 48 }).trim().escape().matches(REGEXP.PROPERTY),
+  query('label').optional().isString().isLength({ min: 1, max: 48 }).trim().escape().matches(REGEXP.PROPERTY),
   query('limit').optional().isInt({ min: 0, max: 500 }),
   query('skip').optional().isInt({ min: 0 }),
-  query('orderBy').optional().isString().isLength({ min: 1, max: 48 }).trim().escape().matches(REGEXP.PROPERTY),
+  query('orderBy').optional().isString().isLength({ min: 1, max: 48 }).trim().escape().matches(REGEXP.QUERY),
   query('asc').optional().isBoolean(),
   query('search').optional().isString().isLength({ min: 1, max: 240 }).trim().escape(),
   query('field').optional().isString().isLength({ min: 1, max: 48 }).trim().escape().matches(REGEXP.PROPERTY),

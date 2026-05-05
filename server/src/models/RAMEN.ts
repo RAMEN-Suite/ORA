@@ -1,6 +1,6 @@
 export namespace RAMEN {
   interface Node {
-    _types: string[];
+    _labels: string[];
     [key: string]: unknown;
   }
 

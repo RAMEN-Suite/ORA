@@ -5,7 +5,7 @@ import { ListDAO } from '../database/ListDAO';
 import { List, Listable, ListOptions, Pagination } from '../models/List';
 
 export async function getList<T>(resource: Listable, req: Request, res: Response): Promise<void> {
-  const specifiedType: string | undefined = Utils.parseString(req.query.type);
+  const specifiedLabel: string | undefined = Utils.parseString(req.query.label);
   const options: ListOptions = {
     orderBy: Utils.parseString(req.query.orderBy),
     asc: Utils.parseBoolean(req.query.asc),
@@ -15,8 +15,8 @@ export async function getList<T>(resource: Listable, req: Request, res: Response
     field: Utils.parseString(req.query.field),
   };
 
-  const data: T[] = await ListDAO.getList(resource, specifiedType, options);
-  const total: number = await ListDAO.getCount(resource, specifiedType, options);
+  const data: T[] = await ListDAO.getList(resource, specifiedLabel, options);
+  const total: number = await ListDAO.getCount(resource, specifiedLabel, options);
 
   const pagination: Pagination = {
     skip: options.skip,

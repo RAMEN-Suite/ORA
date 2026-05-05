@@ -10,11 +10,9 @@ export class Utils {
   }
 
   public static parseNumber(value: unknown): number | undefined {
-    if (typeof value === 'string') {
-      const num: number = Number(value);
-      return isNaN(num) ? undefined : num;
-    }
-    return undefined;
+    if (typeof value !== 'string' && typeof value !== 'number') return undefined;
+    const num: number = Number(value);
+    return Number.isFinite(num) ? num : undefined;
   }
 
   public static parseString(value: unknown): string | undefined {
