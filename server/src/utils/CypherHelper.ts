@@ -16,9 +16,12 @@ export class CypherPathHelper {
     });
   }
 
-  public static expression(path: QueryPath, prefix: string): string {
+  public static expression(path: QueryPath, prefix: string, params: Record<string, unknown>): string {
     const alias: string = path.steps.length === 0 ? 'r' : `${prefix}${path.steps.length - 1}`;
-    return `${alias}.${path.field}`;
+    const param: string = `${prefix}Field`;
+
+    params[param] = path.field;
+    return `${alias}[$${param}]`;
   }
 
   private static matchStep(step: QueryStep, previous: string, alias: string, index: number, context: BuildContext): string {

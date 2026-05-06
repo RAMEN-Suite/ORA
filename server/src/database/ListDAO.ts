@@ -41,9 +41,9 @@ export class ListDAO {
   private static applySearch(query: string[], params: Record<string, unknown>, options: ListOptions): void {
     if (!options.search) return;
 
-    const path: QueryPath = QueryParser.parse(options.field ?? 'label');
+    const path: QueryPath = QueryParser.parse(options.filters ?? 'label');
     query.push(...CypherPathHelper.matches(path, 'search', params));
-    query.push(`WHERE apoc.text.clean(${CypherPathHelper.expression(path, 'search')}) CONTAINS apoc.text.clean($search)`);
+    query.push(`WHERE apoc.text.clean(${CypherPathHelper.expression(path, 'search', params)}) CONTAINS apoc.text.clean($search)`);
 
     params.search = options.search;
   }
@@ -55,7 +55,7 @@ export class ListDAO {
     const direction: string = options.asc === false ? 'DESC' : 'ASC';
 
     query.push(...CypherPathHelper.matches(path, 'sort', params));
-    query.push(`ORDER BY ${CypherPathHelper.expression(path, 'sort')} ${direction}`);
+    query.push(`ORDER BY ${CypherPathHelper.expression(path, 'sort', params)} ${direction}`);
   }
 
   private static applyPagination(query: string[], params: Record<string, unknown>, options: ListOptions): void {

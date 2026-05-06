@@ -18,4 +18,16 @@ export class Utils {
   public static parseString(value: unknown): string | undefined {
     return typeof value === 'string' ? value : undefined;
   }
+
+  public static parseArray(value: unknown): unknown[] {
+    return Array.isArray(value) ? value : [value];
+  }
+
+  public static parseStringArray(value: unknown): string[] {
+    if (!Array.isArray(value)) return [];
+
+    return value.filter((entry: unknown): entry is string => {
+      return typeof entry === 'string' && entry.trim().length > 0;
+    });
+  }
 }

@@ -1,7 +1,6 @@
 export enum Listable {
   COLLECTION = 'Collection',
   ENTITY = 'Entity',
-  CONTENT = 'Content',
 }
 
 export interface List<T> {
@@ -24,5 +23,4 @@ export interface ListOptions {
   orderBy?: string;
   asc?: boolean;
   search?: string;
-  field?: string;
 }
