@@ -74,6 +74,10 @@
               (activeFiltersChange)="handleFilterChange($event)"
             />
           </div>
+
+          <div class="border-surface-300 bg-surface-0 space-y-3 rounded-md border p-5 select-none">
+            <p-button label="Ansicht zurücksetzen" outlined fluid (click)="handleClearFilter()" />
+          </div>
         </div>
       </aside>
     </div>

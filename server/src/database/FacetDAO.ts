@@ -42,6 +42,7 @@ export class FacetDAO {
     const prefix = 'facet';
     const path: AccessPath = AccessParser.parse(field);
 
+    context.query.push(`WITH DISTINCT r`);
     context.query.push(...CypherAccessHelper.matches(path, prefix, context.params));
     const expression: string = CypherAccessHelper.expression(path, prefix, context.params);
 

@@ -19,7 +19,7 @@ import { IftaLabel } from 'primeng/iftalabel';
 import { InputText } from 'primeng/inputtext';
 import { Button } from 'primeng/button';
 import { AppConfig } from '../../../models/AppConfig';
-import { StringUtils } from '../../../utils/StringUtils';
+import { Utils } from '../../../utils/Utils';
 import { Tooltip } from 'primeng/tooltip';
 import { ActiveFilter, FacetGroup, FacetOptions } from '../../../models/Facet';
 import { FacetListComponent } from '../../components/facet-list/facet-list.component';
@@ -59,6 +59,7 @@ export class CollectionsScreen {
   protected readonly nodes: Signal<NodeOption[]> = computed((): NodeOption[] => this.screen().nodes);
   protected readonly activeNode: WritableSignal<NodeOption> = signal<NodeOption>(this.config().initialNode(this.screen()));
   protected readonly activeNodeLabel: Signal<string> = computed((): string => this.activeNode().value);
+
   protected readonly rawProperties: Signal<Property[]> = computed((): Property[] =>
     this.config().properties(this.screen(), this.activeNode()),
   );
@@ -84,7 +85,6 @@ export class CollectionsScreen {
     this.activeNodeLabel,
     this.listOptions,
   );
-
   public readonly $facets: HttpResourceRef<FacetGroup[]> = this.listService.fetchFacets(
     Listable.COLLECTION,
     this.activeNodeLabel,
@@ -96,13 +96,11 @@ export class CollectionsScreen {
     computation: (source: List<Collection>, previous: PreviousLinkedValue<List<Collection>>): List<Collection> =>
       this.$list.isLoading() ? (previous?.value ?? source) : source,
   });
-
   protected readonly properties: Signal<Property[]> = linkedSignal({
     source: (): Property[] => this.rawProperties(),
     computation: (source: Property[], previous: PreviousLinkedValue<Property[]>): Property[] =>
       this.$list.isLoading() ? (previous?.value ?? source) : source,
   });
-
   protected readonly facets: Signal<FacetGroup[]> = linkedSignal({
     source: (): FacetGroup[] => this.$facets.value(),
     computation: (source: FacetGroup[], previous: PreviousLinkedValue<FacetGroup[]>): FacetGroup[] =>
@@ -121,7 +119,7 @@ export class CollectionsScreen {
     const page: number = PaginationUtils.skipToPage(next.skip, limit);
 
     const params: Params = { page, limit };
-    this.navigationService.updateQuery(this.route, params);
+    this.navigationService.updateQuery(this.route, params, { scroll: 'manual' });
   }
 
   protected handleNodeChange(option: NodeOption | undefined): void {
@@ -136,13 +134,13 @@ export class CollectionsScreen {
     if (search.length < 3 && search !== '') return;
 
     const params: Params = { search: search || null, page: 1 };
-    this.navigationService.updateQuery(this.route, params);
+    this.navigationService.updateQuery(this.route, params, { scroll: 'manual' });
   }
 
   protected handleFilterChange(filters: ActiveFilter[]): void {
     const serialized: string[] = filters.map(FilterUtils.serializeFilter);
     const params: Params = { filters: serialized, page: 1 };
-    this.navigationService.updateQuery(this.route, params);
+    this.navigationService.updateQuery(this.route, params, { scroll: 'manual' });
   }
 
   protected handleSortChange(change: Partial<Pick<ListOptions, 'asc' | 'orderBy'>>): void {
@@ -153,7 +151,11 @@ export class CollectionsScreen {
     const asc: string = String(next.asc);
 
     const params: Record<string, string | number> = { orderBy, asc, page: 1 };
-    this.navigationService.updateQuery(this.route, params);
+    this.navigationService.updateQuery(this.route, params, { scroll: 'manual' });
+  }
+
+  protected handleClearFilter(): void {
+    this.navigationService.updateQuery(this.route, null, { queryParamsHandling: null });
   }
 
   private applyQueryParams(params: Params): void {
@@ -164,25 +166,18 @@ export class CollectionsScreen {
     this.applyNodeParam(params);
     this.applyFilterParams(params);
 
-    const search: string | undefined = StringUtils.parseString(params['search']);
+    const search: string | undefined = Utils.parseString(params['search']);
     const { orderBy, asc } = this.applySortParams(params);
 
-    this.listOptions.update(
-      (current: ListOptions): ListOptions => ({ ...current, limit, skip, search, orderBy, asc, filters: this.activeFilters() }),
-    );
+    const list: ListOptions = { limit, skip, search, orderBy, asc, filters: this.activeFilters() };
+    this.listOptions.update((current: ListOptions): ListOptions => ({ ...current, ...list }));
 
-    this.facetOptions.update(
-      (current: FacetOptions): FacetOptions => ({
-        ...current,
-        search,
-        facets: this.config().filterPaths(this.activeNode()),
-        filters: this.activeFilters(),
-      }),
-    );
+    const facet: FacetOptions = { search, facets: this.config().filterPaths(this.activeNode()), filters: this.activeFilters() };
+    this.facetOptions.update((current: FacetOptions): FacetOptions => ({ ...current, ...facet }));
   }
 
   private applyNodeParam(params: Params): void {
-    const label: string | undefined = StringUtils.parseString(params['label']);
+    const label: string | undefined = Utils.parseString(params['label']);
     if (label === undefined) return;
 
     const existing: NodeOption | undefined = this.config().node(this.screen(), label);
@@ -190,19 +185,20 @@ export class CollectionsScreen {
   }
 
   private applyFilterParams(params: Params): void {
-    const filters: ActiveFilter[] = StringUtils.parseStringArray(params['filters']).map(FilterUtils.parseFilter);
+    const filterArray: unknown[] = Utils.parseArray(params['filters']);
+    const filters: ActiveFilter[] = Utils.parseStringArray(filterArray).map(FilterUtils.parseFilter);
     this.activeFilters.set(filters);
   }
 
   private applySortParams(params: Params): Pick<ListOptions, 'orderBy' | 'asc'> {
-    const rawOrderBy: string | undefined = StringUtils.parseString(params['orderBy']);
+    const rawOrderBy: string | undefined = Utils.parseString(params['orderBy']);
     const existing: Option | undefined = this.config().option(this.activeNode().sort?.options ?? [], rawOrderBy ?? '');
     const initial: Option | undefined = this.config().initialOption(this.activeNode().sort);
     this.activeSort.set(existing ?? initial);
 
     return {
       orderBy: this.activeSort()?.value ?? 'label',
-      asc: StringUtils.parseBoolean(params['asc']) ?? this.activeNode().sort?.direction === 'asc',
+      asc: Utils.parseBoolean(params['asc']) ?? this.activeNode().sort?.direction === 'asc',
     };
   }
 

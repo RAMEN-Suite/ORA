@@ -1,6 +1,6 @@
 import { Component, effect, input, InputSignal, model, ModelSignal, signal, WritableSignal } from '@angular/core';
 import { Button } from 'primeng/button';
-import { StringUtils } from '../../../utils/StringUtils';
+import { Utils } from '../../../utils/Utils';
 
 @Component({
   selector: 'shared-character-list',
@@ -38,7 +38,7 @@ export class CharacterListComponent {
   }
 
   private getFirstCharacter(value: string): string {
-    const normalized: string = StringUtils.normalize(value, { toUpper: true });
+    const normalized: string = Utils.normalize(value, { toUpper: true });
     const firstChar: string = normalized.charAt(0);
     return /^\p{L}$/u.test(firstChar) ? firstChar : '#';
   }

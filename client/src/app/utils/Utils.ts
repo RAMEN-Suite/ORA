@@ -5,7 +5,7 @@ interface NormalizeOptions {
   toUpper?: boolean;
 }
 
-export class StringUtils {
+export class Utils {
   public static normalize(value: string, options: NormalizeOptions): string {
     const normalizedValue: string = removeAccents(value.trim());
     if (options.toLower) return normalizedValue.toLocaleLowerCase();
@@ -33,6 +33,10 @@ export class StringUtils {
 
   public static parseString(value: unknown): string | undefined {
     return typeof value === 'string' ? value : undefined;
+  }
+
+  public static parseArray(value: unknown): unknown[] {
+    return Array.isArray(value) ? value : [value];
   }
 
   public static parseStringArray(value: unknown): string[] {

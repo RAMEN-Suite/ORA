@@ -7,7 +7,7 @@ import { HttpResourceRef } from '@angular/common/http';
 import { DataView } from 'primeng/dataview';
 import { CharacterListComponent } from '../../components/character-list/character-list.component';
 import { ActivatedRoute, Params } from '@angular/router';
-import { StringUtils } from '../../../utils/StringUtils';
+import { Utils } from '../../../utils/Utils';
 import { NavigationService } from '../../../services/navigation.service';
 import { RAMEN } from '../../../models/RAMEN';
 import { List, Listable, ListOptions } from '../../../models/List';
@@ -116,19 +116,19 @@ export class EntitiesScreen {
   private filterEntityList(): Entity[] {
     if (this.activeCharacter() === '') return [];
 
-    const searchPhrase: string = StringUtils.normalize(this.searchPhrase(), { toLower: true });
+    const searchPhrase: string = Utils.normalize(this.searchPhrase(), { toLower: true });
     const entities: Entity[] = this.entities().data;
     const currentCharacter: string = this.activeCharacter();
 
     if (searchPhrase !== '') {
       return entities.filter((e: Entity): boolean => {
-        const normalized: string = StringUtils.normalize(e.label, { toLower: true });
+        const normalized: string = Utils.normalize(e.label, { toLower: true });
         return normalized.includes(searchPhrase);
       });
     }
 
     return entities.filter((e: Entity): boolean => {
-      const character: string = StringUtils.firstCharacter(e.label);
+      const character: string = Utils.firstCharacter(e.label);
       return currentCharacter === '' || currentCharacter === character;
     });
   }

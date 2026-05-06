@@ -17,7 +17,7 @@ const validateFilterQueries: ValidationChain[] = [
   query('facets').optional().customSanitizer(Utils.parseArray).isArray({ max: 10 }),
   query('facets.*').isString().isLength({ min: 1, max: 96 }).trim().matches(REGEXP.QUERY),
 
-  query('filters').optional().customSanitizer(Utils.parseArray).isArray({ max: 20 }),
+  query('filters').optional().customSanitizer(Utils.parseArray).isArray({ max: 10 }),
   query('filters.*').isString().isLength({ min: 3, max: 240 }).trim(),
 ];
 
