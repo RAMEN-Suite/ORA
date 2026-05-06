@@ -28,7 +28,7 @@ export class AppConfig {
   }
 
   public filters(node: NodeOption): FilterOption[] {
-    return node.filter ?? [];
+    return node.filters ?? [];
   }
 
   public filterPaths(node: NodeOption): string[] {

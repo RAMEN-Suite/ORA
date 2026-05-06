@@ -1,17 +1,20 @@
 import neo4j, { QueryResult } from 'neo4j-driver';
 import { Neo4jService } from '../services/Neo4jService';
-import { Listable, ListOptions } from '../models/List';
-import { QueryParser, QueryPath } from '../utils/QueryParser';
-import { CypherPathHelper } from '../utils/CypherHelper';
 import { ActiveFilter } from '../models/Facet';
+import { Listable, ListOptions } from '../models/List';
+import { CypherPathHelper } from '../utils/CypherHelper';
+import { QueryParser, QueryPath } from '../utils/QueryParser';
 
 export class ListDAO {
   public static async getList<T>(resource: Listable, label: string | undefined, options: ListOptions): Promise<T[]> {
     const params: Record<string, unknown> = {};
     const query: string[] = this.getBaseMatch(resource, label, params);
 
-    this.applySearch(query, params, options);
-    this.applyFilters(query, params, options);
+    const conditions: string[] = [];
+
+    this.applySearch(query, params, conditions, options);
+    this.applyFilters(query, params, conditions, options);
+    this.applyWhere(query, conditions);
     this.applySorting(query, params, options);
     this.applyPagination(query, params, options);
 
@@ -25,11 +28,18 @@ export class ListDAO {
     const params: Record<string, unknown> = {};
     const query: string[] = this.getBaseMatch(resource, label, params);
 
-    this.applySearch(query, params, options);
+    const conditions: string[] = [];
+
+    this.applySearch(query, params, conditions, options);
+    this.applyFilters(query, params, conditions, options);
+    this.applyWhere(query, conditions);
+
     query.push(`RETURN count(DISTINCT r) AS total`);
 
     const result: QueryResult | null = await Neo4jService.run(query.join(' '), params);
-    return result?.records[0]?.get('total') ?? 0;
+    const total: unknown = result?.records[0]?.get('total');
+
+    return neo4j.isInt(total) ? total.toNumber() : Number(total ?? 0);
   }
 
   private static getBaseMatch(resource: Listable, label: string | undefined, params: Record<string, unknown>): string[] {
@@ -40,21 +50,42 @@ export class ListDAO {
     return [`MATCH (r:$($resource):$($label))`];
   }
 
-  private static applySearch(query: string[], params: Record<string, unknown>, options: ListOptions): void {
+  private static applySearch(query: string[], params: Record<string, unknown>, conditions: string[], options: ListOptions): void {
     if (!options.search) return;
-
     const path: QueryPath = QueryParser.parse('label');
+
     query.push(...CypherPathHelper.matches(path, 'search', params));
-    query.push(`WHERE apoc.text.clean(${CypherPathHelper.expression(path, 'search', params)}) CONTAINS apoc.text.clean($search)`);
+    conditions.push(`apoc.text.clean(${CypherPathHelper.expression(path, 'search', params)}) CONTAINS apoc.text.clean($search)`);
 
     params.search = options.search;
   }
 
-  private static applyFilters(query: string[], params: Record<string, unknown>, options: ListOptions): void {
-    options.filters?.forEach((filter: ActiveFilter, index: number): void => {
-      const path: QueryPath = QueryParser.parse(filter.field);
-      CypherPathHelper.filter(query, params, path, `filter${index}`, filter);
+  private static applyFilters(
+    query: string[],
+    params: Record<string, unknown>,
+    conditions: string[],
+    options: ListOptions,
+  ): void {
+    const groups: Map<string, ActiveFilter[]> = new Map();
+
+    options.filters?.forEach((filter: ActiveFilter): void => {
+      groups.set(filter.field, [...(groups.get(filter.field) ?? []), filter]);
     });
+
+    Array.from(groups.entries()).forEach(([field, filters]: [string, ActiveFilter[]], groupIndex: number): void => {
+      const groupConditions: string[] = [];
+
+      filters.forEach((filter: ActiveFilter, index: number): void => {
+        const path: QueryPath = QueryParser.parse(filter.field);
+        CypherPathHelper.filter(query, params, groupConditions, path, `filter${groupIndex}_${index}`, filter);
+      });
+
+      conditions.push(`(${groupConditions.join(' OR ')})`);
+    });
+  }
+
+  private static applyWhere(query: string[], conditions: string[]): void {
+    if (conditions.length > 0) query.push(`WHERE ${conditions.join(' AND ')}`);
   }
 
   private static applySorting(query: string[], params: Record<string, unknown>, options: ListOptions): void {

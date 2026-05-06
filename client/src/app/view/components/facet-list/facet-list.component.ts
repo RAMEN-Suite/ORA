@@ -1,26 +1,26 @@
-import { Component, input, InputSignal } from '@angular/core';
+import { Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
 import { Accordion, AccordionContent, AccordionHeader, AccordionPanel } from 'primeng/accordion';
-import { Listbox } from 'primeng/listbox';
-import { FacetGroup } from '../../../models/Facet';
-import { ProgressSpinner } from 'primeng/progressspinner';
-
-interface FilterOption {
-  icon?: string;
-  label: string;
-  value: string;
-  valueMap?: Record<string, string>;
-  display?: 'list' | 'range';
-}
+import { ActiveFilter, FacetGroup } from '../../../models/Facet';
+import { FormsModule } from '@angular/forms';
+import { FacetListItemComponent } from './facet-list-item/facet-list-item.component';
+import { Config } from '../../../models/Config';
+import FilterOption = Config.FilterOption;
 
 @Component({
   selector: 'shared-facet-list',
-  imports: [Accordion, AccordionContent, AccordionHeader, AccordionPanel, Listbox, ProgressSpinner],
+  imports: [Accordion, AccordionContent, AccordionHeader, AccordionPanel, FormsModule, FacetListItemComponent],
   templateUrl: './facet-list.component.html',
 })
 export class FacetListComponent {
   public readonly facets: InputSignal<FacetGroup[]> = input<FacetGroup[]>([]);
   public readonly filters: InputSignal<FilterOption[]> = input<FilterOption[]>([]);
-  public readonly isLoading: InputSignal<boolean> = input(false);
+
+  public readonly activeFilters: InputSignal<ActiveFilter[]> = input<ActiveFilter[]>([]);
+  public readonly activeFiltersChange: OutputEmitterRef<ActiveFilter[]> = output<ActiveFilter[]>();
+
+  protected isExpanded(field: string): boolean {
+    return this.activeFilters().some((filter: ActiveFilter): boolean => filter.field === field);
+  }
 
   protected getFilter(field: string): FilterOption | undefined {
     return this.filters().find((filter: FilterOption): boolean => filter.value === field);
@@ -32,9 +32,5 @@ export class FacetListComponent {
 
   protected getFacetLabel(field: string): string {
     return this.getFilter(field)?.label ?? field;
-  }
-
-  protected getValueLabel(field: string, value: string): string {
-    return this.getFilter(field)?.valueMap?.[value] ?? value;
   }
 }

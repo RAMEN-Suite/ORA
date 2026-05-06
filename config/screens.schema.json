@@ -173,7 +173,7 @@
               "$ref": "#/$defs/sortSelection"
             },
 
-            "filter": {
+            "filters": {
               "type": "array",
               "items": {
                 "$ref": "#/$defs/filterOption"

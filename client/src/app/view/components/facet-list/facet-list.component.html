@@ -1,41 +1,23 @@
-@if (isLoading()) {
-  <div class="flex justify-center">
-    <p-progress-spinner class="spinner-base" />
-  </div>
-}
-
 @for (facet of facets(); track facet.field) {
-  @let isFilterRequired = facet.values.length > 10;
-
-  <p-accordion [multiple]="true">
+  <p-accordion [multiple]="true" [value]="isExpanded(facet.field) ? [$index] : []">
     <p-accordion-panel [value]="$index" class="border-0!">
       <p-accordion-header class="py-3!">
         <div class="flex items-center gap-4 tracking-tight">
-          <i [class]="getFacetIcon(facet.field)"></i>
-          {{ getFacetLabel(facet.field) }} ({{ facet.values.length }})
+          @if (getFacetIcon(facet.field); as icon) {
+            <i [class]="icon"></i>
+          }
+
+          <span> {{ getFacetLabel(facet.field) }} ({{ facet.values.length }}) </span>
         </div>
       </p-accordion-header>
+
       <p-accordion-content class="[--p-accordion-content-padding:0_1.125rem_10px_1.125rem]!">
-        <p-list-box
-          class="w-full border-0! shadow-none! [--p-listbox-checkmark-gutter-end:15px]! [--p-listbox-checkmark-gutter-start:0]! [--p-listbox-list-header-padding:0_0_10px_0]! [--p-listbox-list-padding:0]!"
-          [options]="facet.values"
-          [filter]="isFilterRequired"
-          emptyMessage="Keine Einträge gefunden..."
-          emptyFilterMessage="Keine Einträge gefunden."
-          showToggleAll="false"
-          optionLabel="value"
-          scrollHeight="190px"
-          virtualScroll
-          virtualScrollItemSize="40"
-          checkbox
-          multiple
-        >
-          <ng-template #item let-option>
-            <span class="tracking-tight whitespace-nowrap" [title]="getValueLabel(facet.field, option.value) + ' (' + option.count + ')'">
-              {{ getValueLabel(facet.field, option.value) }} ({{ option.count }})
-            </span>
-          </ng-template>
-        </p-list-box>
+        <shared-facet-list-item
+          [facet]="facet"
+          [filter]="getFilter(facet.field)"
+          [activeFilters]="activeFilters()"
+          (activeFiltersChange)="activeFiltersChange.emit($event)"
+        />
       </p-accordion-content>
     </p-accordion-panel>
   </p-accordion>

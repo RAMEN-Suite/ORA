@@ -4,6 +4,7 @@ import { withCache } from '@ngneat/cashew';
 import { List, Listable, ListOptions } from '../models/List';
 import { environment } from '../../environments/environment';
 import { FacetGroup, FacetOptions } from '../models/Facet';
+import { FilterUtils } from '../utils/FilterUtils';
 
 const DEFAULT_PAGINATION = {
   skip: 0,
@@ -49,8 +50,8 @@ export class ListService {
 
     if (label) params = params.set('label', label);
     if (options?.search !== undefined) params = params.set('search', String(options.search));
-    if (options?.field !== undefined) params = params.set('field', String(options.field));
-    for (const filter of options?.filters ?? []) params = params.append('filters', filter);
+    for (const facet of options?.facets ?? []) params = params.append('facets', facet);
+    for (const filter of options?.filters ?? []) params = params.append('filters', FilterUtils.serializeFilter(filter));
 
     return params;
   }
@@ -64,6 +65,7 @@ export class ListService {
     if (options?.orderBy) params = params.set('orderBy', options.orderBy);
     if (options?.asc !== undefined) params = params.set('asc', String(options.asc));
     if (options?.search) params = params.set('search', options.search);
+    for (const filter of options?.filters ?? []) params = params.append('filters', FilterUtils.serializeFilter(filter));
 
     return params;
   }

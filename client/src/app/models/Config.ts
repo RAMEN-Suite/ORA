@@ -28,7 +28,7 @@ export namespace Config {
   export interface NodeOption extends Option {
     properties?: Property[];
     sort?: SortSelection;
-    filter?: FilterOption[];
+    filters?: FilterOption[];
   }
 
   export interface Selection {

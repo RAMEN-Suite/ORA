@@ -21,8 +21,9 @@ import { Button } from 'primeng/button';
 import { AppConfig } from '../../../models/AppConfig';
 import { StringUtils } from '../../../utils/StringUtils';
 import { Tooltip } from 'primeng/tooltip';
-import { FacetGroup, FacetOptions } from '../../../models/Facet';
+import { ActiveFilter, FacetGroup, FacetOptions } from '../../../models/Facet';
 import { FacetListComponent } from '../../components/facet-list/facet-list.component';
+import { FilterUtils } from '../../../utils/FilterUtils';
 import Collection = RAMEN.Collection;
 import Property = Config.Property;
 import NodeOption = Config.NodeOption;
@@ -63,11 +64,13 @@ export class CollectionsScreen {
   );
 
   protected readonly filters: Signal<FilterOption[]> = computed((): FilterOption[] => this.config().filters(this.activeNode()));
+  protected readonly activeFilters: WritableSignal<ActiveFilter[]> = signal<ActiveFilter[]>([]);
+
   protected readonly sortOptions: Signal<Option[]> = computed((): Option[] => this.activeNode().sort?.options ?? []);
   protected readonly activeSort: WritableSignal<Option | undefined> = signal(this.config().initialOption(this.activeNode().sort));
 
   protected readonly facetOptions: WritableSignal<FacetOptions> = signal({
-    filters: this.config().filterPaths(this.activeNode()),
+    facets: this.config().filterPaths(this.activeNode()),
   });
   protected readonly listOptions: WritableSignal<ListOptions> = signal({
     orderBy: this.activeSort()?.value ?? 'label',
@@ -136,6 +139,12 @@ export class CollectionsScreen {
     this.navigationService.updateQuery(this.route, params);
   }
 
+  protected handleFilterChange(filters: ActiveFilter[]): void {
+    const serialized: string[] = filters.map(FilterUtils.serializeFilter);
+    const params: Params = { filters: serialized, page: 1 };
+    this.navigationService.updateQuery(this.route, params);
+  }
+
   protected handleSortChange(change: Partial<Pick<ListOptions, 'asc' | 'orderBy'>>): void {
     const current: ListOptions = this.listOptions();
     const next: ListOptions = { ...current, ...change };
@@ -152,23 +161,49 @@ export class CollectionsScreen {
     const page: number = PaginationUtils.parsePage(params['page']);
     const skip: number = PaginationUtils.pageToSkip(page, limit);
 
+    this.applyNodeParam(params);
+    this.applyFilterParams(params);
+
     const search: string | undefined = StringUtils.parseString(params['search']);
+    const { orderBy, asc } = this.applySortParams(params);
+
+    this.listOptions.update(
+      (current: ListOptions): ListOptions => ({ ...current, limit, skip, search, orderBy, asc, filters: this.activeFilters() }),
+    );
+
+    this.facetOptions.update(
+      (current: FacetOptions): FacetOptions => ({
+        ...current,
+        search,
+        facets: this.config().filterPaths(this.activeNode()),
+        filters: this.activeFilters(),
+      }),
+    );
+  }
+
+  private applyNodeParam(params: Params): void {
     const label: string | undefined = StringUtils.parseString(params['label']);
+    if (label === undefined) return;
 
-    if (label !== null && label !== undefined) {
-      const existing: NodeOption | undefined = this.config().node(this.screen(), label);
-      if (existing) this.activeNode.set(existing);
-    }
+    const existing: NodeOption | undefined = this.config().node(this.screen(), label);
+    if (existing) this.activeNode.set(existing);
+  }
 
+  private applyFilterParams(params: Params): void {
+    const filters: ActiveFilter[] = StringUtils.parseStringArray(params['filters']).map(FilterUtils.parseFilter);
+    this.activeFilters.set(filters);
+  }
+
+  private applySortParams(params: Params): Pick<ListOptions, 'orderBy' | 'asc'> {
     const rawOrderBy: string | undefined = StringUtils.parseString(params['orderBy']);
     const existing: Option | undefined = this.config().option(this.activeNode().sort?.options ?? [], rawOrderBy ?? '');
     const initial: Option | undefined = this.config().initialOption(this.activeNode().sort);
     this.activeSort.set(existing ?? initial);
 
-    const orderBy: string = this.activeSort()?.value ?? 'label';
-    const asc: boolean | undefined = StringUtils.parseBoolean(params['asc']) ?? this.activeNode().sort?.direction === 'asc';
-
-    this.listOptions.update((current: ListOptions): ListOptions => ({ ...current, limit, skip, search, orderBy, asc }));
+    return {
+      orderBy: this.activeSort()?.value ?? 'label',
+      asc: StringUtils.parseBoolean(params['asc']) ?? this.activeNode().sort?.direction === 'asc',
+    };
   }
 
   protected readonly ROUTES: typeof ROUTES = ROUTES;

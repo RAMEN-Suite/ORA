@@ -1,0 +1,23 @@
+<p-list-box
+  class="w-full border-0! shadow-none! [--p-listbox-checkmark-gutter-end:15px]! [--p-listbox-checkmark-gutter-start:0]! [--p-listbox-list-header-padding:0_0_10px_0]! [--p-listbox-list-padding:0]!"
+  [options]="options()"
+  [filter]="isFilterable()"
+  [ngModel]="selectedValues()"
+  (ngModelChange)="handleSelectionChange($event)"
+  optionLabel="value"
+  optionValue="value"
+  scrollHeight="190px"
+  emptyMessage="Keine Einträge gefunden..."
+  emptyFilterMessage="Keine Einträge gefunden."
+  showToggleAll="false"
+  virtualScrollItemSize="40"
+  virtualScroll
+  checkbox
+  multiple
+>
+  <ng-template #item let-option>
+    <span class="tracking-tight whitespace-nowrap" [title]="getFilterValue(option.value) + ' (' + option.count + ')'">
+      {{ getFilterValue(option.value) }} ({{ option.count }})
+    </span>
+  </ng-template>
+</p-list-box>
