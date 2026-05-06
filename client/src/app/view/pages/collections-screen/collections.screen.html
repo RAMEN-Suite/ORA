@@ -39,7 +39,7 @@
                 fluid
                 type="search"
                 autocomplete="off"
-                [ngModel]="options().search ?? ''"
+                [ngModel]="listOptions().search ?? ''"
                 (ngModelChange)="handleSearchChange($event)"
               />
               <label for="search">Sammlung durchsuchen:</label>
@@ -55,22 +55,19 @@
               />
 
               <p-button
-                icon="pi {{ options().asc ? 'pi-sort-amount-up' : 'pi-sort-amount-down-alt' }}"
+                icon="pi {{ listOptions().asc ? 'pi-sort-amount-up' : 'pi-sort-amount-down-alt' }}"
                 styleClass="h-full! w-12!"
                 tooltipPosition="bottom"
                 positionTop="5"
-                [pTooltip]="options().asc ? 'aufsteigend' : 'absteigend'"
-                (click)="handleSortChange({ asc: !options().asc })"
+                [pTooltip]="listOptions().asc ? 'aufsteigend' : 'absteigend'"
+                (click)="handleSortChange({ asc: !listOptions().asc })"
                 outlined
               />
             </div>
           </div>
 
           <div class="border-surface-300 bg-surface-0 space-y-3 rounded-md border p-5 select-none">
-            <p-ifta-label class="w-full">
-              <p-select id="sort" fluid />
-              <label for="sort">Filtern nach:</label>
-            </p-ifta-label>
+            <shared-facet-list [facets]="facets()" [isLoading]="$facets.isLoading()" [filters]="activeNode().filter ?? []" />
           </div>
         </div>
       </aside>

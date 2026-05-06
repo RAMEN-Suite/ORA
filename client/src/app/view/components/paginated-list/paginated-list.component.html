@@ -1,7 +1,9 @@
+<app-mobile-pagination [rows]="rows()" [skip]="skip()" [totalRecords]="totalRecords()" (onLazyLoad)="handleLazyLoad($event)" />
+
 <p-data-view
   class="select-none"
   paginatorPosition="both"
-  paginatorStyleClass="border-0! p-0!"
+  paginatorStyleClass="border-0! p-0! hidden! lg:flex!"
   [value]="items()"
   [rows]="rows()"
   [first]="skip()"
@@ -13,7 +15,7 @@
   lazy
 >
   <ng-template #list let-items>
-    <div class="my-8">
+    <div class="my-9">
       <shared-nodes-view [nodes]="items" [properties]="properties()" [routeTarget]="routeTarget()" [isLoading]="isLoading()" />
     </div>
   </ng-template>
@@ -22,3 +24,5 @@
     <span class="text-surface-600 tracking-wide"> ({{ item.first + 1 }} — {{ Math.min(item.first + item.rows, totalRecords()) }}) </span>
   </ng-template>
 </p-data-view>
+
+<app-mobile-pagination [rows]="rows()" [skip]="skip()" [totalRecords]="totalRecords()" (onLazyLoad)="handleLazyLoad($event)" />

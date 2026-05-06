@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ramen-schema.org/ora/2026.1/screens.schema.json",
+  "title": "ORA Screens Configuration",
+  "type": "object",
+  "required": ["entities", "collections"],
+  "additionalProperties": false,
+  "properties": {
+    "entities": { "$ref": "#/$defs/multiNode" },
+    "collections": { "$ref": "#/$defs/multiNode" }
+  },
+
+  "$defs": {
+    "queryPath": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:\\[[^\\]]+])?(?:\\.[A-Za-z_][A-Za-z0-9_]*(?:\\[[^\\]]+])?)*$"
+    },
+
+    "propertyName": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+    },
+
+    "option": {
+      "type": "object",
+      "required": ["label", "value"],
+      "additionalProperties": false,
+
+      "properties": {
+        "icon": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+
+    "property": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/propertyName"
+        },
+
+        "display": {
+          "type": "string"
+        },
+
+        "valueMap": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+
+    "filterOption": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/option"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+
+          "properties": {
+            "display": {
+              "type": "string",
+              "enum": ["list", "range"]
+            },
+
+            "value": {
+              "$ref": "#/$defs/queryPath"
+            },
+
+            "valueMap": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ]
+    },
+
+    "selection": {
+      "type": "object",
+      "required": ["initial", "options"],
+      "additionalProperties": false,
+
+      "properties": {
+        "initial": {
+          "type": "string"
+        },
+
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/option"
+          }
+        }
+      }
+    },
+
+    "sortSelection": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/selection"
+        },
+        {
+          "type": "object",
+          "required": ["direction"],
+
+          "properties": {
+            "direction": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            },
+
+            "options": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/option"
+                  },
+                  {
+                    "type": "object",
+
+                    "properties": {
+                      "value": {
+                        "$ref": "#/$defs/queryPath"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+
+    "nodeOption": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/option"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+
+          "properties": {
+            "properties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/property"
+              }
+            },
+
+            "sort": {
+              "$ref": "#/$defs/sortSelection"
+            },
+
+            "filter": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/filterOption"
+              }
+            }
+          }
+        }
+      ]
+    },
+
+    "multiNode": {
+      "type": "object",
+      "required": ["initial", "nodes"],
+      "additionalProperties": false,
+
+      "properties": {
+        "initial": {
+          "type": "string"
+        },
+
+        "nodes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/nodeOption"
+          }
+        },
+
+        "properties": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/property"
+          }
+        }
+      }
+    },
+
+    "screens": {
+      "type": "object",
+      "required": ["entities", "collections"],
+      "additionalProperties": false,
+
+      "properties": {
+        "entities": {
+          "$ref": "#/$defs/multiNode"
+        },
+
+        "collections": {
+          "$ref": "#/$defs/multiNode"
+        }
+      }
+    }
+  }
+}

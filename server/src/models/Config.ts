@@ -20,10 +20,15 @@ export namespace Config {
     value: string;
   }
 
+  export interface FilterOption extends Option {
+    display?: 'list' | 'range';
+    valueMap?: Record<string, string>;
+  }
+
   export interface NodeOption extends Option {
     properties?: Property[];
     sort?: SortSelection;
-    filter?: Selection;
+    filter?: FilterOption[];
   }
 
   export interface Selection {

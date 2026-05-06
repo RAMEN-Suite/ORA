@@ -1,0 +1,7 @@
+<div class="mb-4 flex items-center justify-center gap-1 lg:hidden">
+  <p-button type="button" icon="pi pi-angle-double-left" text (click)="first()" />
+  <p-button type="button" icon="pi pi-angle-left" text (click)="previous()" />
+  <p-badge size="large" [value]="PaginationUtils.skipToPage(skip(), rows())" class="mx-3" />
+  <p-button type="button" icon="pi pi-angle-right" text (click)="next()" />
+  <p-button type="button" icon="pi pi-angle-double-right" text (click)="last()" />
+</div>

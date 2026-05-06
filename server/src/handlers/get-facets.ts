@@ -16,6 +16,6 @@ export async function getFacets(resource: Listable, req: Request, res: Response)
     filters: Utils.parseStringArray(params.filters),
   };
 
-  const facets: FacetGroup[] = await FacetDAO.getFacets(resource, specifiedLabel, options);
-  res.status(STATUS_CODE.OK).json({ facets });
+  const response: FacetGroup[] = await FacetDAO.getFacets(resource, specifiedLabel, options);
+  res.status(STATUS_CODE.OK).json(response);
 }

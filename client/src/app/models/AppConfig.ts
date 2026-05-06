@@ -6,6 +6,7 @@ import Option = Config.Option;
 import NodeOption = Config.NodeOption;
 import Property = Config.Property;
 import Selection = Config.Selection;
+import FilterOption = Config.FilterOption;
 
 export class AppConfig {
   constructor(private readonly config: Root) {}
@@ -24,6 +25,14 @@ export class AppConfig {
 
   public option(options: Option[], value: string): Option | undefined {
     return options.find((o: Option): boolean => o.value === value);
+  }
+
+  public filters(node: NodeOption): FilterOption[] {
+    return node.filter ?? [];
+  }
+
+  public filterPaths(node: NodeOption): string[] {
+    return this.filters(node).map((filter: FilterOption): string => filter.value);
   }
 
   public initialNode(screen: MultiNode): NodeOption {

@@ -50,5 +50,6 @@ Thumbs.db
 
 # ENVIRONMENT AND CONFIG FILES
 .env
-config/**/*
+config/**/*.json
+!config/**/*.schema.json
 !config/.gitkeep

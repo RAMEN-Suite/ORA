@@ -1,6 +1,5 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Nullable } from 'primeng/ts-helpers';
 
 @Injectable({
   providedIn: 'root',
@@ -8,12 +7,11 @@ import { Nullable } from 'primeng/ts-helpers';
 export class NavigationService {
   private readonly router: Router = inject(Router);
 
-  public updateQuery(route: ActivatedRoute, params: Record<string, Nullable<string | number>>): void {
+  public updateQuery(route: ActivatedRoute, params: Record<string, string | number | null>): void {
     void this.router.navigate([], {
       relativeTo: route,
       queryParams: params,
       queryParamsHandling: 'merge',
-      replaceUrl: true,
     });
   }
 }

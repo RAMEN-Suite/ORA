@@ -1,15 +1,17 @@
 import { Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
-import { TableLazyLoadEvent, TableModule } from 'primeng/table';
+import { TableModule } from 'primeng/table';
 import { DataView } from 'primeng/dataview';
 import { NodesViewComponent } from '../data-view/nodes-view/nodes-view.component';
 import { PAGE_LIMITS, PaginationUtils } from '../../../utils/PaginationUtils';
 import { Property } from '../property-list/property-list.component';
+import { MobilePaginationComponent } from './mobile-pagination/mobile-pagination.component';
+import { LazyLoadEvent } from 'primeng/api';
 
 type TableRow = Record<string, unknown>;
 
 @Component({
   selector: 'shared-paginated-list',
-  imports: [TableModule, DataView, NodesViewComponent],
+  imports: [TableModule, DataView, NodesViewComponent, MobilePaginationComponent],
   templateUrl: './paginated-list.component.html',
 })
 export class PaginatedListComponent {
@@ -24,7 +26,7 @@ export class PaginatedListComponent {
   public readonly isLoading: InputSignal<boolean> = input(false);
   public readonly onPageChange: OutputEmitterRef<{ limit: number; skip: number }> = output();
 
-  protected handleLazyLoad(event: TableLazyLoadEvent): void {
+  protected handleLazyLoad(event: LazyLoadEvent): void {
     const limit: number = PaginationUtils.parseLimit(event.rows ?? this.rows());
     const skip: number = event.first ?? 0;
     this.onPageChange.emit({ limit, skip });

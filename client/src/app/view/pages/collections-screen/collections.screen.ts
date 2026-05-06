@@ -1,36 +1,48 @@
-import {Component, computed, inject, linkedSignal, signal, Signal, WritableSignal} from '@angular/core';
-import {TableModule} from 'primeng/table';
-import {PaginatedListComponent} from '../../components/paginated-list/paginated-list.component';
-import {ListService} from '../../../services/list.service';
-import {List, Listable, ListOptions} from '../../../models/List';
-import {RAMEN} from '../../../models/RAMEN';
-import {HttpResourceRef} from '@angular/common/http';
-import {ConfigService} from '../../../services/config.service';
-import {Config} from '../../../models/Config';
-import {NavigationService} from '../../../services/navigation.service';
-import {ActivatedRoute, Params} from '@angular/router';
-import {PreviousLinkedValue} from '../../../../types/global';
-import {ROUTES} from '../../../app.routes';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationUtils} from '../../../utils/PaginationUtils';
-import {SelectComponent} from '../../components/select/select.component';
-import {FormsModule} from '@angular/forms';
-import {IftaLabel} from 'primeng/iftalabel';
-import {InputText} from 'primeng/inputtext';
-import {Select} from 'primeng/select';
-import {Button} from 'primeng/button';
-import {AppConfig} from '../../../models/AppConfig';
-import {StringUtils} from '../../../utils/StringUtils';
+import { Component, computed, inject, linkedSignal, signal, Signal, WritableSignal } from '@angular/core';
+import { TableModule } from 'primeng/table';
+import { PaginatedListComponent } from '../../components/paginated-list/paginated-list.component';
+import { ListService } from '../../../services/list.service';
+import { List, Listable, ListOptions } from '../../../models/List';
+import { RAMEN } from '../../../models/RAMEN';
+import { HttpResourceRef } from '@angular/common/http';
+import { ConfigService } from '../../../services/config.service';
+import { Config } from '../../../models/Config';
+import { NavigationService } from '../../../services/navigation.service';
+import { ActivatedRoute, Params } from '@angular/router';
+import { PreviousLinkedValue } from '../../../../types/global';
+import { ROUTES } from '../../../app.routes';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PaginationUtils } from '../../../utils/PaginationUtils';
+import { SelectComponent } from '../../components/select/select.component';
+import { FormsModule } from '@angular/forms';
+import { IftaLabel } from 'primeng/iftalabel';
+import { InputText } from 'primeng/inputtext';
+import { Button } from 'primeng/button';
+import { AppConfig } from '../../../models/AppConfig';
+import { StringUtils } from '../../../utils/StringUtils';
 import { Tooltip } from 'primeng/tooltip';
+import { FacetGroup, FacetOptions } from '../../../models/Facet';
+import { FacetListComponent } from '../../components/facet-list/facet-list.component';
 import Collection = RAMEN.Collection;
 import Property = Config.Property;
 import NodeOption = Config.NodeOption;
 import MultiNode = Config.MultiNode;
 import Option = Config.Option;
+import FilterOption = Config.FilterOption;
 
 @Component({
   selector: 'screen-collections',
-  imports: [TableModule, PaginatedListComponent, SelectComponent, FormsModule, IftaLabel, InputText, Select, Button, Tooltip],
+  imports: [
+    TableModule,
+    PaginatedListComponent,
+    SelectComponent,
+    FormsModule,
+    IftaLabel,
+    InputText,
+    Button,
+    Tooltip,
+    FacetListComponent,
+  ],
   templateUrl: './collections.screen.html',
   styleUrl: './collections.screen.scss',
 })
@@ -50,19 +62,30 @@ export class CollectionsScreen {
     this.config().properties(this.screen(), this.activeNode()),
   );
 
+  protected readonly filters: Signal<FilterOption[]> = computed((): FilterOption[] => this.config().filters(this.activeNode()));
   protected readonly sortOptions: Signal<Option[]> = computed((): Option[] => this.activeNode().sort?.options ?? []);
   protected readonly activeSort: WritableSignal<Option | undefined> = signal(this.config().initialOption(this.activeNode().sort));
 
-  protected readonly options: WritableSignal<ListOptions> = signal({
+  protected readonly facetOptions: WritableSignal<FacetOptions> = signal({
+    filters: this.config().filterPaths(this.activeNode()),
+  });
+  protected readonly listOptions: WritableSignal<ListOptions> = signal({
     orderBy: this.activeSort()?.value ?? 'label',
     asc: this.activeNode().sort?.direction === 'asc',
     limit: 25,
     skip: 0,
   });
+
   public readonly $list: HttpResourceRef<List<Collection>> = this.listService.fetchList(
     Listable.COLLECTION,
     this.activeNodeLabel,
-    this.options,
+    this.listOptions,
+  );
+
+  public readonly $facets: HttpResourceRef<FacetGroup[]> = this.listService.fetchFacets(
+    Listable.COLLECTION,
+    this.activeNodeLabel,
+    this.facetOptions,
   );
 
   protected readonly collections: Signal<List<Collection>> = linkedSignal({
@@ -77,12 +100,18 @@ export class CollectionsScreen {
       this.$list.isLoading() ? (previous?.value ?? source) : source,
   });
 
+  protected readonly facets: Signal<FacetGroup[]> = linkedSignal({
+    source: (): FacetGroup[] => this.$facets.value(),
+    computation: (source: FacetGroup[], previous: PreviousLinkedValue<FacetGroup[]>): FacetGroup[] =>
+      this.$facets.isLoading() ? (previous?.value ?? source) : source,
+  });
+
   constructor() {
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(this.applyQueryParams.bind(this));
   }
 
   protected handlePaginationChange(change: Partial<Pick<ListOptions, 'limit' | 'skip'>>): void {
-    const current: ListOptions = this.options();
+    const current: ListOptions = this.listOptions();
     const next: ListOptions = { ...current, ...change };
 
     const limit: number = PaginationUtils.parseLimit(next.limit);
@@ -95,7 +124,7 @@ export class CollectionsScreen {
   protected handleNodeChange(option: NodeOption | undefined): void {
     if (!option) return;
 
-    const params: Params = { label: option.value, limit: this.options().limit, page: 1, orderBy: null };
+    const params: Params = { label: option.value, limit: this.listOptions().limit, page: 1, orderBy: null };
     this.navigationService.updateQuery(this.route, params);
   }
 
@@ -108,7 +137,7 @@ export class CollectionsScreen {
   }
 
   protected handleSortChange(change: Partial<Pick<ListOptions, 'asc' | 'orderBy'>>): void {
-    const current: ListOptions = this.options();
+    const current: ListOptions = this.listOptions();
     const next: ListOptions = { ...current, ...change };
 
     const orderBy: string = next.orderBy || 'label';
@@ -139,7 +168,7 @@ export class CollectionsScreen {
     const orderBy: string = this.activeSort()?.value ?? 'label';
     const asc: boolean | undefined = StringUtils.parseBoolean(params['asc']) ?? this.activeNode().sort?.direction === 'asc';
 
-    this.options.update((current: ListOptions): ListOptions => ({ ...current, limit, skip, search, orderBy, asc }));
+    this.listOptions.update((current: ListOptions): ListOptions => ({ ...current, limit, skip, search, orderBy, asc }));
   }
 
   protected readonly ROUTES: typeof ROUTES = ROUTES;
