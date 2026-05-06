@@ -5,7 +5,7 @@ import { Utils } from '../utils/Utils';
 import { FacetGroup, FacetOptions } from '../models/Facet';
 import { FacetDAO } from '../database/FacetDAO';
 import { matchedData } from 'express-validator';
-import { FilterParser } from '../utils/FilterParser';
+import { FilterParser } from '../helper/parser/FilterParser';
 
 export async function getFacets(resource: Listable, req: Request, res: Response): Promise<void> {
   const params: Record<string, unknown> = matchedData(req);
@@ -13,6 +13,7 @@ export async function getFacets(resource: Listable, req: Request, res: Response)
   const specifiedLabel: string | undefined = Utils.parseString(params.label);
   const options: FacetOptions = {
     search: Utils.parseString(params.search),
+    field: Utils.parseString(params.field),
     facets: Utils.parseStringArray(params.facets),
     filters: FilterParser.parseMany(Utils.parseStringArray(params.filters)),
   };

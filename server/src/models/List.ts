@@ -25,5 +25,6 @@ export interface ListOptions {
   orderBy?: string;
   asc?: boolean;
   search?: string;
+  field?: string;
   filters?: ActiveFilter[];
 }

@@ -1,12 +1,12 @@
 type StepName = 'annotation' | 'entity';
 
-export interface QueryStep {
+export interface AccessStep {
   name: StepName;
   filter?: string;
 }
 
-export interface QueryPath {
-  steps: QueryStep[];
+export interface AccessPath {
+  steps: AccessStep[];
   field: string;
 }
 
@@ -15,18 +15,18 @@ interface Segment {
   filter?: string;
 }
 
-export class QueryParser {
+export class AccessParser {
   private static readonly SEGMENT_EXP: RegExp = /^(?<name>[A-Za-z_]\w*)(?:\[(?<filter>[^\]]+)])?$/;
 
-  public static parse(value: string): QueryPath {
+  public static parse(value: string): AccessPath {
     const segments: Segment[] = value.split('.').map((segment: string): Segment => this.parseSegment(segment));
 
     const accessor: Segment | undefined = segments.pop();
     if (!accessor || accessor.filter) throw new Error(`Invalid query path: ${value}`);
 
-    const steps: QueryStep[] = segments.map((segment: Segment): QueryStep => {
-      if (!this.isQueryStep(segment)) throw Error(`Invalid query step: ${segment}`);
-      return segment;
+    const steps: AccessStep[] = segments.map((segment: Segment): AccessStep => {
+      if (this.isAccessStep(segment)) return segment;
+      throw Error(`Invalid query step: ${segment}`);
     });
 
     return { steps, field: accessor.name };
@@ -41,7 +41,7 @@ export class QueryParser {
     return { name, filter };
   }
 
-  private static isQueryStep(segment: Segment): segment is QueryStep {
+  private static isAccessStep(segment: Segment): segment is AccessStep {
     return segment.name === 'annotation' || segment.name === 'entity';
   }
 }

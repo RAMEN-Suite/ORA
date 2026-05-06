@@ -12,6 +12,7 @@ const router: Router = Router();
 const validateFilterQueries: ValidationChain[] = [
   query('label').optional().isString().isLength({ min: 1, max: 48 }).trim().escape().matches(REGEXP.PROPERTY),
   query('search').optional().isString().isLength({ min: 1, max: 240 }).trim().escape(),
+  query('field').optional().isString().isLength({ min: 1, max: 48 }).trim().escape().matches(REGEXP.PROPERTY),
 
   query('facets').optional().customSanitizer(Utils.parseArray).isArray({ max: 10 }),
   query('facets.*').isString().isLength({ min: 1, max: 96 }).trim().matches(REGEXP.QUERY),

@@ -25,6 +25,7 @@ export interface FacetGroup {
 
 export interface FacetOptions {
   search?: string;
+  field?: string;
   facets: string[];
   filters?: ActiveFilter[];
 }
