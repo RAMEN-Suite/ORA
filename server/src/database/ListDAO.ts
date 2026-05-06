@@ -3,6 +3,7 @@ import { Neo4jService } from '../services/Neo4jService';
 import { Listable, ListOptions } from '../models/List';
 import { QueryParser, QueryPath } from '../utils/QueryParser';
 import { CypherPathHelper } from '../utils/CypherHelper';
+import { ActiveFilter } from '../models/Facet';
 
 export class ListDAO {
   public static async getList<T>(resource: Listable, label: string | undefined, options: ListOptions): Promise<T[]> {
@@ -10,6 +11,7 @@ export class ListDAO {
     const query: string[] = this.getBaseMatch(resource, label, params);
 
     this.applySearch(query, params, options);
+    this.applyFilters(query, params, options);
     this.applySorting(query, params, options);
     this.applyPagination(query, params, options);
 
@@ -41,11 +43,18 @@ export class ListDAO {
   private static applySearch(query: string[], params: Record<string, unknown>, options: ListOptions): void {
     if (!options.search) return;
 
-    const path: QueryPath = QueryParser.parse(options.filters ?? 'label');
+    const path: QueryPath = QueryParser.parse('label');
     query.push(...CypherPathHelper.matches(path, 'search', params));
     query.push(`WHERE apoc.text.clean(${CypherPathHelper.expression(path, 'search', params)}) CONTAINS apoc.text.clean($search)`);
 
     params.search = options.search;
+  }
+
+  private static applyFilters(query: string[], params: Record<string, unknown>, options: ListOptions): void {
+    options.filters?.forEach((filter: ActiveFilter, index: number): void => {
+      const path: QueryPath = QueryParser.parse(filter.field);
+      CypherPathHelper.filter(query, params, path, `filter${index}`, filter);
+    });
   }
 
   private static applySorting(query: string[], params: Record<string, unknown>, options: ListOptions): void {

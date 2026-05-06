@@ -1,4 +1,5 @@
 import { QueryPath, QueryStep } from './QueryParser';
+import { ActiveFilter } from '../models/Facet';
 
 interface BuildContext {
   prefix: string;
@@ -24,6 +25,17 @@ export class CypherPathHelper {
     return `${alias}[$${param}]`;
   }
 
+  public static filter(
+    query: string[],
+    params: Record<string, unknown>,
+    path: QueryPath,
+    prefix: string,
+    filter: ActiveFilter,
+  ): void {
+    if (filter.kind === 'equal') this.whereEquals(query, params, path, prefix, filter.value);
+    if (filter.kind === 'range') this.whereRange(query, params, path, prefix, filter.min, filter.max);
+  }
+
   private static matchStep(step: QueryStep, previous: string, alias: string, index: number, context: BuildContext): string {
     return step.name === 'annotation'
       ? this.matchAnnotation(step, previous, alias, index, context)
@@ -46,6 +58,50 @@ export class CypherPathHelper {
     context.params[param] = step.filter;
 
     return `OPTIONAL MATCH (${previous})-[:REFERS_TO]->(${alias}:Entity:$($${param}))`;
+  }
+
+  private static whereEquals(
+    query: string[],
+    params: Record<string, unknown>,
+    path: QueryPath,
+    prefix: string,
+    value: unknown,
+  ): void {
+    query.push(...this.matches(path, prefix, params));
+
+    const expression: string = this.expression(path, prefix, params);
+    const param = `${prefix}Value`;
+    query.push(`WHERE ${expression} = $${param}`);
+
+    params[param] = value;
+  }
+
+  private static whereRange(
+    query: string[],
+    params: Record<string, unknown>,
+    path: QueryPath,
+    prefix: string,
+    min?: number,
+    max?: number,
+  ): void {
+    query.push(...this.matches(path, prefix, params));
+
+    const expression: string = this.expression(path, prefix, params);
+    const conditions: string[] = [];
+
+    if (min !== undefined) {
+      const param = `${prefix}Min`;
+      conditions.push(`${expression} >= $${param}`);
+      params[param] = min;
+    }
+
+    if (max !== undefined) {
+      const param = `${prefix}Max`;
+      conditions.push(`${expression} <= $${param}`);
+      params[param] = max;
+    }
+
+    query.push(`WHERE ${conditions.join(' AND ')}`);
   }
 
   private static alias(context: BuildContext, index: number): string {

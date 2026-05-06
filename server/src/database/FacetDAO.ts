@@ -2,14 +2,14 @@ import neo4j, { QueryResult, Record as Neo4jRecord } from 'neo4j-driver';
 import { Neo4jService } from '../services/Neo4jService';
 import { Listable } from '../models/List';
 import { QueryParser, QueryPath } from '../utils/QueryParser';
-import { FacetGroup, FacetOptions, FacetValue } from '../models/Facet';
+import { ActiveFilter, FacetGroup, FacetOptions, FacetValue } from '../models/Facet';
 import { CypherPathHelper } from '../utils/CypherHelper';
 
 export class FacetDAO {
   public static async getFacets(resource: Listable, label: string | undefined, options: FacetOptions): Promise<FacetGroup[]> {
     const groups: FacetGroup[] = [];
 
-    for (const field of options.filters) {
+    for (const field of options.facets) {
       const values: FacetValue[] = await this.getFacetValues(resource, label, field, options);
       groups.push({ field, values });
     }
@@ -27,6 +27,7 @@ export class FacetDAO {
     const query: string[] = this.getBaseMatch(resource, label, params);
 
     this.applySearch(query, params, options);
+    this.applyFilters(query, params, options, field);
     this.applyFacet(query, params, field);
 
     const result: QueryResult | null = await Neo4jService.run(query.join(' '), params);
@@ -44,13 +45,22 @@ export class FacetDAO {
   private static applySearch(query: string[], params: Record<string, unknown>, options: FacetOptions): void {
     if (!options.search) return;
 
-    const path: QueryPath = QueryParser.parse(options.field ?? 'label');
+    const path: QueryPath = QueryParser.parse('label');
     query.push(...CypherPathHelper.matches(path, 'search', params));
 
     const expression: string = CypherPathHelper.expression(path, 'search', params);
     query.push(`WHERE apoc.text.clean(${expression}) CONTAINS apoc.text.clean($search)`);
 
     params.search = options.search;
+  }
+
+  private static applyFilters(query: string[], params: Record<string, unknown>, options: FacetOptions, field: string): void {
+    const currentFilters: ActiveFilter[] = options.filters?.filter((f: ActiveFilter): boolean => f.field === field) ?? [];
+
+    currentFilters.forEach((filter: ActiveFilter, index: number): void => {
+      const path: QueryPath = QueryParser.parse(filter.field);
+      CypherPathHelper.filter(query, params, path, `filter${index}`, filter);
+    });
   }
 
   private static applyFacet(query: string[], params: Record<string, unknown>, field: string): void {

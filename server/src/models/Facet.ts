@@ -1,3 +1,18 @@
+export type ActiveFilter = EqualFilter | RangeFilter;
+
+export interface EqualFilter {
+  kind: 'equal';
+  field: string;
+  value: string;
+}
+
+export interface RangeFilter {
+  kind: 'range';
+  field: string;
+  min?: number;
+  max?: number;
+}
+
 export interface FacetValue {
   value: string;
   count: number;
@@ -9,7 +24,7 @@ export interface FacetGroup {
 }
 
 export interface FacetOptions {
-  field?: string;
   search?: string;
-  filters: string[];
+  facets: string[];
+  filters?: ActiveFilter[];
 }

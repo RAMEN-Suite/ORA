@@ -4,6 +4,7 @@ import { STATUS_CODE } from '../constants/STATUS_CODE';
 import { ListDAO } from '../database/ListDAO';
 import { List, Listable, ListOptions, Pagination } from '../models/List';
 import { matchedData } from 'express-validator';
+import { FilterParser } from '../utils/FilterParser';
 
 export async function getList<T>(resource: Listable, req: Request, res: Response): Promise<void> {
   const params: Record<string, unknown> = matchedData(req);
@@ -15,6 +16,7 @@ export async function getList<T>(resource: Listable, req: Request, res: Response
     limit: Utils.parseNumber(params.limit) ?? 25,
     skip: Utils.parseNumber(params.skip) ?? 0,
     search: Utils.parseString(params.search),
+    filters: FilterParser.parseMany(Utils.parseStringArray(params.filters)),
   };
 
   const data: T[] = await ListDAO.getList(resource, specifiedLabel, options);

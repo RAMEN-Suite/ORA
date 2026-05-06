@@ -1,3 +1,5 @@
+import { ActiveFilter } from './Facet';
+
 export enum Listable {
   COLLECTION = 'Collection',
   ENTITY = 'Entity',
@@ -23,4 +25,5 @@ export interface ListOptions {
   orderBy?: string;
   asc?: boolean;
   search?: string;
+  filters?: ActiveFilter[];
 }
