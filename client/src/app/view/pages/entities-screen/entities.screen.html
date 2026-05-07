@@ -7,7 +7,7 @@
         <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
           <shared-select
             label="Register auswählen:"
-            [items]="nodes()"
+            [items]="nodeOptions"
             [activeItem]="activeNode()"
             (activeItemChange)="handleNodeChange($event)"
           />
@@ -27,17 +27,24 @@
             <label for="search">Register durchsuchen:</label>
           </p-ifta-label>
 
-          @if (!$list.isLoading()) {
-            <shared-character-list
-              [isDisabled]="isSearching"
-              [items]="entityLabels()"
-              [activeCharacter]="activeCharacter()"
-              (activeCharacterChange)="handleCharacterChange($event)"
-            />
-          } @else {
-            <div class="flex justify-center py-10">
-              <p-progress-spinner class="spinner-base" />
-            </div>
+          @switch (this.indexType()) {
+            @case ("bible") {
+              <shared-bible-list
+                [isDisabled]="isSearching"
+                [bibleBooks]="bibleBooks"
+                [items]="entityLabels()"
+                [activeBook]="activeIndex()"
+                (activeBookChange)="handleIndexChange($event)"
+              />
+            }
+            @default {
+              <shared-character-list
+                [isDisabled]="isSearching"
+                [items]="entityLabels()"
+                [activeCharacter]="activeIndex()"
+                (activeCharacterChange)="handleIndexChange($event)"
+              />
+            }
           }
         </nav>
       </div>
@@ -49,9 +56,7 @@
           {{ activeNode().label }}
         </h1>
 
-        <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
-          Einträge zu: {{ isSearching ? searchPhrase() : activeCharacter() }}
-        </p>
+        <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">Einträge zu: {{ isSearching ? searchPhrase() : activeIndex() }}</p>
       </header>
 
       <div class="animate__animated animate__fadeIn">
@@ -64,7 +69,9 @@
               [routeTarget]="['/', ROUTES.ENTITY]"
             />
           </ng-template>
-          <ng-template #emptymessage>Es konnten keine Einträge gefunden werden. </ng-template>
+          <ng-template #emptymessage>
+            <div [hidden]="$list.isLoading()">Es konnten keine Einträge gefunden werden.</div>
+          </ng-template>
         </p-data-view>
       </div>
     </section>

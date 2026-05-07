@@ -2,13 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ramen-schema.org/ora/2026.1/screens.schema.json",
   "title": "ORA Screens Configuration",
-  "type": "object",
-  "required": ["entities", "collections"],
-  "additionalProperties": false,
-  "properties": {
-    "entities": { "$ref": "#/$defs/multiNode" },
-    "collections": { "$ref": "#/$defs/multiNode" }
-  },
+  "$ref": "#/$defs/screens",
 
   "$defs": {
     "queryPath": {
@@ -24,206 +18,173 @@
     "option": {
       "type": "object",
       "required": ["label", "value"],
-      "additionalProperties": false,
-
       "properties": {
-        "icon": {
-          "type": "string"
-        },
-        "label": {
-          "type": "string",
-          "minLength": 1
-        },
-        "value": {
-          "type": "string",
-          "minLength": 1
-        }
-      }
+        "icon": { "type": "string" },
+        "label": { "type": "string", "minLength": 1 },
+        "value": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
     },
 
     "property": {
       "type": "object",
       "required": ["name"],
-      "additionalProperties": false,
-
       "properties": {
-        "name": {
-          "$ref": "#/$defs/propertyName"
-        },
-
-        "display": {
-          "type": "string"
-        },
-
+        "name": { "$ref": "#/$defs/propertyName" },
+        "display": { "type": "string" },
         "valueMap": {
           "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
+          "additionalProperties": { "type": "string" }
         }
-      }
+      },
+      "additionalProperties": false
     },
 
     "filterOption": {
       "allOf": [
-        {
-          "$ref": "#/$defs/option"
-        },
+        { "$ref": "#/$defs/option" },
         {
           "type": "object",
-          "additionalProperties": false,
-
           "properties": {
             "display": {
               "type": "string",
               "enum": ["list", "range"]
             },
-
-            "value": {
-              "$ref": "#/$defs/queryPath"
-            },
-
+            "value": { "$ref": "#/$defs/queryPath" },
             "valueMap": {
               "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
+              "additionalProperties": { "type": "string" }
             }
           }
         }
-      ]
+      ],
+      "unevaluatedProperties": false
     },
 
     "selection": {
       "type": "object",
       "required": ["initial", "options"],
-      "additionalProperties": false,
-
       "properties": {
-        "initial": {
-          "type": "string"
-        },
-
+        "initial": { "type": "string" },
         "options": {
           "type": "array",
-          "items": {
-            "$ref": "#/$defs/option"
-          }
+          "items": { "$ref": "#/$defs/option" }
         }
-      }
+      },
+      "additionalProperties": false
     },
 
     "sortSelection": {
       "allOf": [
-        {
-          "$ref": "#/$defs/selection"
-        },
+        { "$ref": "#/$defs/selection" },
         {
           "type": "object",
           "required": ["direction"],
-
           "properties": {
             "direction": {
               "type": "string",
               "enum": ["asc", "desc"]
             },
-
             "options": {
               "type": "array",
               "items": {
                 "allOf": [
-                  {
-                    "$ref": "#/$defs/option"
-                  },
+                  { "$ref": "#/$defs/option" },
                   {
                     "type": "object",
-
                     "properties": {
-                      "value": {
-                        "$ref": "#/$defs/queryPath"
-                      }
+                      "value": { "$ref": "#/$defs/queryPath" }
                     }
                   }
-                ]
+                ],
+                "unevaluatedProperties": false
               }
             }
           }
         }
-      ]
+      ],
+      "unevaluatedProperties": false
     },
 
     "nodeOption": {
       "allOf": [
-        {
-          "$ref": "#/$defs/option"
-        },
+        { "$ref": "#/$defs/option" },
         {
           "type": "object",
-          "additionalProperties": false,
-
           "properties": {
             "properties": {
               "type": "array",
-              "items": {
-                "$ref": "#/$defs/property"
-              }
+              "items": { "$ref": "#/$defs/property" }
             },
-
-            "sort": {
-              "$ref": "#/$defs/sortSelection"
-            },
-
+            "sort": { "$ref": "#/$defs/sortSelection" },
             "filters": {
               "type": "array",
-              "items": {
-                "$ref": "#/$defs/filterOption"
-              }
+              "items": { "$ref": "#/$defs/filterOption" }
             }
           }
         }
-      ]
+      ],
+      "unevaluatedProperties": false
     },
 
-    "multiNode": {
-      "type": "object",
-      "required": ["initial", "nodes"],
-      "additionalProperties": false,
-
-      "properties": {
-        "initial": {
-          "type": "string"
-        },
-
-        "nodes": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/nodeOption"
-          }
-        },
-
-        "properties": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/property"
+    "entityNodeOption": {
+      "allOf": [
+        { "$ref": "#/$defs/nodeOption" },
+        {
+          "type": "object",
+          "properties": {
+            "index": {
+              "type": "string",
+              "enum": ["character", "bible"]
+            }
           }
         }
-      }
+      ],
+      "unevaluatedProperties": false
+    },
+
+    "multiNodes": {
+      "type": "object",
+      "required": ["initial", "nodes"],
+      "properties": {
+        "initial": { "type": "string" },
+        "nodes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nodeOption" }
+        },
+        "properties": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/property" }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "entityNodes": {
+      "type": "object",
+      "required": ["initial", "nodes"],
+      "properties": {
+        "initial": { "type": "string" },
+        "nodes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/entityNodeOption" }
+        },
+        "properties": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/property" }
+        }
+      },
+      "additionalProperties": false
     },
 
     "screens": {
       "type": "object",
       "required": ["entities", "collections"],
-      "additionalProperties": false,
-
       "properties": {
-        "entities": {
-          "$ref": "#/$defs/multiNode"
-        },
-
-        "collections": {
-          "$ref": "#/$defs/multiNode"
-        }
-      }
+        "entities": { "$ref": "#/$defs/entityNodes" },
+        "collections": { "$ref": "#/$defs/multiNodes" }
+      },
+      "additionalProperties": false
     }
   }
 }

@@ -1,0 +1,9 @@
+<div class="animate__animated animate__fadeIn flex flex-wrap gap-3">
+  @for (book of books(); track book.value) {
+    @if (book.value === activeBook() && !isDisabled()) {
+      <p-button [label]="book.label" outlined severity="contrast" />
+    } @else {
+      <p-button [label]="book.label" [disabled]="isDisabled()" (click)="activeBook.set(book.value)" severity="secondary" text />
+    }
+  }
+</div>

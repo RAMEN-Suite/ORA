@@ -1,17 +1,22 @@
 export namespace Config {
   export interface Root {
     screens: Screens;
+    extensions: Extensions;
   }
 
   export interface Screens {
-    entities: MultiNode;
-    collections: MultiNode;
+    entities: EntityNodes;
+    collections: MultiNodes;
   }
 
-  export interface MultiNode {
+  export interface MultiNodes {
     initial: string;
     nodes: NodeOption[];
     properties?: Property[];
+  }
+
+  export interface EntityNodes extends MultiNodes {
+    nodes: EntityOption[];
   }
 
   export interface Option {
@@ -31,13 +36,17 @@ export namespace Config {
     filters?: FilterOption[];
   }
 
+  export interface EntityOption extends NodeOption {
+    index?: EntityIndex;
+  }
+
   export interface Selection {
     initial: string;
     options: Option[];
   }
 
   export interface SortSelection extends Selection {
-    direction: 'asc' | 'desc';
+    direction: SortDirection;
   }
 
   export interface Property {
@@ -45,4 +54,16 @@ export namespace Config {
     display?: string;
     valueMap?: Record<string, string>;
   }
+
+  export interface Extensions {
+    bible: BibleBook[];
+  }
+
+  export interface BibleBook {
+    key: string;
+    aliases: string[];
+  }
+
+  export type SortDirection = 'asc' | 'desc';
+  export type EntityIndex = 'character' | 'bible';
 }

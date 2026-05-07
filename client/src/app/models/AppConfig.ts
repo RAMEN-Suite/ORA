@@ -1,18 +1,23 @@
 import { Config } from './Config';
 import Root = Config.Root;
 import Screens = Config.Screens;
-import MultiNode = Config.MultiNode;
+import MultiNode = Config.MultiNodes;
 import Option = Config.Option;
 import NodeOption = Config.NodeOption;
 import Property = Config.Property;
 import Selection = Config.Selection;
 import FilterOption = Config.FilterOption;
+import Extensions = Config.Extensions;
 
 export class AppConfig {
   constructor(private readonly config: Root) {}
 
   public screen<K extends keyof Screens>(key: K): Screens[K] {
     return this.config.screens[key];
+  }
+
+  public extensions<K extends keyof Extensions>(key: K): Extensions[K] {
+    return this.config.extensions[key];
   }
 
   public node(screen: MultiNode, value: string): NodeOption | undefined {
