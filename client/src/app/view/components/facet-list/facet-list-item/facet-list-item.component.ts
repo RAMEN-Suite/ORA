@@ -3,7 +3,6 @@ import { ActiveFilter, EqualFilter, FacetGroup, FacetValue } from '../../../../m
 import { Listbox } from 'primeng/listbox';
 import { FormsModule } from '@angular/forms';
 
-type FacetListOption = FacetValue & { disabled: boolean };
 interface FilterOption {
   icon?: string;
   label: string;
@@ -21,9 +20,6 @@ export class FacetListItemComponent {
   public readonly facet: InputSignal<FacetGroup> = input.required<FacetGroup>();
   public readonly filter: InputSignal<FilterOption | undefined> = input<FilterOption>();
 
-  public readonly maxFacetSelections: InputSignal<number> = input<number>(5);
-  public readonly maxTotalSelections: InputSignal<number> = input<number>(5);
-
   public readonly activeFilters: InputSignal<ActiveFilter[]> = input<ActiveFilter[]>([]);
   public readonly activeFiltersChange: OutputEmitterRef<ActiveFilter[]> = output<ActiveFilter[]>();
 
@@ -34,11 +30,9 @@ export class FacetListItemComponent {
   });
 
   protected readonly selectedSet: Signal<Set<string>> = computed((): Set<string> => new Set(this.selectedValues()));
-  protected readonly options: Signal<FacetListOption[]> = computed((): FacetListOption[] => {
+  protected readonly options: Signal<FacetValue[]> = computed((): FacetValue[] => {
     const selected: Set<string> = this.selectedSet();
-    return this.facet()
-      .values.map((option: FacetValue): FacetListOption => this.toFacetListOption(option, selected))
-      .sort((a: FacetListOption, b: FacetListOption): number => this.sortOptions(a, b, selected));
+    return this.facet().values.sort((a: FacetValue, b: FacetValue): number => this.getSortedValues(a, b, selected));
   });
 
   protected handleSelectionChange(values: string[] | null): void {
@@ -58,16 +52,7 @@ export class FacetListItemComponent {
     return this.facet().values.length > 10;
   }
 
-  private isLimitReached(selected: Set<string>): boolean {
-    return selected.size >= this.maxFacetSelections() || this.activeFilters().length >= this.maxTotalSelections();
-  }
-
-  private toFacetListOption(option: FacetValue, selected: Set<string>): FacetListOption {
-    const isSelected: boolean = selected.has(option.value);
-    return { ...option, disabled: !isSelected && this.isLimitReached(selected) };
-  }
-
-  private sortOptions(a: FacetListOption, b: FacetListOption, selected: Set<string>): number {
+  private getSortedValues(a: FacetValue, b: FacetValue, selected: Set<string>): number {
     const aSelected: boolean = selected.has(a.value);
     const bSelected: boolean = selected.has(b.value);
     if (aSelected !== bSelected) return aSelected ? -1 : 1;

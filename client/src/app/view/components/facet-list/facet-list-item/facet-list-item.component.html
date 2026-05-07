@@ -4,6 +4,8 @@
   [filter]="isFilterable()"
   [ngModel]="selectedValues()"
   (ngModelChange)="handleSelectionChange($event)"
+  [virtualScroll]="facet().values.length > 100"
+  virtualScrollItemSize="40"
   optionLabel="value"
   optionValue="value"
   optionDisabled="disabled"
@@ -11,13 +13,15 @@
   emptyMessage="Keine Einträge gefunden..."
   emptyFilterMessage="Keine Einträge gefunden."
   showToggleAll="false"
-  virtualScrollItemSize="40"
-  virtualScroll
   checkbox
   multiple
 >
   <ng-template #item let-option>
-    <span class="tracking-tight whitespace-nowrap" [title]="getFilterValue(option.value) + ' (' + option.count + ')'">
+    <span
+      class="tracking-tight"
+      [class.whitespace-nowrap]="facet().values.length > 100"
+      [title]="getFilterValue(option.value) + ' (' + option.count + ')'"
+    >
       {{ getFilterValue(option.value) }} ({{ option.count }})
     </span>
   </ng-template>

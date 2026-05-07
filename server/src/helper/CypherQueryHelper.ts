@@ -30,17 +30,11 @@ export class CypherQueryHelper {
     context.params.search = search;
   }
 
-  public static applyFilter(context: QueryContext, filters: ActiveFilter[], excludeField?: string): void {
-    const groups: Map<string, ActiveFilter[]> = new Map();
-
-    for (const filter of filters) {
-      if (filter.field === excludeField) continue;
-      const group: ActiveFilter[] = groups.get(filter.field) ?? [];
-      groups.set(filter.field, [...group, filter]);
+  public static applyFilter(context: QueryContext, filters: ActiveFilter[]): void {
+    for (const [index, filter] of filters.entries()) {
+      const path: AccessPath = AccessParser.parse(filter.field);
+      CypherFilterHelper.filter(path, context.query, context.conditions, context.params, `filter${index}`, filter);
     }
-
-    const entries: [string, ActiveFilter[]][] = Array.from(groups.entries());
-    entries.forEach((group: [string, ActiveFilter[]], index: number): void => this.applyGroupFilter(context, group, index));
   }
 
   public static applySorting(context: QueryContext, field: string | undefined, asc: boolean | undefined): void {
@@ -76,18 +70,5 @@ export class CypherQueryHelper {
 
     params.label = label;
     return [`MATCH (r:$($resource):$($label))`];
-  }
-
-  private static applyGroupFilter(context: QueryContext, group: [string, ActiveFilter[]], groupIndex: number): void {
-    const [_, filters] = group;
-    const conditions: string[] = [];
-
-    filters.forEach((filter: ActiveFilter, index: number): void => {
-      const path: AccessPath = AccessParser.parse(filter.field);
-      CypherFilterHelper.filter(path, context.query, conditions, context.params, `filter${groupIndex}_${index}`, filter);
-    });
-
-    if (conditions.length === 0) return;
-    context.conditions.push(`(${conditions.join(' OR ')})`);
   }
 }
