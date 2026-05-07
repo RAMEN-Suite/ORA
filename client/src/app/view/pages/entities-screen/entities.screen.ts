@@ -20,7 +20,7 @@ import { NodesViewComponent } from '../../components/data-view/nodes-view/nodes-
 import { PreviousLinkedValue } from '../../../../types/global';
 import { AppConfig } from '../../../models/AppConfig';
 import { BibleListComponent } from '../../components/bible-list/bible-list.component';
-import { BibleListHelper } from '../../components/bible-list/bible-list.helper';
+import { BibleAlias, BibleListHelper } from '../../components/bible-list/bible-list.helper';
 import Entity = RAMEN.Entity;
 import Property = Config.Property;
 import EntityNodes = Config.EntityNodes;
@@ -59,6 +59,9 @@ export class EntitiesScreen {
   private readonly config: AppConfig = this.configService.config();
   private readonly screen: EntityNodes = this.config.screen('entities');
 
+  protected readonly bibleBooks: BibleBook[] = this.config.extensions('bible');
+  protected readonly bibleAliases: BibleAlias[] = BibleListHelper.createIndex(this.bibleBooks);
+
   protected readonly nodeOptions: EntityOption[] = [...this.screen.nodes, DEFAULT_OPTION];
   protected readonly activeNode: WritableSignal<EntityOption> = signal<EntityOption>(this.config.initialNode(this.screen));
   protected readonly activeNodeLabel: Signal<string> = computed((): string => this.activeNode().value);
@@ -70,7 +73,6 @@ export class EntitiesScreen {
 
   protected readonly indexType: Signal<EntityIndex> = computed((): EntityIndex => this.activeNode().index ?? 'character');
   protected readonly activeIndex: WritableSignal<string> = signal('');
-  protected readonly bibleBooks: BibleBook[] = this.config.extensions('bible');
 
   protected readonly options: Signal<ListOptions> = signal({ orderBy: 'label', asc: true, limit: 0, skip: 0 });
   protected readonly $list: HttpResourceRef<List<Entity>> = this.listService.fetchList(
@@ -122,13 +124,13 @@ export class EntitiesScreen {
   }
 
   private filterEntityList(): Entity[] {
-    if (this.activeIndex() === '') return [];
-
     const searchPhrase: string = Utils.normalize(this.searchPhrase(), { toLower: true });
     const entities: Entity[] = this.entities().data;
     const currentIndex: string = this.activeIndex();
 
     if (searchPhrase !== '') return this.filterBySearch(entities, searchPhrase);
+    if (currentIndex === '') return [];
+
     if (this.indexType() === 'bible') return this.filterByBible(entities, currentIndex);
     return this.filterByDefault(entities, currentIndex);
   }
@@ -142,8 +144,8 @@ export class EntitiesScreen {
 
   private filterByBible(entities: Entity[], currentIndex: string): Entity[] {
     return entities
-      .filter((e: Entity): boolean => BibleListHelper.getBibleValue(e.label, this.bibleBooks) === currentIndex)
-      .sort((a: Entity, b: Entity): number => BibleListHelper.compare(a.label, b.label, this.bibleBooks));
+      .filter((e: Entity): boolean => BibleListHelper.getBibleValue(e.label, this.bibleAliases) === currentIndex)
+      .sort((a: Entity, b: Entity): number => BibleListHelper.compare(a.label, b.label, this.bibleAliases));
   }
 
   private filterByDefault(entities: Entity[], currentIndex: string): Entity[] {

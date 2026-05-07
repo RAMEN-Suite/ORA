@@ -1,6 +1,6 @@
-@for (facet of facets(); track facet.field) {
-  <p-accordion [multiple]="true" [value]="isExpanded(facet.field) ? [$index] : []">
-    <p-accordion-panel [value]="$index" class="border-0!">
+<p-accordion [multiple]="true" [value]="expandedFacets()" (valueChange)="handleAccordionChange($event)">
+  @for (facet of facets(); track facet.field) {
+    <p-accordion-panel [value]="facet.field" class="border-0!">
       <p-accordion-header class="py-3!">
         <div class="flex items-center gap-4 tracking-tight">
           @if (getFacetIcon(facet.field); as icon) {
@@ -20,5 +20,5 @@
         />
       </p-accordion-content>
     </p-accordion-panel>
-  </p-accordion>
-}
+  }
+</p-accordion>

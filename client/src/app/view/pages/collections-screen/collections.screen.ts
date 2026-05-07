@@ -1,28 +1,28 @@
-import {Component, computed, inject, linkedSignal, signal, Signal, WritableSignal} from '@angular/core';
-import {TableModule} from 'primeng/table';
-import {PaginatedListComponent} from '../../components/paginated-list/paginated-list.component';
-import {ListService} from '../../../services/list.service';
-import {List, Listable, ListOptions} from '../../../models/List';
-import {RAMEN} from '../../../models/RAMEN';
-import {HttpResourceRef} from '@angular/common/http';
-import {ConfigService} from '../../../services/config.service';
-import {Config} from '../../../models/Config';
-import {NavigationService} from '../../../services/navigation.service';
-import {ActivatedRoute, Params} from '@angular/router';
-import {PreviousLinkedValue} from '../../../../types/global';
-import {ROUTES} from '../../../app.routes';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {PaginationUtils} from '../../../utils/PaginationUtils';
-import {SelectComponent} from '../../components/select/select.component';
-import {FormsModule} from '@angular/forms';
-import {IftaLabel} from 'primeng/iftalabel';
-import {InputText} from 'primeng/inputtext';
-import {Button} from 'primeng/button';
-import {AppConfig} from '../../../models/AppConfig';
-import {Utils} from '../../../utils/Utils';
-import {Tooltip} from 'primeng/tooltip';
-import {ActiveFilter, FacetGroup, FacetOptions} from '../../../models/Facet';
-import {FacetListComponent} from '../../components/facet-list/facet-list.component';
+import { Component, computed, inject, linkedSignal, signal, Signal, viewChild, WritableSignal } from '@angular/core';
+import { TableModule } from 'primeng/table';
+import { PaginatedListComponent } from '../../components/paginated-list/paginated-list.component';
+import { ListService } from '../../../services/list.service';
+import { List, Listable, ListOptions } from '../../../models/List';
+import { RAMEN } from '../../../models/RAMEN';
+import { HttpResourceRef } from '@angular/common/http';
+import { ConfigService } from '../../../services/config.service';
+import { Config } from '../../../models/Config';
+import { NavigationService } from '../../../services/navigation.service';
+import { ActivatedRoute, Params } from '@angular/router';
+import { PreviousLinkedValue } from '../../../../types/global';
+import { ROUTES } from '../../../app.routes';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PaginationUtils } from '../../../utils/PaginationUtils';
+import { SelectComponent } from '../../components/select/select.component';
+import { FormsModule } from '@angular/forms';
+import { IftaLabel } from 'primeng/iftalabel';
+import { InputText } from 'primeng/inputtext';
+import { Button } from 'primeng/button';
+import { AppConfig } from '../../../models/AppConfig';
+import { Utils } from '../../../utils/Utils';
+import { Tooltip } from 'primeng/tooltip';
+import { ActiveFilter, FacetGroup, FacetOptions } from '../../../models/Facet';
+import { FacetListComponent } from '../../components/facet-list/facet-list.component';
 import { FilterUtils } from '../../../utils/FilterUtils';
 import Collection = RAMEN.Collection;
 import Property = Config.Property;
@@ -52,6 +52,8 @@ export class CollectionsScreen {
   private readonly configService: ConfigService = inject(ConfigService);
   private readonly listService: ListService = inject(ListService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
+
+  private readonly facetList: Signal<FacetListComponent | undefined> = viewChild(FacetListComponent);
 
   private readonly config: Signal<AppConfig> = computed((): AppConfig => this.configService.config());
   private readonly screen: Signal<MultiNodes> = computed((): MultiNodes => this.config().screen('collections'));
@@ -155,6 +157,7 @@ export class CollectionsScreen {
   }
 
   protected handleClearFilter(): void {
+    this.facetList()?.collapseAccordions();
     this.navigationService.updateQuery(this.route, null, { queryParamsHandling: null });
   }
 

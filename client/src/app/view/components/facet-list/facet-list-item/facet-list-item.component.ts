@@ -32,7 +32,7 @@ export class FacetListItemComponent {
   protected readonly selectedSet: Signal<Set<string>> = computed((): Set<string> => new Set(this.selectedValues()));
   protected readonly options: Signal<FacetValue[]> = computed((): FacetValue[] => {
     const selected: Set<string> = this.selectedSet();
-    return this.facet().values.sort((a: FacetValue, b: FacetValue): number => this.getSortedValues(a, b, selected));
+    return [...this.facet().values.sort((a: FacetValue, b: FacetValue): number => this.getSortedValues(a, b, selected))];
   });
 
   protected handleSelectionChange(values: string[] | null): void {

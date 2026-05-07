@@ -1,4 +1,4 @@
-import { Component, input, InputSignal, output, OutputEmitterRef } from '@angular/core';
+import { Component, input, InputSignal, output, OutputEmitterRef, signal, WritableSignal } from '@angular/core';
 import { Accordion, AccordionContent, AccordionHeader, AccordionPanel } from 'primeng/accordion';
 import { ActiveFilter, FacetGroup } from '../../../models/Facet';
 import { FormsModule } from '@angular/forms';
@@ -18,8 +18,14 @@ export class FacetListComponent {
   public readonly activeFilters: InputSignal<ActiveFilter[]> = input<ActiveFilter[]>([]);
   public readonly activeFiltersChange: OutputEmitterRef<ActiveFilter[]> = output<ActiveFilter[]>();
 
-  protected isExpanded(field: string): boolean {
-    return this.activeFilters().some((filter: ActiveFilter): boolean => filter.field === field);
+  protected readonly expandedFacets: WritableSignal<string[]> = signal<string[]>([]);
+
+  public collapseAccordions(): void {
+    this.expandedFacets.set([]);
+  }
+
+  protected handleAccordionChange(value: unknown): void {
+    this.expandedFacets.set(Array.isArray(value) ? value : value ? [value] : []);
   }
 
   protected getFilter(field: string): FilterOption | undefined {

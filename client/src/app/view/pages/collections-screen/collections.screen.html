@@ -32,18 +32,31 @@
           </div>
 
           <div class="border-surface-300 bg-surface-0 space-y-3 rounded-md border p-5 select-none">
-            <p-ifta-label>
-              <input
-                id="search"
-                pInputText
-                fluid
-                type="search"
-                autocomplete="off"
-                [ngModel]="listOptions().search ?? ''"
-                (ngModelChange)="handleSearchChange($event)"
+            <div class="flex flex-row gap-3">
+              <p-ifta-label class="w-full">
+                <input
+                  id="search"
+                  pInputText
+                  fluid
+                  type="search"
+                  autocomplete="off"
+                  [ngModel]="listOptions().search ?? ''"
+                  (ngModelChange)="handleSearchChange($event)"
+                />
+                <label for="search">Sammlung durchsuchen:</label>
+              </p-ifta-label>
+
+              <p-button
+                icon="pi pi-eraser"
+                styleClass="h-full! w-12!"
+                tooltipPosition="bottom"
+                positionTop="5"
+                pTooltip="zurücksetzen"
+                (click)="handleClearFilter()"
+                showDelay="500"
+                outlined
               />
-              <label for="search">Sammlung durchsuchen:</label>
-            </p-ifta-label>
+            </div>
 
             <div class="flex flex-row gap-3">
               <shared-select
@@ -61,11 +74,10 @@
                 positionTop="5"
                 [pTooltip]="listOptions().asc ? 'aufsteigend' : 'absteigend'"
                 (click)="handleSortChange({ asc: !listOptions().asc })"
+                showDelay="500"
                 outlined
               />
             </div>
-
-            <p-button label="Ansicht zurücksetzen" size="large" outlined fluid (click)="handleClearFilter()" />
           </div>
 
           <div class="border-surface-300 bg-surface-0 space-y-3 rounded-md border p-5 select-none" [hidden]="filters().length === 0">

@@ -1,14 +1,13 @@
 type Parsed = { option: BibleOption; chapter: number; verse: number };
 
-interface BibleBookMatch {
-  book: BibleBook;
-  order: number;
-  rest: string;
-}
-
 interface BibleBook {
   key: string;
   aliases: string[];
+}
+
+export interface BibleAlias {
+  alias: string;
+  option: BibleOption;
 }
 
 export interface BibleOption {
@@ -18,12 +17,25 @@ export interface BibleOption {
 }
 
 export class BibleListHelper {
-  public static getBibleOptions(labels: string[], books: BibleBook[]): BibleOption[] {
+  public static createIndex(books: BibleBook[]): BibleAlias[] {
+    const aliases: BibleAlias[] = [];
+
+    for (const [order, book] of books.entries()) {
+      const option: BibleOption = { label: book.key, value: book.key, order };
+      aliases.push({ alias: this.normalize(book.key), option });
+      for (const alias of book.aliases) aliases.push({ alias: this.normalize(alias), option });
+    }
+
+    aliases.sort((a: BibleAlias, b: BibleAlias): number => b.alias.length - a.alias.length);
+    return aliases;
+  }
+
+  public static getBibleOptions(labels: string[], aliases: BibleAlias[]): BibleOption[] {
     const result = new Map<string, BibleOption>();
     let isUnknown: boolean = false;
 
     for (const label of labels) {
-      const parsed: Parsed | undefined = this.parseLabel(label, books);
+      const parsed: Parsed | void = this.match(label, aliases);
       parsed ? result.set(parsed.option.value, parsed.option) : (isUnknown = true);
     }
 
@@ -32,24 +44,16 @@ export class BibleListHelper {
     return options;
   }
 
-  public static getBibleValue(label: string, books: BibleBook[]): string {
-    return this.parseLabel(label, books)?.option.value ?? '#';
+  public static getBibleValue(label: string, aliases: BibleAlias[]): string {
+    return this.match(label, aliases)?.option.value ?? '#';
   }
 
-  public static compare(a: string, b: string, books: BibleBook[]): number {
-    const left: Parsed | undefined = this.parseLabel(a, books);
-    const right: Parsed | undefined = this.parseLabel(b, books);
+  public static compare(a: string, b: string, aliases: BibleAlias[]): number {
+    const left: Parsed | void = this.match(a, aliases);
+    const right: Parsed | void = this.match(b, aliases);
 
     if (!left || !right) return left ? -1 : right ? 1 : a.localeCompare(b);
     return left.option.order - right.option.order || left.chapter - right.chapter || left.verse - right.verse;
-  }
-
-  private static parseLabel(label: string, books: BibleBook[]): Parsed | undefined {
-    const match: void | BibleBookMatch = this.match(label, books);
-    if (!match) return undefined;
-
-    const [chapter, verse] = this.parseReference(match.rest);
-    return { option: { label: match.book.key, value: match.book.key, order: match.order }, chapter, verse };
   }
 
   private static parseReference(value: string): [number, number] {
@@ -65,16 +69,15 @@ export class BibleListHelper {
     return [0, 0];
   }
 
-  private static match(label: string, books: BibleBook[]): BibleBookMatch | void {
+  private static match(label: string, aliases: BibleAlias[]): Parsed | void {
     const trimmed: string = label.trimStart();
     const normalized: string = this.normalize(trimmed);
 
-    for (const [order, book] of books.entries()) {
-      for (const alias of [book.key, ...book.aliases]) {
-        const normalizedAlias: string = this.normalize(alias);
-        if (!normalized.startsWith(normalizedAlias)) continue;
-        return { book, order, rest: trimmed.slice(alias.length).trim() };
-      }
+    for (const entry of aliases) {
+      if (!normalized.startsWith(entry.alias)) continue;
+      const rest: string = trimmed.slice(entry.alias.length).trim();
+      const [chapter, verse] = this.parseReference(rest);
+      return { option: entry.option, chapter, verse };
     }
   }
 
