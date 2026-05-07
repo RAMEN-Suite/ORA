@@ -2,12 +2,13 @@ import { Component, input, InputSignal, model, ModelSignal } from '@angular/core
 import { IftaLabel } from 'primeng/iftalabel';
 import { Select } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 type Selectable = { icon?: string; label: string; value: string };
 
 @Component({
   selector: 'shared-select',
-  imports: [IftaLabel, Select, FormsModule],
+  imports: [IftaLabel, Select, FormsModule, TranslocoDirective],
   templateUrl: './select.component.html',
 })
 export class SelectComponent {

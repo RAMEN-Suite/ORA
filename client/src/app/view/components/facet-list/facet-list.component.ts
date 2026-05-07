@@ -4,11 +4,20 @@ import { ActiveFilter, FacetGroup } from '../../../models/Facet';
 import { FormsModule } from '@angular/forms';
 import { FacetListItemComponent } from './facet-list-item/facet-list-item.component';
 import { Config } from '../../../models/Config';
+import { TranslocoDirective } from '@jsverse/transloco';
 import FilterOption = Config.FilterOption;
 
 @Component({
   selector: 'shared-facet-list',
-  imports: [Accordion, AccordionContent, AccordionHeader, AccordionPanel, FormsModule, FacetListItemComponent],
+  imports: [
+    Accordion,
+    AccordionContent,
+    AccordionHeader,
+    AccordionPanel,
+    FormsModule,
+    FacetListItemComponent,
+    TranslocoDirective,
+  ],
   templateUrl: './facet-list.component.html',
 })
 export class FacetListComponent {

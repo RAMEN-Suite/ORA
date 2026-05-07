@@ -2,10 +2,11 @@ import { Component, computed, effect, input, InputSignal, model, ModelSignal, Si
 import { BibleAlias, BibleListHelper, BibleOption } from './bible-list.helper';
 import { FormsModule } from '@angular/forms';
 import { Listbox } from 'primeng/listbox';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'shared-bible-list',
-  imports: [FormsModule, Listbox],
+  imports: [FormsModule, Listbox, TranslocoDirective],
   templateUrl: './bible-list.component.html',
 })
 export class BibleListComponent {
@@ -13,7 +14,7 @@ export class BibleListComponent {
   public readonly isDisabled: InputSignal<boolean> = input(false);
 
   public readonly bibleAliases: InputSignal<BibleAlias[]> = input.required<BibleAlias[]>();
-  public readonly activeBook: ModelSignal<string> = model('');
+  public activeBook: ModelSignal<string> = model('');
 
   protected readonly books: Signal<BibleOption[]> = computed((): BibleOption[] =>
     BibleListHelper.getBibleOptions(this.items(), this.bibleAliases()),

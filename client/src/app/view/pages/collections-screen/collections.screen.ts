@@ -24,6 +24,7 @@ import { Tooltip } from 'primeng/tooltip';
 import { ActiveFilter, FacetGroup, FacetOptions } from '../../../models/Facet';
 import { FacetListComponent } from '../../components/facet-list/facet-list.component';
 import { FilterUtils } from '../../../utils/FilterUtils';
+import { TranslocoDirective } from '@jsverse/transloco';
 import Collection = RAMEN.Collection;
 import Property = Config.Property;
 import NodeOption = Config.NodeOption;
@@ -43,6 +44,7 @@ import FilterOption = Config.FilterOption;
     Button,
     Tooltip,
     FacetListComponent,
+    TranslocoDirective,
   ],
   templateUrl: './collections.screen.html',
   styleUrl: './collections.screen.scss',

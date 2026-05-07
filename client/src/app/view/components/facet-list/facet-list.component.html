@@ -7,7 +7,7 @@
             <i [class]="icon"></i>
           }
 
-          <span> {{ getFacetLabel(facet.field) }} ({{ facet.values.length }}) </span>
+          <span *transloco="let t"> {{ t(getFacetLabel(facet.field)) }} ({{ facet.values.length }}) </span>
         </div>
       </p-accordion-header>
 

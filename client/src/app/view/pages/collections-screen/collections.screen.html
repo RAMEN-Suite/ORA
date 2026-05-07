@@ -1,10 +1,12 @@
-<main class="min-h-screen px-6 py-10">
+<main class="min-h-screen px-6 py-10" *transloco="let t">
   @if (collections(); as list) {
     <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_350px]">
       <section class="border-surface-300 bg-surface-0/75 order-2 rounded-md border p-5 lg:order-1!">
         <header class="mb-3 pb-5 select-none">
-          <h1 class="text-4xl font-semibold tracking-tight">{{ activeNode().label }}</h1>
-          <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">Insgesamt {{ list.pagination.total }} Einträge verfügbar</p>
+          <h1 class="text-4xl font-semibold tracking-tight">{{ t(activeNode().label) }}</h1>
+          <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
+            {{ t("app.collections.available", { count: list.pagination.total }) }}
+          </p>
         </header>
 
         <div class="animate__animated animate__fadeIn">
@@ -24,7 +26,7 @@
         <div class="space-y-5">
           <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
             <shared-select
-              label="Sammlung auswählen:"
+              label="app.collections.select"
               [items]="nodes()"
               [activeItem]="activeNode()"
               (activeItemChange)="handleNodeChange($event)"
@@ -43,7 +45,7 @@
                   [ngModel]="listOptions().search ?? ''"
                   (ngModelChange)="handleSearchChange($event)"
                 />
-                <label for="search">Sammlung durchsuchen:</label>
+                <label for="search">{{ t("app.collections.search") }}</label>
               </p-ifta-label>
 
               <p-button
@@ -51,7 +53,7 @@
                 styleClass="h-full! w-12!"
                 tooltipPosition="bottom"
                 positionTop="5"
-                pTooltip="zurücksetzen"
+                [pTooltip]="t('app.collections.tooltips.reset')"
                 (click)="handleClearFilter()"
                 showDelay="500"
                 outlined
@@ -61,7 +63,7 @@
             <div class="flex flex-row gap-3">
               <shared-select
                 class="w-full"
-                label="Sortieren nach:"
+                label="app.collections.sort"
                 [items]="sortOptions()"
                 [activeItem]="activeSort()"
                 (activeItemChange)="handleSortChange({ orderBy: $event?.value })"
@@ -72,7 +74,7 @@
                 styleClass="h-full! w-12!"
                 tooltipPosition="bottom"
                 positionTop="5"
-                [pTooltip]="listOptions().asc ? 'aufsteigend' : 'absteigend'"
+                [pTooltip]="listOptions().asc ? t('app.collections.tooltips.ascending') : t('app.collections.tooltips.descending')"
                 (click)="handleSortChange({ asc: !listOptions().asc })"
                 showDelay="500"
                 outlined

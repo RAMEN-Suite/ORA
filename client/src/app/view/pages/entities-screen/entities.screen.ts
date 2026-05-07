@@ -21,6 +21,7 @@ import { PreviousLinkedValue } from '../../../../types/global';
 import { AppConfig } from '../../../models/AppConfig';
 import { BibleListComponent } from '../../components/bible-list/bible-list.component';
 import { BibleAlias, BibleListHelper } from '../../components/bible-list/bible-list.helper';
+import { TranslocoDirective } from '@jsverse/transloco';
 import Entity = RAMEN.Entity;
 import Property = Config.Property;
 import EntityNodes = Config.EntityNodes;
@@ -46,6 +47,7 @@ const DEFAULT_OPTION: EntityOption = {
     SelectComponent,
     NodesViewComponent,
     BibleListComponent,
+    TranslocoDirective,
   ],
   templateUrl: './entities.screen.html',
   styleUrl: './entities.screen.scss',

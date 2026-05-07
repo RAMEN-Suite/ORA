@@ -53,7 +53,7 @@ export class ConfigService {
       await fs.access(filePath);
       return true;
     } catch (error: unknown) {
-      logger.warn(error, 'ConfigService: Failed to access.');
+      logger.debug(error, 'ConfigService: Failed to access.');
       return false;
     }
   }

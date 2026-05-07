@@ -1,6 +1,7 @@
 import {
   ApplicationConfig,
   inject,
+  isDevMode,
   provideAppInitializer,
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
@@ -14,6 +15,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideHttpCache, withHttpCacheInterceptor, withLocalStorage } from '@ngneat/cashew';
 import { ConfigService } from './services/config.service';
 import { provideMarkdown } from 'ngx-markdown';
+import { TranslocoHttpLoader } from './transloco-loader';
+import { provideTransloco } from '@jsverse/transloco';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,5 +28,14 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([withHttpCacheInterceptor()])),
     provideHttpCache(withLocalStorage()),
     provideMarkdown(),
+    provideTransloco({
+      config: {
+        availableLangs: ['de', 'en', 'fr', 'it', 'es'],
+        defaultLang: 'de',
+        reRenderOnLangChange: true,
+        prodMode: !isDevMode(),
+      },
+      loader: TranslocoHttpLoader,
+    }),
   ],
 };

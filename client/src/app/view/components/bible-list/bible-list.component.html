@@ -6,5 +6,12 @@
     scrollHeight="275px"
     [(ngModel)]="activeBook"
     [disabled]="isDisabled()"
-  />
+    *transloco="let t"
+  >
+    <ng-template #item let-item>
+      <span class="tracking-tight">
+        {{ t(item.label) }}
+      </span>
+    </ng-template>
+  </p-list-box>
 </div>

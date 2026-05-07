@@ -1,7 +1,8 @@
-import { Component, computed, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
+import { Component, computed, inject, input, InputSignal, output, OutputEmitterRef, Signal } from '@angular/core';
 import { ActiveFilter, EqualFilter, FacetGroup, FacetValue } from '../../../../models/Facet';
 import { Listbox } from 'primeng/listbox';
 import { FormsModule } from '@angular/forms';
+import { TranslocoService } from '@jsverse/transloco';
 
 interface FilterOption {
   icon?: string;
@@ -17,6 +18,8 @@ interface FilterOption {
   templateUrl: './facet-list-item.component.html',
 })
 export class FacetListItemComponent {
+  private readonly translocoService: TranslocoService = inject(TranslocoService);
+
   public readonly facet: InputSignal<FacetGroup> = input.required<FacetGroup>();
   public readonly filter: InputSignal<FilterOption | undefined> = input<FilterOption>();
 
@@ -45,7 +48,8 @@ export class FacetListItemComponent {
   }
 
   protected getFilterValue(value: string): string {
-    return this.filter()?.valueMap?.[value] ?? value;
+    const mapped: string | undefined = this.filter()?.valueMap?.[value];
+    return mapped ? this.translocoService.translate(mapped) : value;
   }
 
   protected isFilterable(): boolean {

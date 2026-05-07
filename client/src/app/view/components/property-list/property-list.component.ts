@@ -1,6 +1,6 @@
-import { Component, computed, input, InputSignal, Signal } from '@angular/core';
-import { sprintf } from 'sprintf-js';
+import { Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
 import { MarkdownComponent } from 'ngx-markdown';
+import { TranslocoService } from '@jsverse/transloco';
 
 export type Property = { name: string; display?: string; valueMap?: Record<string, string> };
 
@@ -10,31 +10,39 @@ export type Property = { name: string; display?: string; valueMap?: Record<strin
   templateUrl: './property-list.component.html',
 })
 export class PropertyListComponent {
+  private readonly translocoService: TranslocoService = inject(TranslocoService);
+
   public readonly item: InputSignal<Record<string, unknown>> = input({});
   public readonly properties: InputSignal<Property[]> = input<Property[]>([]);
 
-  protected readonly formattedStrings: Signal<string[]> = computed((): string[] => {
-    return this.properties()
-      .map((property: Property): string => this.getFormattedString(this.item(), property))
-      .filter((formattedString: string): boolean => formattedString !== '');
-  });
+  protected readonly formattedStrings: Signal<string[]> = computed((): string[] =>
+    this.properties()
+      .map((property: Property): string => this.formatString(property))
+      .filter(Boolean),
+  );
 
-  protected getFormattedString(item: Record<string, unknown>, property: Property): string {
-    const value: string | string[] | null = this.getPropertyValue(item, property.name);
-    if (value === null || value === undefined) return '';
-    const mapped: string[] = this.getMappedValues(value, property);
-    return property.display ? sprintf(property.display, ...mapped) : mapped.join(',');
+  private formatString(property: Property): string {
+    const value: string | string[] | null = this.getValue(property.name);
+    if (value === null) return '';
+
+    const values: string[] = this.getMappedValues(value, property);
+    if (!property.display) return values.join(', ');
+
+    return this.translocoService.translate(property.display, { value: values[0], values });
   }
 
-  protected getPropertyValue(item: Record<string, unknown>, property: string): string | string[] | null {
-    const value: unknown | undefined = item[property];
+  private getValue(property: string): string | string[] | null {
+    const value: unknown = this.item()[property];
     if (value === null || value === undefined || value === '') return null;
     return Array.isArray(value) ? value.map(String) : String(value);
   }
 
-  protected getMappedValues(value: string | string[], property: Property): string[] {
+  private getMappedValues(value: string | string[], property: Property): string[] {
     const values: string[] = Array.isArray(value) ? value : [value];
-    if (!property.valueMap) return values;
-    return values.map((value: string): string => property.valueMap?.[value] ?? value);
+
+    return values.map((value: string): string => {
+      const mapped: string = property.valueMap?.[value] ?? value;
+      return this.translocoService.translate(mapped);
+    });
   }
 }

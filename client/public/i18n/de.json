@@ -1,0 +1,21 @@
+{
+  "app": {
+    "collections": {
+      "available": "Insgesamt {{ count }} Einträge verfügbar",
+      "select": "Sammlung auswählen:",
+      "search": "Sammlung durchsuchen:",
+      "sort": "Sortieren nach:",
+      "tooltips": {
+        "reset": "zurücksetzen",
+        "ascending": "aufsteigend",
+        "descending": "absteigend"
+      }
+    },
+    "entities": {
+      "select": "Register auswählen:",
+      "search": "Register durchsuchen:",
+      "entries": "Einträge zu: {{ value }}",
+      "empty": "Es konnten keine Einträge gefunden werden."
+    }
+  }
+}
