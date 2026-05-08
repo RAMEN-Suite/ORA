@@ -21,7 +21,7 @@ import { PreviousLinkedValue } from '../../../../types/global';
 import { AppConfig } from '../../../models/AppConfig';
 import { BibleListComponent } from '../../components/bible-list/bible-list.component';
 import { BibleAlias, BibleListHelper } from '../../components/bible-list/bible-list.helper';
-import { TranslocoDirective } from '@jsverse/transloco';
+import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import Entity = RAMEN.Entity;
 import Property = Config.Property;
 import EntityNodes = Config.EntityNodes;
@@ -31,7 +31,7 @@ import BibleBook = Config.BibleBook;
 
 const DEFAULT_OPTION: EntityOption = {
   icon: 'pi pi-folder-open',
-  label: 'Alle Register',
+  label: 'app.entities.default',
   index: 'character',
   value: '',
 };
@@ -53,6 +53,7 @@ const DEFAULT_OPTION: EntityOption = {
   styleUrl: './entities.screen.scss',
 })
 export class EntitiesScreen {
+  private readonly translocoService: TranslocoService = inject(TranslocoService);
   private readonly navigationService: NavigationService = inject(NavigationService);
   private readonly configService: ConfigService = inject(ConfigService);
   private readonly listService: ListService = inject(ListService);
@@ -124,6 +125,12 @@ export class EntitiesScreen {
     const index: string | null = phrase === '' ? this.activeIndex() : null;
     this.navigationService.updateQuery(this.route, { index, search: phrase || null });
   }
+
+  protected readonly getActiveEntryLabel: Signal<string> = computed((): string => {
+    if (this.searchPhrase()) return this.searchPhrase();
+    const index: string = this.activeIndex();
+    return index.length > 1 ? this.translocoService.translate(index) : index;
+  });
 
   private filterEntityList(): Entity[] {
     const searchPhrase: string = Utils.normalize(this.searchPhrase(), { toLower: true });

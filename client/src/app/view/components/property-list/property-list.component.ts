@@ -41,8 +41,8 @@ export class PropertyListComponent {
     const values: string[] = Array.isArray(value) ? value : [value];
 
     return values.map((value: string): string => {
-      const mapped: string = property.valueMap?.[value] ?? value;
-      return this.translocoService.translate(mapped);
+      const mapped: string | undefined = property.valueMap?.[value];
+      return mapped ? this.translocoService.translate(mapped) : value;
     });
   }
 }

@@ -57,7 +57,7 @@
         </h1>
 
         <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
-          {{ t("app.entities.entries", { value: isSearching ? searchPhrase() : t(activeIndex()) }) }}
+          {{ t("app.entities.entries", { value: getActiveEntryLabel() }) }}
         </p>
       </header>
 

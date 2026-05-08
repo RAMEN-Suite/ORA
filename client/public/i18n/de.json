@@ -15,7 +15,8 @@
       "select": "Register auswählen:",
       "search": "Register durchsuchen:",
       "entries": "Einträge zu: {{ value }}",
-      "empty": "Es konnten keine Einträge gefunden werden."
+      "empty": "Es konnten keine Einträge gefunden werden.",
+      "default": "Alle Register"
     }
   }
 }
