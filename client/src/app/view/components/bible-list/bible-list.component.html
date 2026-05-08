@@ -10,7 +10,7 @@
   >
     <ng-template #item let-item>
       <span class="tracking-tight">
-        {{ t(item.label) }}
+        {{ item.label === "#" ? item.label : t(item.label) }}
       </span>
     </ng-template>
   </p-list-box>

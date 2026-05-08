@@ -6,7 +6,7 @@ import { logger } from '../utils/logger';
 import path from 'node:path';
 import fs from 'fs/promises';
 import { Config } from '../models/Config';
-import { deepmerge } from 'deepmerge-ts';
+import { ConfigUtils } from '../utils/ConfigUtils';
 
 export type JSON = Record<string, unknown>;
 
@@ -32,7 +32,7 @@ export class ConfigService {
     for (const file of CONFIG_FILES) {
       const key: string = file.replace('.config.json', '');
       const override: JSON = await this.accessJSON(path.join(this.overridesPath, file));
-      config[key] = deepmerge(config[key], override);
+      config[key] = ConfigUtils.merge(config[key], override);
     }
 
     return config;
