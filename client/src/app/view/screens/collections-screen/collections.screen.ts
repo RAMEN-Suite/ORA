@@ -1,6 +1,6 @@
 import { Component, computed, inject, linkedSignal, signal, Signal, viewChild, WritableSignal } from '@angular/core';
 import { TableModule } from 'primeng/table';
-import { PaginatedListComponent } from '../../components/paginated-list/paginated-list.component';
+import { PaginatedListComponent } from '../../shared/paginated-list/paginated-list.component';
 import { ListService } from '../../../services/list.service';
 import { List, Listable, ListOptions } from '../../../models/List';
 import { RAMEN } from '../../../models/RAMEN';
@@ -13,7 +13,7 @@ import { PreviousLinkedValue } from '../../../../types/global';
 import { ROUTES } from '../../../app.routes';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationUtils } from '../../../utils/PaginationUtils';
-import { SelectComponent } from '../../components/select/select.component';
+import { SelectComponent } from '../../shared/select/select.component';
 import { FormsModule } from '@angular/forms';
 import { IftaLabel } from 'primeng/iftalabel';
 import { InputText } from 'primeng/inputtext';
@@ -22,7 +22,7 @@ import { AppConfig } from '../../../models/AppConfig';
 import { Utils } from '../../../utils/Utils';
 import { Tooltip } from 'primeng/tooltip';
 import { ActiveFilter, FacetGroup, FacetOptions } from '../../../models/Facet';
-import { FacetListComponent } from '../../components/facet-list/facet-list.component';
+import { FacetListComponent } from '../../shared/facet-list/facet-list.component';
 import { FilterUtils } from '../../../utils/FilterUtils';
 import { TranslocoDirective } from '@jsverse/transloco';
 import Collection = RAMEN.Collection;
@@ -47,7 +47,6 @@ import FilterOption = Config.FilterOption;
     TranslocoDirective,
   ],
   templateUrl: './collections.screen.html',
-  styleUrl: './collections.screen.scss',
 })
 export class CollectionsScreen {
   private readonly navigationService: NavigationService = inject(NavigationService);

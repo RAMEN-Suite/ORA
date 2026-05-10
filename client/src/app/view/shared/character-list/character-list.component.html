@@ -1,4 +1,4 @@
-<div class="animate__animated animate__fadeIn grid grid-cols-[repeat(auto-fit,minmax(2.5rem,max-content))] justify-between gap-3">
+<div class="grid grid-cols-[repeat(auto-fit,minmax(2.5rem,max-content))] justify-between gap-3">
   @for (character of characters(); track character) {
     @if (character === activeCharacter() && !isDisabled()) {
       <p-button [label]="character" outlined severity="contrast" />

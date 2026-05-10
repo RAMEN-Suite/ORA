@@ -30,33 +30,45 @@ export class BibleListHelper {
     return aliases;
   }
 
-  public static getBibleOptions(labels: string[], aliases: BibleAlias[]): BibleOption[] {
+  public static options(labels: string[], aliases: BibleAlias[]): BibleOption[] {
     const result = new Map<string, BibleOption>();
     let isUnknown: boolean = false;
 
     for (const label of labels) {
-      const parsed: Parsed | void = this.match(label, aliases);
+      const parsed: Parsed | void = this.parse(label, aliases);
       parsed ? result.set(parsed.option.value, parsed.option) : (isUnknown = true);
     }
 
-    const options: BibleOption[] = [...result.values()].sort(this.sortBibleBooks);
-    if (isUnknown) options.push({ label: '#', value: '#', order: Number.MAX_SAFE_INTEGER });
+    const options: BibleOption[] = [...result.values()].sort(this.sort);
+    if (isUnknown) options.push({ label: 'app.shared.bibleList.unknown', value: '#', order: Number.MAX_SAFE_INTEGER });
     return options;
   }
 
-  public static getBibleValue(label: string, aliases: BibleAlias[]): string {
-    return this.match(label, aliases)?.option.value ?? '#';
+  public static value(label: string, aliases: BibleAlias[]): string {
+    return this.parse(label, aliases)?.option.value ?? '#';
   }
 
   public static compare(a: string, b: string, aliases: BibleAlias[]): number {
-    const left: Parsed | void = this.match(a, aliases);
-    const right: Parsed | void = this.match(b, aliases);
+    const left: Parsed | void = this.parse(a, aliases);
+    const right: Parsed | void = this.parse(b, aliases);
 
     if (!left || !right) return left ? -1 : right ? 1 : a.localeCompare(b);
     return left.option.order - right.option.order || left.chapter - right.chapter || left.verse - right.verse;
   }
 
-  private static parseReference(value: string): [number, number] {
+  private static parse(label: string, aliases: BibleAlias[]): Parsed | void {
+    const trimmed: string = label.trimStart();
+    const normalized: string = this.normalize(trimmed);
+
+    for (const entry of aliases) {
+      if (!normalized.startsWith(entry.alias)) continue;
+      const rest: string = trimmed.slice(entry.alias.length).trim();
+      const [chapter, verse] = this.reference(rest);
+      return { option: entry.option, chapter, verse };
+    }
+  }
+
+  private static reference(value: string): [number, number] {
     const full: RegExpMatchArray | null = value.match(/(\d+)\s*[,.]\s*(\d+)/);
     if (full) return [Number(full[1]), Number(full[2])];
 
@@ -69,19 +81,7 @@ export class BibleListHelper {
     return [0, 0];
   }
 
-  private static match(label: string, aliases: BibleAlias[]): Parsed | void {
-    const trimmed: string = label.trimStart();
-    const normalized: string = this.normalize(trimmed);
-
-    for (const entry of aliases) {
-      if (!normalized.startsWith(entry.alias)) continue;
-      const rest: string = trimmed.slice(entry.alias.length).trim();
-      const [chapter, verse] = this.parseReference(rest);
-      return { option: entry.option, chapter, verse };
-    }
-  }
-
-  private static sortBibleBooks(a: BibleOption, b: BibleOption): number {
+  private static sort(a: BibleOption, b: BibleOption): number {
     return a.order - b.order;
   }
 

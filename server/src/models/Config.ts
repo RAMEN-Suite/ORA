@@ -1,7 +1,7 @@
 export namespace Config {
   export interface Root {
     screens: Screens;
-    extensions: Extensions;
+    features: Features;
   }
 
   export interface Screens {
@@ -55,7 +55,7 @@ export namespace Config {
     valueMap?: Record<string, string>;
   }
 
-  export interface Extensions {
+  export interface Features {
     bible: BibleBook[];
   }
 

@@ -1,0 +1,33 @@
+<div class="flex flex-col gap-3" *transloco="let t">
+  <p-listbox
+    [options]="filteredOptions()"
+    listStyleClass="min-h-68.75"
+    class="min-h-68.75"
+    scrollHeight="275px"
+    optionLabel="label"
+    optionValue="value"
+    [(ngModel)]="activeValue"
+    [disabled]="isDisabled()"
+    [emptyMessage]="t('app.shared.searchableList.empty')"
+  />
+
+  <div class="flex flex-row gap-3">
+    <p-button icon="pi pi-angle-double-left" styleClass="h-full!" (click)="change(-1)" outlined />
+
+    <p-ifta-label class="w-full">
+      <input
+        id="search"
+        pInputText
+        class="min-w-0 flex-1"
+        type="search"
+        autocomplete="off"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        fluid
+      />
+      <label for="search">{{ t(searchLabel()) }}</label>
+    </p-ifta-label>
+
+    <p-button icon="pi pi-angle-double-right" styleClass="h-full!" (click)="change(1)" outlined />
+  </div>
+</div>

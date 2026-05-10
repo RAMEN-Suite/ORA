@@ -1,5 +1,5 @@
 import screens from '../../config/screens.config.json';
-import extensions from '../../config/extensions.config.json';
+import features from '../../config/features.config.json';
 import { ServiceError } from '../models/utility/Error';
 import { ERROR_CODE } from '../constants/ERROR_CODE';
 import { logger } from '../utils/logger';
@@ -10,8 +10,8 @@ import { ConfigUtils } from '../utils/ConfigUtils';
 
 export type JSON = Record<string, unknown>;
 
-const DEFAULT_CONFIG: Config.Root = { screens, extensions };
-const CONFIG_FILES: string[] = ['screens.config.json', 'extensions.config.json'];
+const DEFAULT_CONFIG: Config.Root = { screens, features };
+const CONFIG_FILES: string[] = ['screens.config.json', 'features.config.json'];
 
 export class ConfigService {
   private static overridesPath: string | undefined;

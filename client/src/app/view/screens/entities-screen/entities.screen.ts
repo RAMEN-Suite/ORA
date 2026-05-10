@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ListService } from '../../../services/list.service';
 import { HttpResourceRef } from '@angular/common/http';
 import { DataView } from 'primeng/dataview';
-import { CharacterListComponent } from '../../components/character-list/character-list.component';
+import { CharacterListComponent } from '../../shared/character-list/character-list.component';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Utils } from '../../../utils/Utils';
 import { NavigationService } from '../../../services/navigation.service';
@@ -14,13 +14,13 @@ import { List, Listable, ListOptions } from '../../../models/List';
 import { ConfigService } from '../../../services/config.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Config } from '../../../models/Config';
-import { SelectComponent } from '../../components/select/select.component';
+import { SelectComponent } from '../../shared/select/select.component';
 import { ROUTES } from '../../../app.routes';
-import { NodesViewComponent } from '../../components/data-view/nodes-view/nodes-view.component';
+import { NodesViewComponent } from '../../shared/data-view/nodes-view/nodes-view.component';
 import { PreviousLinkedValue } from '../../../../types/global';
 import { AppConfig } from '../../../models/AppConfig';
-import { BibleListComponent } from '../../components/bible-list/bible-list.component';
-import { BibleAlias, BibleListHelper } from '../../components/bible-list/bible-list.helper';
+import { BibleListComponent } from '../../features/bible-list/bible-list.component';
+import { BibleAlias, BibleListHelper } from '../../features/bible-list/bible-list.helper';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import Entity = RAMEN.Entity;
 import Property = Config.Property;
@@ -50,7 +50,6 @@ const DEFAULT_OPTION: EntityOption = {
     TranslocoDirective,
   ],
   templateUrl: './entities.screen.html',
-  styleUrl: './entities.screen.scss',
 })
 export class EntitiesScreen {
   private readonly translocoService: TranslocoService = inject(TranslocoService);
@@ -62,7 +61,7 @@ export class EntitiesScreen {
   private readonly config: AppConfig = this.configService.config();
   private readonly screen: EntityNodes = this.config.screen('entities');
 
-  protected readonly bibleBooks: BibleBook[] = this.config.extensions('bible');
+  protected readonly bibleBooks: BibleBook[] = this.config.features('bible');
   protected readonly bibleAliases: BibleAlias[] = BibleListHelper.createIndex(this.bibleBooks);
 
   protected readonly nodeOptions: EntityOption[] = [...this.screen.nodes, DEFAULT_OPTION];
@@ -153,7 +152,7 @@ export class EntitiesScreen {
 
   private filterByBible(entities: Entity[], currentIndex: string): Entity[] {
     return entities
-      .filter((e: Entity): boolean => BibleListHelper.getBibleValue(e.label, this.bibleAliases) === currentIndex)
+      .filter((e: Entity): boolean => BibleListHelper.value(e.label, this.bibleAliases) === currentIndex)
       .sort((a: Entity, b: Entity): number => BibleListHelper.compare(a.label, b.label, this.bibleAliases));
   }
 

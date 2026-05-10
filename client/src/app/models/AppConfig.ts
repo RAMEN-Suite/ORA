@@ -7,7 +7,7 @@ import NodeOption = Config.NodeOption;
 import Property = Config.Property;
 import Selection = Config.Selection;
 import FilterOption = Config.FilterOption;
-import Extensions = Config.Extensions;
+import Features = Config.Features;
 
 export class AppConfig {
   constructor(private readonly config: Root) {}
@@ -16,8 +16,8 @@ export class AppConfig {
     return this.config.screens[key];
   }
 
-  public extensions<K extends keyof Extensions>(key: K): Extensions[K] {
-    return this.config.extensions[key];
+  public features<K extends keyof Features>(key: K): Features[K] {
+    return this.config.features[key];
   }
 
   public node(screen: MultiNode, value: string): NodeOption | undefined {

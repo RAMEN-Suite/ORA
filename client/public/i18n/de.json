@@ -17,6 +17,17 @@
       "entries": "Einträge zu: {{ value }}",
       "empty": "Es konnten keine Einträge gefunden werden.",
       "default": "Alle Register"
+    },
+    "shared": {
+      "searchableList": {
+        "search": "Liste durchsuchen:",
+        "empty": "Keine Einträge vorhanden."
+      }
+    },
+    "features": {
+      "bibleList": {
+        "unknown": "Keine Einsortierung"
+      }
     }
   }
 }

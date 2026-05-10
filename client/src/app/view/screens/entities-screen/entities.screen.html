@@ -27,25 +27,27 @@
             <label for="search">{{ t("app.entities.search") }}</label>
           </p-ifta-label>
 
-          @switch (this.indexType()) {
-            @case ("bible") {
-              <shared-bible-list
-                [isDisabled]="isSearching"
-                [bibleAliases]="bibleAliases"
-                [items]="entityLabels()"
-                [activeBook]="activeIndex()"
-                (activeBookChange)="handleIndexChange($event)"
-              />
+          <div class="animate__animated animate__fadeIn">
+            @switch (this.indexType()) {
+              @case ("bible") {
+                <feature-bible-list
+                  [isDisabled]="isSearching"
+                  [aliases]="bibleAliases"
+                  [items]="entityLabels()"
+                  [activeBook]="activeIndex()"
+                  (activeBookChange)="handleIndexChange($event)"
+                />
+              }
+              @default {
+                <shared-character-list
+                  [isDisabled]="isSearching"
+                  [items]="entityLabels()"
+                  [activeCharacter]="activeIndex()"
+                  (activeCharacterChange)="handleIndexChange($event)"
+                />
+              }
             }
-            @default {
-              <shared-character-list
-                [isDisabled]="isSearching"
-                [items]="entityLabels()"
-                [activeCharacter]="activeIndex()"
-                (activeCharacterChange)="handleIndexChange($event)"
-              />
-            }
-          }
+          </div>
         </nav>
       </div>
     </aside>
