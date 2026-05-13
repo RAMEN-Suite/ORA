@@ -53,7 +53,7 @@ export class SearchableListComponent {
         this.activeValue.set(options[0]?.value ?? '');
       }
 
-      if (!disabled) this.scrollToSelected();
+      this.scrollToSelected();
     });
   }
 

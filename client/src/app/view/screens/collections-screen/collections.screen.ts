@@ -143,7 +143,7 @@ export class CollectionsScreen {
     const current: ListOptions = this.listOptions();
     const next: ListOptions = { ...current, ...change };
 
-    const orderBy: string = next.orderBy || 'label';
+    const orderBy: string = next.orderBy ?? 'label';
     const asc: string = String(next.asc);
 
     const params: Record<string, string | number> = { orderBy, asc, page: 1 };

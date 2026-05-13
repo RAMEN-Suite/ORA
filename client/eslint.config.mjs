@@ -11,12 +11,25 @@ export default defineConfig(
 
   {
     files: ["**/*.ts"],
-    extends: [js.configs.recommended, tseslint.configs.recommendedTypeChecked, angular.configs.tsRecommended],
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.strictTypeChecked,
+      tseslint.configs.stylisticTypeChecked,
+      angular.configs.tsRecommended,
+    ],
     processor: angular.processInlineTemplates,
     languageOptions: {
-      parserOptions: { projectService: true },
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     rules: {
+      "@typescript-eslint/no-inferrable-types": "off",
+      "@typescript-eslint/no-extraneous-class": "off",
+      "@typescript-eslint/no-confusing-void-expression": "off",
+      "@typescript-eslint/unbound-method": "off",
+
       "@typescript-eslint/no-unused-vars": [
         "error",
         {

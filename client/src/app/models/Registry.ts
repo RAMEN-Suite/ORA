@@ -70,7 +70,7 @@ export class Registry {
 
   private mergeProperties(global: Property[] = [], local: Property[] = []): Property[] {
     const combined: Property[] = [...global, ...local];
-    const map: Map<string, Property> = new Map(combined.map((p: Property): [string, Property] => [p.name, p]));
+    const map: Map<string, Property> = new Map<string, Property>(combined.map((p: Property): [string, Property] => [p.name, p]));
     return Array.from(map.values());
   }
 }

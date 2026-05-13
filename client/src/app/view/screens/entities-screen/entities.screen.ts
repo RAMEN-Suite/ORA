@@ -160,7 +160,7 @@ export class EntitiesScreen {
     const searchPhrase: string | undefined = Utils.parseString(params['search']);
     const label: string | undefined = Utils.parseString(params['label']);
 
-    if (label !== null && label !== undefined) {
+    if (label !== undefined) {
       const existing: EntityOption | undefined = this.config.node(this.screen, label);
       if (existing) this.activeNode.set(existing);
     }

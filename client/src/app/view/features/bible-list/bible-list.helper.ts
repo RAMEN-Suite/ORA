@@ -1,4 +1,8 @@
-type Parsed = { option: BibleOption; chapter: number; verse: number };
+interface Parsed {
+  option: BibleOption;
+  chapter: number;
+  verse: number;
+}
 
 interface BibleBook {
   key: string;
@@ -31,11 +35,11 @@ export class BibleListHelper {
   }
 
   public static options(labels: string[], aliases: BibleAlias[]): BibleOption[] {
-    const result = new Map<string, BibleOption>();
+    const result: Map<string, BibleOption> = new Map<string, BibleOption>();
     let isUnknown: boolean = false;
 
     for (const label of labels) {
-      const parsed: Parsed | void = this.parse(label, aliases);
+      const parsed: Parsed | undefined = this.parse(label, aliases);
       if (parsed) result.set(parsed.option.value, parsed.option);
       else isUnknown = true;
     }
@@ -50,14 +54,14 @@ export class BibleListHelper {
   }
 
   public static compare(a: string, b: string, aliases: BibleAlias[]): number {
-    const left: Parsed | void = this.parse(a, aliases);
-    const right: Parsed | void = this.parse(b, aliases);
+    const left: Parsed | undefined = this.parse(a, aliases);
+    const right: Parsed | undefined = this.parse(b, aliases);
 
     if (!left || !right) return left ? -1 : right ? 1 : a.localeCompare(b);
     return left.option.order - right.option.order || left.chapter - right.chapter || left.verse - right.verse;
   }
 
-  private static parse(label: string, aliases: BibleAlias[]): Parsed | void {
+  private static parse(label: string, aliases: BibleAlias[]): Parsed | undefined {
     const trimmed: string = label.trimStart();
     const normalized: string = this.normalize(trimmed);
 
@@ -67,16 +71,18 @@ export class BibleListHelper {
       const [chapter, verse] = this.reference(rest);
       return { option: entry.option, chapter, verse };
     }
+
+    return undefined;
   }
 
   private static reference(value: string): [number, number] {
-    const full: RegExpMatchArray | null = value.match(/(\d+)\s*[,.]\s*(\d+)/);
+    const full: RegExpExecArray | null = /(\d+)\s*[,.]\s*(\d+)/.exec(value);
     if (full) return [Number(full[1]), Number(full[2])];
 
-    const chapter: RegExpMatchArray | null = value.match(/^\s*(\d+)/);
+    const chapter: RegExpExecArray | null = /^\s*(\d+)/.exec(value);
     if (chapter) return [Number(chapter[1]), 0];
 
-    const verse: RegExpMatchArray | null = value.match(/^[,\s]+(\d+)/);
+    const verse: RegExpExecArray | null = /^[,\s]+(\d+)/.exec(value);
     if (verse) return [1, Number(verse[1])];
 
     return [0, 0];

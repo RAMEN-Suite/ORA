@@ -5,6 +5,7 @@ import { List, Listable, ListOptions } from '../models/List';
 import { environment } from '../../environments/environment';
 import { FacetGroup, FacetOptions } from '../models/Facet';
 import { FilterUtils } from '../utils/FilterUtils';
+import { Utils } from '../utils/Utils';
 
 const DEFAULT_PAGINATION = {
   skip: 0,
@@ -49,7 +50,7 @@ export class ListService {
     let params: HttpParams = new HttpParams();
 
     if (label) params = params.set('label', label);
-    if (options?.search !== undefined) params = params.set('search', String(options.search));
+    if (options?.search !== undefined) params = params.set('search', Utils.parseString(options.search) ?? '');
     for (const facet of options?.facets ?? []) params = params.append('facets', facet);
     for (const filter of options?.filters ?? []) params = params.append('filters', FilterUtils.serializeFilter(filter));
 
