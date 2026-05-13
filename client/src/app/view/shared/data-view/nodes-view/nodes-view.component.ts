@@ -4,7 +4,11 @@ import { ProgressSpinner } from 'primeng/progressspinner';
 import { Property, PropertyListComponent } from '../../property-list/property-list.component';
 import { RouterLink } from '@angular/router';
 
-type LabeledNode = { label: string; uuid: string };
+export interface LabeledNode {
+  label: string;
+  uuid: string;
+  [key: string]: unknown;
+}
 
 @Component({
   selector: 'shared-nodes-view',

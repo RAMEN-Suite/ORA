@@ -3,9 +3,16 @@ import { Accordion, AccordionContent, AccordionHeader, AccordionPanel } from 'pr
 import { ActiveFilter, FacetGroup } from '../../../models/Facet';
 import { FormsModule } from '@angular/forms';
 import { FacetListItemComponent } from './facet-list-item/facet-list-item.component';
-import { Config } from '../../../models/Config';
 import { TranslocoDirective } from '@jsverse/transloco';
-import FilterOption = Config.FilterOption;
+import { Utils } from '../../../utils/Utils';
+
+export interface FacetFilter {
+  icon?: string;
+  label: string;
+  value: string;
+  valueMap?: Record<string, string>;
+  display?: 'list' | 'range';
+}
 
 @Component({
   selector: 'shared-facet-list',
@@ -15,14 +22,14 @@ import FilterOption = Config.FilterOption;
     AccordionHeader,
     AccordionPanel,
     FormsModule,
-    FacetListItemComponent,
     TranslocoDirective,
+    FacetListItemComponent,
   ],
   templateUrl: './facet-list.component.html',
 })
 export class FacetListComponent {
   public readonly facets: InputSignal<FacetGroup[]> = input<FacetGroup[]>([]);
-  public readonly filters: InputSignal<FilterOption[]> = input<FilterOption[]>([]);
+  public readonly filters: InputSignal<FacetFilter[]> = input<FacetFilter[]>([]);
 
   public readonly activeFilters: InputSignal<ActiveFilter[]> = input<ActiveFilter[]>([]);
   public readonly activeFiltersChange: OutputEmitterRef<ActiveFilter[]> = output<ActiveFilter[]>();
@@ -34,11 +41,12 @@ export class FacetListComponent {
   }
 
   protected handleAccordionChange(value: unknown): void {
-    this.expandedFacets.set(Array.isArray(value) ? value : value ? [value] : []);
+    value = Utils.parseArray(value);
+    this.expandedFacets.set(Utils.parseStringArray(value));
   }
 
-  protected getFilter(field: string): FilterOption | undefined {
-    return this.filters().find((filter: FilterOption): boolean => filter.value === field);
+  protected getFilter(field: string): FacetFilter | undefined {
+    return this.filters().find((filter: FacetFilter): boolean => filter.value === field);
   }
 
   protected getFacetIcon(field: string): string | undefined {

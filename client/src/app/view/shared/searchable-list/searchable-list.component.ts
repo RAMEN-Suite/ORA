@@ -46,7 +46,7 @@ export class SearchableListComponent {
     effect((): void => {
       const disabled: boolean = this.isDisabled();
       const options: SearchableOption[] = this.options();
-      if (options.length === 0) return;
+      if (options.length === 0 || disabled) return;
 
       const current: string = this.activeValue();
       if (!options.some((option: SearchableOption): boolean => option.value === current)) {

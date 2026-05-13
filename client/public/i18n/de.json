@@ -26,6 +26,7 @@
     },
     "features": {
       "bibleList": {
+        "search": "Nach Buch suchen:",
         "unknown": "Keine Einsortierung"
       }
     }

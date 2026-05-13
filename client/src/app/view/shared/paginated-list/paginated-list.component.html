@@ -1,4 +1,4 @@
-<app-mobile-pagination [rows]="rows()" [skip]="skip()" [totalRecords]="totalRecords()" (onLazyLoad)="handleLazyLoad($event)" />
+<shared-mobile-pagination [rows]="rows()" [skip]="skip()" [totalRecords]="totalRecords()" (lazyLoad)="handleLazyLoad($event)" />
 
 <p-data-view
   class="select-none"
@@ -25,4 +25,4 @@
   </ng-template>
 </p-data-view>
 
-<app-mobile-pagination [rows]="rows()" [skip]="skip()" [totalRecords]="totalRecords()" (onLazyLoad)="handleLazyLoad($event)" />
+<shared-mobile-pagination [rows]="rows()" [skip]="skip()" [totalRecords]="totalRecords()" (lazyLoad)="handleLazyLoad($event)" />

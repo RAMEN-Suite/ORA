@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
 import { EntitiesScreen } from './view/screens/entities-screen/entities.screen';
-import { CollectionsScreen } from './view/screens/collections-screen/collections.screen';
 import { configGuard } from './guards/config.guard';
 import { ErrorScreen } from './view/screens/error-screen/error.screen';
-import { ComposableScreen } from './view/screens/composable-screen/composable.screen';
+import { CollectionScreen } from './view/screens/collection-screen/collection.screen';
+import { CollectionsScreen } from './view/screens/collections-screen/collections.screen';
+import { EntityScreen } from './view/screens/entity-screen/entity.screen';
 
 export enum ROUTES {
   ENTITIES = 'entities',
@@ -19,8 +20,8 @@ export const routes: Routes = [
     children: [
       { path: ROUTES.COLLECTIONS, component: CollectionsScreen },
       { path: ROUTES.ENTITIES, component: EntitiesScreen },
-      { path: `${ROUTES.ENTITY}/:id`, redirectTo: '' },
-      { path: `${ROUTES.COLLECTION}/:id`, component: ComposableScreen },
+      { path: `${ROUTES.ENTITY}/:id`, component: EntityScreen },
+      { path: `${ROUTES.COLLECTION}/:id`, component: CollectionScreen },
     ],
   },
   { path: 'error', component: ErrorScreen },

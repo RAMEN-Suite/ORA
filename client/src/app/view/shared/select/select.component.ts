@@ -4,7 +4,11 @@ import { Select } from 'primeng/select';
 import { FormsModule } from '@angular/forms';
 import { TranslocoDirective } from '@jsverse/transloco';
 
-type Selectable = { icon?: string; label: string; value: string };
+export interface Selectable {
+  icon?: string;
+  label: string;
+  value: string;
+}
 
 @Component({
   selector: 'shared-select',

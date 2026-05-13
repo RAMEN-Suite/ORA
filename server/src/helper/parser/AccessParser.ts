@@ -1,4 +1,4 @@
-type StepName = 'annotation' | 'entity';
+type StepName = 'annotation' | 'entity' | 'collection' | 'content' | 'refers';
 
 export interface AccessStep {
   name: StepName;
@@ -17,8 +17,10 @@ interface Segment {
 
 export class AccessParser {
   private static readonly SEGMENT_EXP: RegExp = /^(?<name>[A-Za-z_]\w*)(?:\[(?<filter>[^\]]+)])?$/;
+  private static readonly STEP_NAMES: ReadonlySet<string> = new Set(['annotation', 'entity', 'collection', 'content']);
 
   public static parse(value: string): AccessPath {
+    if (!value.trim()) throw new Error('Invalid query path: empty value');
     const segments: Segment[] = value.split('.').map((segment: string): Segment => this.parseSegment(segment));
 
     const accessor: Segment | undefined = segments.pop();
@@ -26,7 +28,7 @@ export class AccessParser {
 
     const steps: AccessStep[] = segments.map((segment: Segment): AccessStep => {
       if (this.isAccessStep(segment)) return segment;
-      throw Error(`Invalid query step: ${segment}`);
+      throw new Error(`Invalid query step: ${segment.name}`);
     });
 
     return { steps, field: accessor.name };
@@ -42,6 +44,6 @@ export class AccessParser {
   }
 
   private static isAccessStep(segment: Segment): segment is AccessStep {
-    return segment.name === 'annotation' || segment.name === 'entity';
+    return this.STEP_NAMES.has(segment.name);
   }
 }

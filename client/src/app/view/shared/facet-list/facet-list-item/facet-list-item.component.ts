@@ -3,14 +3,7 @@ import { ActiveFilter, EqualFilter, FacetGroup, FacetValue } from '../../../../m
 import { Listbox } from 'primeng/listbox';
 import { FormsModule } from '@angular/forms';
 import { TranslocoService } from '@jsverse/transloco';
-
-interface FilterOption {
-  icon?: string;
-  label: string;
-  value: string;
-  valueMap?: Record<string, string>;
-  display?: 'list' | 'range';
-}
+import { FacetFilter } from '../facet-list.component';
 
 @Component({
   selector: 'shared-facet-list-item',
@@ -21,7 +14,7 @@ export class FacetListItemComponent {
   private readonly translocoService: TranslocoService = inject(TranslocoService);
 
   public readonly facet: InputSignal<FacetGroup> = input.required<FacetGroup>();
-  public readonly filter: InputSignal<FilterOption | undefined> = input<FilterOption>();
+  public readonly filter: InputSignal<FacetFilter | undefined> = input<FacetFilter>();
 
   public readonly activeFilters: InputSignal<ActiveFilter[]> = input<ActiveFilter[]>([]);
   public readonly activeFiltersChange: OutputEmitterRef<ActiveFilter[]> = output<ActiveFilter[]>();

@@ -2,7 +2,7 @@ export const environment = {
   appVersion: '2026.0.1',
   apiBaseUrl: '/api',
   apiPaths: {
-    data: '/data',
+    view: '/view',
     config: '/config',
     i18n: '/i18n',
   },

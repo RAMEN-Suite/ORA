@@ -1,8 +1,13 @@
 import { Component, computed, inject, input, InputSignal, Signal } from '@angular/core';
 import { MarkdownComponent } from 'ngx-markdown';
 import { TranslocoService } from '@jsverse/transloco';
+import { Utils } from '../../../utils/Utils';
 
-export type Property = { name: string; display?: string; valueMap?: Record<string, string> };
+export interface Property {
+  name: string;
+  display?: string;
+  valueMap?: Record<string, string>;
+}
 
 @Component({
   selector: 'shared-property-list',
@@ -34,7 +39,7 @@ export class PropertyListComponent {
   private getValue(property: string): string | string[] | null {
     const value: unknown = this.item()[property];
     if (value === null || value === undefined || value === '') return null;
-    return Array.isArray(value) ? value.map(String) : String(value);
+    return Array.isArray(value) ? value.map(String) : Utils.parseStringArray(value);
   }
 
   private getMappedValues(value: string | string[], property: Property): string[] {

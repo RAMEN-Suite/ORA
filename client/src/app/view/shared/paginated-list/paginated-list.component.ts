@@ -3,9 +3,9 @@ import { TableModule } from 'primeng/table';
 import { DataView } from 'primeng/dataview';
 import { NodesViewComponent } from '../data-view/nodes-view/nodes-view.component';
 import { PAGE_LIMITS, PaginationUtils } from '../../../utils/PaginationUtils';
+import { LazyLoadEvent } from 'primeng/api';
 import { Property } from '../property-list/property-list.component';
 import { MobilePaginationComponent } from './mobile-pagination/mobile-pagination.component';
-import { LazyLoadEvent } from 'primeng/api';
 
 type TableRow = Record<string, unknown>;
 
@@ -24,12 +24,12 @@ export class PaginatedListComponent {
   public readonly skip: InputSignal<number> = input(0);
 
   public readonly isLoading: InputSignal<boolean> = input(false);
-  public readonly onPageChange: OutputEmitterRef<{ limit: number; skip: number }> = output();
+  public readonly pageChange: OutputEmitterRef<{ limit: number; skip: number }> = output();
 
   protected handleLazyLoad(event: LazyLoadEvent): void {
     const limit: number = PaginationUtils.parseLimit(event.rows ?? this.rows());
     const skip: number = event.first ?? 0;
-    this.onPageChange.emit({ limit, skip });
+    this.pageChange.emit({ limit, skip });
   }
 
   protected readonly Math: Math = Math;

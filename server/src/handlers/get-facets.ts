@@ -8,14 +8,14 @@ import { matchedData } from 'express-validator';
 import { FilterParser } from '../helper/parser/FilterParser';
 
 export async function getFacets(resource: Listable, req: Request, res: Response): Promise<void> {
-  const params: Record<string, unknown> = matchedData(req);
+  const queries: Record<string, unknown> = matchedData(req);
 
-  const specifiedLabel: string | undefined = Utils.parseString(params.label);
+  const specifiedLabel: string | undefined = Utils.parseString(queries.label);
   const options: FacetOptions = {
-    search: Utils.parseString(params.search),
-    field: Utils.parseString(params.field),
-    facets: Utils.parseStringArray(params.facets),
-    filters: FilterParser.parseMany(Utils.parseStringArray(params.filters)),
+    search: Utils.parseString(queries.search),
+    field: Utils.parseString(queries.field),
+    facets: Utils.parseStringArray(queries.facets),
+    filters: FilterParser.parseMany(Utils.parseStringArray(queries.filters)),
   };
 
   const response: FacetGroup[] = await FacetDAO.getFacets(resource, specifiedLabel, options);

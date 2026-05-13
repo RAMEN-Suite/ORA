@@ -9,25 +9,19 @@ import { CharacterListComponent } from '../../shared/character-list/character-li
 import { ActivatedRoute, Params } from '@angular/router';
 import { Utils } from '../../../utils/Utils';
 import { NavigationService } from '../../../services/navigation.service';
-import { RAMEN } from '../../../models/RAMEN';
 import { List, Listable, ListOptions } from '../../../models/List';
 import { ConfigService } from '../../../services/config.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Config } from '../../../models/Config';
 import { SelectComponent } from '../../shared/select/select.component';
 import { ROUTES } from '../../../app.routes';
 import { NodesViewComponent } from '../../shared/data-view/nodes-view/nodes-view.component';
 import { PreviousLinkedValue } from '../../../../types/global';
-import { AppConfig } from '../../../models/AppConfig';
+import { Registry } from '../../../models/Registry';
 import { BibleListComponent } from '../../features/bible-list/bible-list.component';
 import { BibleAlias, BibleListHelper } from '../../features/bible-list/bible-list.helper';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
-import Entity = RAMEN.Entity;
-import Property = Config.Property;
-import EntityNodes = Config.EntityNodes;
-import EntityOption = Config.EntityOption;
-import EntityIndex = Config.EntityIndex;
-import BibleBook = Config.BibleBook;
+import { BibleBook, EntityIndex, EntityOption, ListScreen, Property } from '../../../models/Config';
+import { Entity } from '../../../models/RAMEN';
 
 const DEFAULT_OPTION: EntityOption = {
   icon: 'pi pi-folder-open',
@@ -58,8 +52,8 @@ export class EntitiesScreen {
   private readonly listService: ListService = inject(ListService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
-  private readonly config: AppConfig = this.configService.config();
-  private readonly screen: EntityNodes = this.config.screen('entities');
+  private readonly config: Registry = this.configService.config();
+  private readonly screen: ListScreen<EntityOption> = this.config.screen('entities');
 
   protected readonly bibleBooks: BibleBook[] = this.config.features('bible');
   protected readonly bibleAliases: BibleAlias[] = BibleListHelper.createIndex(this.bibleBooks);
@@ -71,16 +65,22 @@ export class EntitiesScreen {
     this.config.properties(this.screen, this.activeNode()),
   );
 
-  protected readonly searchPhrase: WritableSignal<string> = signal('');
-
   protected readonly indexType: Signal<EntityIndex> = computed((): EntityIndex => this.activeNode().index ?? 'character');
   protected readonly activeIndex: WritableSignal<string> = signal('');
+  protected readonly activeIndexLabel: Signal<string> = computed((): string => {
+    if (this.searchPhrase()) return this.searchPhrase();
+    const index: string = this.activeIndex();
+    return index.length > 1 ? this.translocoService.translate(index) : index;
+  });
 
-  protected readonly options: Signal<ListOptions> = signal({ orderBy: 'label', asc: true, limit: 0, skip: 0 });
+  protected readonly searchPhrase: WritableSignal<string> = signal('');
+  protected readonly filteredEntities: Signal<Entity[]> = computed((): Entity[] => this.filterEntityList());
+
+  protected readonly listOptions: Signal<ListOptions> = signal({ orderBy: 'label', asc: true, limit: 0, skip: 0 });
   protected readonly $list: HttpResourceRef<List<Entity>> = this.listService.fetchList(
     Listable.ENTITY,
     this.activeNodeLabel,
-    this.options,
+    this.listOptions,
   );
 
   protected readonly entities: Signal<List<Entity>> = linkedSignal({
@@ -88,17 +88,15 @@ export class EntitiesScreen {
     computation: (source: List<Entity>, previous: PreviousLinkedValue<List<Entity>>): List<Entity> =>
       this.$list.isLoading() ? (previous?.value ?? source) : source,
   });
+  protected readonly entityLabels: Signal<string[]> = computed((): string[] =>
+    this.entities().data.map((e: Entity): string => e.label),
+  );
 
   protected readonly properties: Signal<Property[]> = linkedSignal({
     source: (): Property[] => this.activeProperties(),
     computation: (source: Property[], previous: PreviousLinkedValue<Property[]>): Property[] =>
       this.$list.isLoading() ? (previous?.value ?? source) : source,
   });
-
-  protected readonly filteredEntities: Signal<Entity[]> = computed((): Entity[] => this.filterEntityList());
-  protected readonly entityLabels: Signal<string[]> = computed((): string[] =>
-    this.entities().data.map((e: Entity): string => e.label),
-  );
 
   constructor() {
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(this.applyQueryParams.bind(this));
@@ -124,12 +122,6 @@ export class EntitiesScreen {
     const index: string | null = phrase === '' ? this.activeIndex() : null;
     this.navigationService.updateQuery(this.route, { index, search: phrase || null });
   }
-
-  protected readonly getActiveEntryLabel: Signal<string> = computed((): string => {
-    if (this.searchPhrase()) return this.searchPhrase();
-    const index: string = this.activeIndex();
-    return index.length > 1 ? this.translocoService.translate(index) : index;
-  });
 
   private filterEntityList(): Entity[] {
     const searchPhrase: string = Utils.normalize(this.searchPhrase(), { toLower: true });
@@ -164,9 +156,9 @@ export class EntitiesScreen {
   }
 
   private applyQueryParams(params: Params): void {
-    const index: string | undefined = params['index'];
-    const searchPhrase: string | undefined = params['search'];
-    const label: string | undefined = params['label'];
+    const index: string | undefined = Utils.parseString(params['index']);
+    const searchPhrase: string | undefined = Utils.parseString(params['search']);
+    const label: string | undefined = Utils.parseString(params['label']);
 
     if (label !== null && label !== undefined) {
       const existing: EntityOption | undefined = this.config.node(this.screen, label);

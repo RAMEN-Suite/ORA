@@ -36,10 +36,11 @@ export class BibleListHelper {
 
     for (const label of labels) {
       const parsed: Parsed | void = this.parse(label, aliases);
-      parsed ? result.set(parsed.option.value, parsed.option) : (isUnknown = true);
+      if (parsed) result.set(parsed.option.value, parsed.option);
+      else isUnknown = true;
     }
 
-    const options: BibleOption[] = [...result.values()].sort(this.sort);
+    const options: BibleOption[] = [...result.values()].sort((a: BibleOption, b: BibleOption): number => a.order - b.order);
     if (isUnknown) options.push({ label: 'app.shared.bibleList.unknown', value: '#', order: Number.MAX_SAFE_INTEGER });
     return options;
   }
@@ -79,10 +80,6 @@ export class BibleListHelper {
     if (verse) return [1, Number(verse[1])];
 
     return [0, 0];
-  }
-
-  private static sort(a: BibleOption, b: BibleOption): number {
-    return a.order - b.order;
   }
 
   private static normalize(value: string): string {

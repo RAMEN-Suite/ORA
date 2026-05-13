@@ -5,12 +5,11 @@ import { ERROR_CODE } from '../constants/ERROR_CODE';
 import { logger } from '../utils/logger';
 import path from 'node:path';
 import fs from 'fs/promises';
-import { Config } from '../models/Config';
 import { ConfigUtils } from '../utils/ConfigUtils';
 
 export type JSON = Record<string, unknown>;
 
-const DEFAULT_CONFIG: Config.Root = { screens, features };
+const DEFAULT_CONFIG: Record<string, unknown> = { screens, features };
 const CONFIG_FILES: string[] = ['screens.config.json', 'features.config.json'];
 
 export class ConfigService {

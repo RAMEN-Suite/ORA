@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 import { ExpressUtils } from './utils/ExpressUtils';
 import { httpLogger, logger } from './utils/logger';
-import { ApiRoutes } from './routes/ApiRoutes';
+import { ApiRoutes } from './routes/api.routes';
 import { initNeo4jService } from './services/Neo4jService';
 import { initConfigService } from './services/ConfigService';
 import { initI18nService } from './services/I18nService';

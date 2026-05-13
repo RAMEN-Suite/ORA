@@ -2,12 +2,12 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ramen-schema.org/ora/2026.1/screens.schema.json",
   "title": "ORA Screens Configuration",
-  "$ref": "#/$defs/screens",
+  "$ref": "#/$defs/screensConfig",
 
   "$defs": {
     "queryPath": {
       "type": "string",
-      "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:\\[[^\\]]+])?(?:\\.[A-Za-z_][A-Za-z0-9_]*(?:\\[[^\\]]+])?)*$"
+      "pattern": "^[A-Za-z0-9_.:[\\]-]+$"
     },
 
     "propertyName": {
@@ -26,7 +26,20 @@
       "additionalProperties": false
     },
 
-    "property": {
+    "queryOption": {
+      "allOf": [
+        { "$ref": "#/$defs/option" },
+        {
+          "type": "object",
+          "properties": {
+            "value": { "$ref": "#/$defs/queryPath" }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+
+    "propertyConfig": {
       "type": "object",
       "required": ["name"],
       "properties": {
@@ -42,7 +55,7 @@
 
     "filterOption": {
       "allOf": [
-        { "$ref": "#/$defs/option" },
+        { "$ref": "#/$defs/queryOption" },
         {
           "type": "object",
           "properties": {
@@ -50,7 +63,6 @@
               "type": "string",
               "enum": ["list", "range"]
             },
-            "value": { "$ref": "#/$defs/queryPath" },
             "valueMap": {
               "type": "object",
               "additionalProperties": { "type": "string" }
@@ -87,18 +99,7 @@
             },
             "options": {
               "type": "array",
-              "items": {
-                "allOf": [
-                  { "$ref": "#/$defs/option" },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "value": { "$ref": "#/$defs/queryPath" }
-                    }
-                  }
-                ],
-                "unevaluatedProperties": false
-              }
+              "items": { "$ref": "#/$defs/queryOption" }
             }
           }
         }
@@ -106,7 +107,7 @@
       "unevaluatedProperties": false
     },
 
-    "nodeOption": {
+    "optionWithProperties": {
       "allOf": [
         { "$ref": "#/$defs/option" },
         {
@@ -114,8 +115,20 @@
           "properties": {
             "properties": {
               "type": "array",
-              "items": { "$ref": "#/$defs/property" }
-            },
+              "items": { "$ref": "#/$defs/propertyConfig" }
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+
+    "collectionNode": {
+      "allOf": [
+        { "$ref": "#/$defs/optionWithProperties" },
+        {
+          "type": "object",
+          "properties": {
             "sort": { "$ref": "#/$defs/sortSelection" },
             "filters": {
               "type": "array",
@@ -127,9 +140,9 @@
       "unevaluatedProperties": false
     },
 
-    "entityNodeOption": {
+    "entityNode": {
       "allOf": [
-        { "$ref": "#/$defs/nodeOption" },
+        { "$ref": "#/$defs/optionWithProperties" },
         {
           "type": "object",
           "properties": {
@@ -143,46 +156,196 @@
       "unevaluatedProperties": false
     },
 
-    "multiNodes": {
+    "collectionListScreen": {
       "type": "object",
       "required": ["initial", "nodes"],
       "properties": {
         "initial": { "type": "string" },
         "nodes": {
           "type": "array",
-          "items": { "$ref": "#/$defs/nodeOption" }
+          "items": { "$ref": "#/$defs/collectionNode" }
         },
         "properties": {
           "type": "array",
-          "items": { "$ref": "#/$defs/property" }
+          "items": { "$ref": "#/$defs/propertyConfig" }
         }
       },
       "additionalProperties": false
     },
 
-    "entityNodes": {
+    "entityListScreen": {
       "type": "object",
       "required": ["initial", "nodes"],
       "properties": {
         "initial": { "type": "string" },
         "nodes": {
           "type": "array",
-          "items": { "$ref": "#/$defs/entityNodeOption" }
+          "items": { "$ref": "#/$defs/entityNode" }
         },
         "properties": {
           "type": "array",
-          "items": { "$ref": "#/$defs/property" }
+          "items": { "$ref": "#/$defs/propertyConfig" }
         }
       },
       "additionalProperties": false
     },
 
-    "screens": {
+    "stringBinding": {
       "type": "object",
-      "required": ["entities", "collections"],
+      "required": ["path"],
       "properties": {
-        "entities": { "$ref": "#/$defs/entityNodes" },
-        "collections": { "$ref": "#/$defs/multiNodes" }
+        "path": { "$ref": "#/$defs/queryPath" },
+        "fallback": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+
+    "stringOrStringArrayBinding": {
+      "type": "object",
+      "required": ["path"],
+      "properties": {
+        "path": { "$ref": "#/$defs/queryPath" },
+        "fallback": {
+          "oneOf": [
+            { "type": "string" },
+            {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "stringValue": {
+      "oneOf": [
+        { "type": "string" },
+        { "$ref": "#/$defs/stringBinding" }
+      ]
+    },
+
+    "stringOrStringArrayValue": {
+      "oneOf": [
+        { "type": "string" },
+        {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        { "$ref": "#/$defs/stringOrStringArrayBinding" }
+      ]
+    },
+
+    "headlineBlockProps": {
+      "type": "object",
+      "required": ["title"],
+      "patternProperties": {
+        "^title$": { "$ref": "#/$defs/stringValue" }
+      },
+      "additionalProperties": false
+    },
+
+    "metadataItem": {
+      "type": "object",
+      "required": ["label", "value"],
+      "properties": {
+        "label": { "$ref": "#/$defs/stringValue" },
+        "value": { "$ref": "#/$defs/stringOrStringArrayValue" }
+      },
+      "additionalProperties": false
+    },
+
+    "metadataBlockProps": {
+      "type": "object",
+      "required": ["items"],
+      "patternProperties": {
+        "^title$": { "$ref": "#/$defs/stringValue" },
+        "^items$": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/metadataItem" }
+        },
+        "^link$": {
+          "type": "string",
+          "enum": ["entity", "collection"]
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "textBlockProps": {
+      "type": "object",
+      "required": ["text"],
+      "patternProperties": {
+        "^title$": { "$ref": "#/$defs/stringValue" },
+        "^text$": { "$ref": "#/$defs/stringValue" }
+      },
+      "additionalProperties": false
+    },
+
+    "headlineBlock": {
+      "type": "object",
+      "required": ["type", "props"],
+      "patternProperties": {
+        "^type$": { "enum": ["headline"] },
+        "^props$": { "$ref": "#/$defs/headlineBlockProps" }
+      },
+      "additionalProperties": false
+    },
+
+    "metadataBlock": {
+      "type": "object",
+      "required": ["type", "props"],
+      "patternProperties": {
+        "^type$": { "enum": ["metadata"] },
+        "^props$": { "$ref": "#/$defs/metadataBlockProps" }
+      },
+      "additionalProperties": false
+    },
+
+    "textBlock": {
+      "type": "object",
+      "required": ["type", "props"],
+      "patternProperties": {
+        "^type$": { "enum": ["text"] },
+        "^props$": { "$ref": "#/$defs/textBlockProps" }
+      },
+      "additionalProperties": false
+    },
+
+    "screenBlock": {
+      "oneOf": [
+        { "$ref": "#/$defs/headlineBlock" },
+        { "$ref": "#/$defs/metadataBlock" },
+        { "$ref": "#/$defs/textBlock" }
+      ]
+    },
+
+    "composedScreen": {
+      "type": "object",
+      "required": ["blocks"],
+      "properties": {
+        "blocks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/screenBlock" }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "screensConfig": {
+      "type": "object",
+      "required": ["entities", "collections", "collection", "entity"],
+      "properties": {
+        "entities": { "$ref": "#/$defs/entityListScreen" },
+        "collections": { "$ref": "#/$defs/collectionListScreen" },
+        "collection": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/composedScreen" }
+        },
+        "entity": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/composedScreen" }
+        }
       },
       "additionalProperties": false
     }

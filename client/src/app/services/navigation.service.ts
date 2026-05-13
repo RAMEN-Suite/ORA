@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Params, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -7,11 +7,7 @@ import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 export class NavigationService {
   private readonly router: Router = inject(Router);
 
-  public updateQuery(
-    route: ActivatedRoute,
-    params: Record<string, string | number | null> | null,
-    options?: NavigationExtras,
-  ): void {
+  public updateQuery(route: ActivatedRoute, params: Params | null, options?: NavigationExtras): void {
     void this.router.navigate([], {
       relativeTo: route,
       queryParams: params,

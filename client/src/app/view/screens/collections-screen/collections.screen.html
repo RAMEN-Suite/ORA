@@ -18,7 +18,7 @@
             [skip]="list.pagination.skip"
             [routeTarget]="['/', ROUTES.COLLECTION]"
             [isLoading]="$list.isLoading()"
-            (onPageChange)="handlePaginationChange($event)"
+            (pageChange)="handlePaginationChange($event)"
           />
         </div>
       </section>
@@ -27,7 +27,7 @@
           <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
             <shared-select
               label="app.collections.select"
-              [items]="nodes()"
+              [items]="nodeOptions"
               [activeItem]="activeNode()"
               (activeItemChange)="handleNodeChange($event)"
             />
@@ -64,7 +64,7 @@
               <shared-select
                 class="w-full"
                 label="app.collections.sort"
-                [items]="sortOptions()"
+                [items]="sort()"
                 [activeItem]="activeSort()"
                 (activeItemChange)="handleSortChange({ orderBy: $event?.value })"
               />

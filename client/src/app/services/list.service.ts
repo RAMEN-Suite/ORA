@@ -19,7 +19,7 @@ const DEFAULT_PAGINATION = {
   providedIn: 'root',
 })
 export class ListService {
-  private readonly baseUrl: string = `${environment.apiBaseUrl}${environment.apiPaths.data}`;
+  private readonly baseUrl: string = `${environment.apiBaseUrl}${environment.apiPaths.view}`;
 
   public fetchList<T>(list: Listable, label: Signal<string>, options?: Signal<ListOptions>): HttpResourceRef<List<T>> {
     return httpResource(
@@ -33,7 +33,7 @@ export class ListService {
     );
   }
 
-  public fetchFacets<T>(list: Listable, label: Signal<string>, options?: Signal<FacetOptions>): HttpResourceRef<FacetGroup[]> {
+  public fetchFacets(list: Listable, label: Signal<string>, options?: Signal<FacetOptions>): HttpResourceRef<FacetGroup[]> {
     return httpResource(
       (): HttpResourceRequest => ({
         url: `${this.baseUrl}/${list}/facets`,
