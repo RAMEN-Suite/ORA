@@ -1,8 +1,8 @@
-import { ActiveFilter } from './Facet';
+import { ActiveFilter } from "./Facet";
 
 export enum Listable {
-  COLLECTION = 'Collection',
-  ENTITY = 'Entity',
+  COLLECTION = "Collection",
+  ENTITY = "Entity",
 }
 
 export interface List<T> {

@@ -1,6 +1,6 @@
-import { CypherAccessHelper } from './CypherAccessHelper';
-import { AccessPath } from './parser/AccessParser';
-import { ActiveFilter } from '../models/Facet';
+import { CypherAccessHelper } from "./CypherAccessHelper";
+import { AccessPath } from "./parser/AccessParser";
+import { ActiveFilter } from "../models/Facet";
 
 interface FilterContext {
   prefix: string;
@@ -24,7 +24,7 @@ export class CypherFilterHelper {
     const expression: string = CypherAccessHelper.expression(path, prefix, params);
     const context: FilterContext = { query, conditions, prefix, params, expression };
 
-    if (filter.kind === 'equal') return this.equals(context, filter.value);
+    if (filter.kind === "equal") return this.equals(context, filter.value);
     return this.range(context, filter.min, filter.max);
   }
 

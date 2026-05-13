@@ -1,19 +1,19 @@
-import { Errback, Express, NextFunction, Request, Response } from 'express';
-import { checkExact, Result, ValidationError, validationResult } from 'express-validator';
-import helmet from 'helmet';
-import { SYSTEM_VALUE } from '../constants/SYSTEM_VALUE';
-import { logger } from './logger';
-import { STATUS_CODE } from '../constants/STATUS_CODE';
+import { Errback, Express, NextFunction, Request, Response } from "express";
+import { checkExact, Result, ValidationError, validationResult } from "express-validator";
+import helmet from "helmet";
+import { SYSTEM_VALUE } from "../constants/SYSTEM_VALUE";
+import { logger } from "./logger";
+import { STATUS_CODE } from "../constants/STATUS_CODE";
 
 export class ExpressUtils {
   public static attachSecurityMeasures(application: Express): void {
-    application.disable('x-powered-by');
-    application.set('trust proxy', true);
+    application.disable("x-powered-by");
+    application.set("trust proxy", true);
     application.use(helmet());
   }
 
   public static attachGenericResponses(application: Express): void {
-    application.get('/health', this.handleHealthCheck);
+    application.get("/health", this.handleHealthCheck);
     application.use(this.handleNotFound);
     application.use(this.handleInternal);
   }
@@ -23,7 +23,7 @@ export class ExpressUtils {
 
     const result: Result<ValidationError> = validationResult(req);
     if (!result.isEmpty() && SYSTEM_VALUE.IS_PRODUCTION) {
-      logger.warn(result.array(), 'Request is not valid.');
+      logger.warn(result.array(), "Request is not valid.");
       res.status(STATUS_CODE.BAD_REQUEST).json();
       return;
     }
@@ -41,7 +41,7 @@ export class ExpressUtils {
   }
 
   private static handleInternal(err: Errback, _: Request, res: Response, __: NextFunction): void {
-    logger.error(err, 'Request computation has failed.');
+    logger.error(err, "Request computation has failed.");
     res.status(STATUS_CODE.INTERNAL).json();
   }
 

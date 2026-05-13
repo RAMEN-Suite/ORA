@@ -1,4 +1,4 @@
-import { deepmerge, deepmergeCustom } from 'deepmerge-ts';
+import { deepmerge, deepmergeCustom } from "deepmerge-ts";
 
 type IdentifiableRecord = Record<string, unknown> & { key?: string; id?: string };
 
@@ -41,7 +41,7 @@ export class ConfigUtils {
   }
 
   private static identity(value: unknown): string | undefined {
-    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) {
       return undefined;
     }
 

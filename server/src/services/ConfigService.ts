@@ -1,35 +1,35 @@
-import screens from '../../config/screens.config.json';
-import features from '../../config/features.config.json';
-import { ServiceError } from '../models/utility/Error';
-import { ERROR_CODE } from '../constants/ERROR_CODE';
-import { logger } from '../utils/logger';
-import path from 'node:path';
-import fs from 'fs/promises';
-import { ConfigUtils } from '../utils/ConfigUtils';
+import screens from "../../config/screens.config.json";
+import features from "../../config/features.config.json";
+import { ServiceError } from "../models/utility/Error";
+import { ERROR_CODE } from "../constants/ERROR_CODE";
+import { logger } from "../utils/logger";
+import path from "node:path";
+import fs from "fs/promises";
+import { ConfigUtils } from "../utils/ConfigUtils";
 
 export type JSON = Record<string, unknown>;
 
 const DEFAULT_CONFIG: Record<string, unknown> = { screens, features };
-const CONFIG_FILES: string[] = ['screens.config.json', 'features.config.json'];
+const CONFIG_FILES: string[] = ["screens.config.json", "features.config.json"];
 
 export class ConfigService {
   private static overridesPath: string | undefined;
 
   public static async initService(): Promise<void> {
     const overridesPath: string | undefined = process.env.CONFIGURATION_PATH;
-    if (!overridesPath) throw new ServiceError(ERROR_CODE.MISSING_ENV_VAR, 'Missing OVERRIDES_PATH');
+    if (!overridesPath) throw new ServiceError(ERROR_CODE.MISSING_ENV_VAR, "Missing OVERRIDES_PATH");
     this.overridesPath = path.resolve(process.cwd(), overridesPath);
 
     const isOverrideAccessible: boolean = await this.exists(this.overridesPath);
-    if (!isOverrideAccessible) logger.warn({ path: this.overridesPath }, 'ConfigService: Are you missing overrides?');
+    if (!isOverrideAccessible) logger.warn({ path: this.overridesPath }, "ConfigService: Are you missing overrides?");
   }
 
   public static async fetchConfig(): Promise<JSON> {
-    if (!this.overridesPath) throw new ServiceError(ERROR_CODE.NOT_INITIALIZED, 'ConfigService not initialized');
+    if (!this.overridesPath) throw new ServiceError(ERROR_CODE.NOT_INITIALIZED, "ConfigService not initialized");
     const config: JSON = { ...DEFAULT_CONFIG };
 
     for (const file of CONFIG_FILES) {
-      const key: string = file.replace('.config.json', '');
+      const key: string = file.replace(".config.json", "");
       const override: JSON = await this.accessJSON(path.join(this.overridesPath, file));
       config[key] = ConfigUtils.merge(config[key], override);
     }
@@ -38,7 +38,7 @@ export class ConfigService {
   }
 
   private static async readJSON(filePath: string): Promise<JSON> {
-    const data: string = await fs.readFile(filePath, 'utf-8');
+    const data: string = await fs.readFile(filePath, "utf-8");
     return JSON.parse(data) as JSON;
   }
 
@@ -52,14 +52,14 @@ export class ConfigService {
       await fs.access(filePath);
       return true;
     } catch (error: unknown) {
-      logger.debug(error, 'ConfigService: Failed to access.');
+      logger.debug(error, "ConfigService: Failed to access.");
       return false;
     }
   }
 }
 
 export async function initConfigService(): Promise<void> {
-  logger.info('ConfigService: Initializing...');
+  logger.info("ConfigService: Initializing...");
   await ConfigService.initService();
-  logger.info('ConfigService: Configuration initialized.');
+  logger.info("ConfigService: Configuration initialized.");
 }

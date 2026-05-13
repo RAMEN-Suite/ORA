@@ -1,10 +1,10 @@
-import { Utils } from '../utils/Utils';
-import { Request, Response } from 'express';
-import { STATUS_CODE } from '../constants/STATUS_CODE';
-import { ListDAO } from '../database/ListDAO';
-import { List, Listable, ListOptions, Pagination } from '../models/List';
-import { matchedData } from 'express-validator';
-import { FilterParser } from '../helper/parser/FilterParser';
+import { Utils } from "../utils/Utils";
+import { Request, Response } from "express";
+import { STATUS_CODE } from "../constants/STATUS_CODE";
+import { ListDAO } from "../database/ListDAO";
+import { List, Listable, ListOptions, Pagination } from "../models/List";
+import { matchedData } from "express-validator";
+import { FilterParser } from "../helper/parser/FilterParser";
 
 export async function getList(resource: Listable, req: Request, res: Response): Promise<void> {
   const query: Record<string, unknown> = matchedData(req);

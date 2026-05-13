@@ -1,4 +1,4 @@
-import { AccessPath, AccessStep } from './parser/AccessParser';
+import { AccessPath, AccessStep } from "./parser/AccessParser";
 
 interface BuildContext {
   prefix: string;
@@ -21,7 +21,7 @@ export class CypherAccessHelper {
       const indexValue: string = String(index);
       const previousIndex: string = String(index - 1);
 
-      const previous: string = index === 0 ? 'r' : `${prefix}${previousIndex}`;
+      const previous: string = index === 0 ? "r" : `${prefix}${previousIndex}`;
       const alias: string = `${prefix}${indexValue}`;
       const context: MatchContext = { previous, alias, index, build, optional };
 
@@ -31,7 +31,7 @@ export class CypherAccessHelper {
 
   public static expression(path: AccessPath, prefix: string, params: Record<string, unknown>): string {
     const lastIndex: string = String(path.steps.length - 1);
-    const alias: string = path.steps.length === 0 ? 'r' : `${prefix}${lastIndex}`;
+    const alias: string = path.steps.length === 0 ? "r" : `${prefix}${lastIndex}`;
     const param: string = `${prefix}Field`;
 
     params[param] = path.field;
@@ -39,19 +39,19 @@ export class CypherAccessHelper {
   }
 
   private static matchStep(step: AccessStep, context: MatchContext): string {
-    if (step.name === 'annotation') return this.matchAnnotation(step, context);
-    if (step.name === 'entity') return this.matchEntity(step, context);
-    if (step.name === 'collection') return this.matchCollection(step, context);
-    if (step.name === 'content') return this.matchContent(step, context);
+    if (step.name === "annotation") return this.matchAnnotation(step, context);
+    if (step.name === "entity") return this.matchEntity(step, context);
+    if (step.name === "collection") return this.matchCollection(step, context);
+    if (step.name === "content") return this.matchContent(step, context);
     return this.matchRefers(step, context);
   }
 
   private static matchAnnotation(step: AccessStep, context: MatchContext): string {
     const { build, alias, index, previous } = context;
-    const clause: string = context.optional ? 'OPTIONAL MATCH' : 'MATCH';
+    const clause: string = context.optional ? "OPTIONAL MATCH" : "MATCH";
 
     const node: string = step.filter
-      ? `(${alias}:Annotation { type: $${this.setParam(build, index, 'AnnotationType', step.filter)} })`
+      ? `(${alias}:Annotation { type: $${this.setParam(build, index, "AnnotationType", step.filter)} })`
       : `(${alias}:Annotation)`;
 
     return `${clause} (${previous})-[:HAS_ANNOTATION]->${node}`;
@@ -59,10 +59,10 @@ export class CypherAccessHelper {
 
   private static matchEntity(step: AccessStep, context: MatchContext): string {
     const { build, alias, index, previous } = context;
-    const clause: string = context.optional ? 'OPTIONAL MATCH' : 'MATCH';
+    const clause: string = context.optional ? "OPTIONAL MATCH" : "MATCH";
 
     const node: string = step.filter
-      ? `(${alias}:Entity:$($${this.setParam(build, index, 'EntityLabel', step.filter)}))`
+      ? `(${alias}:Entity:$($${this.setParam(build, index, "EntityLabel", step.filter)}))`
       : `(${alias}:Entity)`;
 
     return `${clause} (${previous})-[:REFERS_TO]->${node}`;
@@ -70,10 +70,10 @@ export class CypherAccessHelper {
 
   private static matchCollection(step: AccessStep, context: MatchContext): string {
     const { build, alias, index, previous } = context;
-    const clause: string = context.optional ? 'OPTIONAL MATCH' : 'MATCH';
+    const clause: string = context.optional ? "OPTIONAL MATCH" : "MATCH";
 
     const node: string = step.filter
-      ? `(${alias}:Collection:$($${this.setParam(build, index, 'CollectionLabel', step.filter)}))`
+      ? `(${alias}:Collection:$($${this.setParam(build, index, "CollectionLabel", step.filter)}))`
       : `(${alias}:Collection)`;
 
     return `${clause} (${previous})-[:PART_OF]->${node}`;
@@ -81,10 +81,10 @@ export class CypherAccessHelper {
 
   private static matchContent(step: AccessStep, context: MatchContext): string {
     const { build, alias, index, previous } = context;
-    const clause: string = context.optional ? 'OPTIONAL MATCH' : 'MATCH';
+    const clause: string = context.optional ? "OPTIONAL MATCH" : "MATCH";
 
     const node: string = step.filter
-      ? `(${alias}:Content:$($${this.setParam(build, index, 'ContentLabel', step.filter)}))`
+      ? `(${alias}:Content:$($${this.setParam(build, index, "ContentLabel", step.filter)}))`
       : `(${alias}:Content)`;
 
     return `${clause} (${previous})<-[:PART_OF]-${node}`;
@@ -92,9 +92,9 @@ export class CypherAccessHelper {
 
   private static matchRefers(step: AccessStep, context: MatchContext): string {
     const { build, alias, index, previous } = context;
-    const clause: string = context.optional ? 'OPTIONAL MATCH' : 'MATCH';
+    const clause: string = context.optional ? "OPTIONAL MATCH" : "MATCH";
 
-    const node: string = step.filter ? `(${alias}:$($${this.setParam(build, index, 'RefersLabel', step.filter)}))` : `(${alias})`;
+    const node: string = step.filter ? `(${alias}:$($${this.setParam(build, index, "RefersLabel", step.filter)}))` : `(${alias})`;
 
     return `${clause} (${previous})-[:REFERS_TO]->${node}`;
   }

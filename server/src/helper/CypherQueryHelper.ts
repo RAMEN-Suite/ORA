@@ -1,8 +1,8 @@
-import { AccessParser, AccessPath } from './parser/AccessParser';
-import { CypherAccessHelper } from './CypherAccessHelper';
-import { ActiveFilter } from '../models/Facet';
-import neo4j from 'neo4j-driver';
-import { CypherFilterHelper } from './CypherFilterHelper';
+import { AccessParser, AccessPath } from "./parser/AccessParser";
+import { CypherAccessHelper } from "./CypherAccessHelper";
+import { ActiveFilter } from "../models/Facet";
+import neo4j from "neo4j-driver";
+import { CypherFilterHelper } from "./CypherFilterHelper";
 
 export interface QueryContext {
   query: string[];
@@ -19,9 +19,9 @@ export class CypherQueryHelper {
 
   public static applySearch(context: QueryContext, field: string | undefined, search: string | undefined): void {
     if (!search) return;
-    const prefix = 'search';
+    const prefix = "search";
 
-    const path: AccessPath = AccessParser.parse(field ?? 'label');
+    const path: AccessPath = AccessParser.parse(field ?? "label");
     context.query.push(...CypherAccessHelper.matches(path, prefix, context.params));
 
     const property: string = CypherAccessHelper.expression(path, prefix, context.params);
@@ -40,9 +40,9 @@ export class CypherQueryHelper {
   public static applySorting(context: QueryContext, field: string | undefined, asc: boolean | undefined): void {
     if (!field) return;
 
-    const prefix = 'sort';
+    const prefix = "sort";
     const path: AccessPath = AccessParser.parse(field);
-    const direction: string = asc === false ? 'DESC' : 'ASC';
+    const direction: string = asc === false ? "DESC" : "ASC";
 
     context.query.push(...CypherAccessHelper.matches(path, prefix, context.params));
     context.query.push(`ORDER BY ${CypherAccessHelper.expression(path, prefix, context.params)} ${direction}`);
@@ -61,7 +61,7 @@ export class CypherQueryHelper {
   }
 
   public static applyWhere(context: QueryContext): void {
-    if (context.conditions.length > 0) context.query.push(`WHERE ${context.conditions.join(' AND ')}`);
+    if (context.conditions.length > 0) context.query.push(`WHERE ${context.conditions.join(" AND ")}`);
   }
 
   private static getBaseMatch(resource: string, label: string | undefined, params: Record<string, unknown>): string[] {
