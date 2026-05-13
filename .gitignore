@@ -58,3 +58,5 @@ config/*
 
 i18n/*
 !i18n/.gitkeep
+
+build

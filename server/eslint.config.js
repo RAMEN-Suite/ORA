@@ -6,7 +6,7 @@ import prettier from 'eslint-config-prettier';
 export default [
   // Ignore build output
   {
-    ignores: ['dist/**', 'coverage/**', 'node_modules/**', 'openapi/**', '**/*.js'],
+    ignores: ['dist/**', 'coverage/**', 'node_modules/**', 'openapi/**', '**/*.js', 'build/**'],
   },
 
   // Base JS recommended

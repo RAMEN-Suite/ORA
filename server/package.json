@@ -10,7 +10,6 @@
     "url": "https://www.sebenns.com"
   },
   "private": true,
-  "type": "module",
   "scripts": {
     "docs": "node openapi/generator.js",
     "build": "tsc -p ./ && webpack",
