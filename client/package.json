@@ -14,7 +14,9 @@
     "ng": "ng",
     "start": "ng serve --proxy-config proxy.conf.json",
     "host": "ng serve --proxy-config proxy.conf.json --host=0.0.0.0",
-    "build": "ng build --configuration production"
+    "build": "ng build --configuration production",
+    "lint": "ng lint",
+    "format": "prettier --check src"
   },
   "dependencies": {
     "@angular/common": "^21.2.7",
@@ -43,9 +45,13 @@
     "@angular/build": "^21.2.7",
     "@angular/cli": "^21.2.7",
     "@angular/compiler-cli": "^21.2.7",
+    "@eslint/js": "^10.0.1",
     "@tailwindcss/postcss": "^4.1.12",
     "@types/jasmine": "~6.0.0",
     "@types/sprintf-js": "^1.1.4",
+    "angular-eslint": "21.4.0",
+    "eslint": "^10.3.0",
+    "eslint-config-prettier": "^10.1.8",
     "jasmine-core": "~6.2.0",
     "karma": "~6.4.4",
     "karma-chrome-launcher": "~3.2.0",
@@ -56,6 +62,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "tailwindcss": "^4.1.12",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "typescript-eslint": "8.59.2"
   }
 }

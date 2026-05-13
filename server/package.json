@@ -15,7 +15,11 @@
     "docs": "node openapi/generator.js",
     "build": "tsc -p ./ && webpack",
     "dev:api:ora": "tsx watch --env-file=.env src/ora.api.ts | pino-pretty",
-    "prod:api:ora": "node dist/ora.api.js"
+    "prod:api:ora": "node dist/ora.api.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --check src",
+    "format:fix": "prettier --write src"
   },
   "dependencies": {
     "deepmerge-ts": "^7.1.5",
@@ -27,14 +31,18 @@
     "pino-http": "^11.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.0",
     "clean-webpack-plugin": "^4.0.0",
     "eslint": "^10.2.1",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.6.0",
     "pino-prettier": "^3.0.1-dev",
     "prettier": "^3.8.3",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.3",
     "webpack": "^5.106.2",
     "webpack-cli": "^7.0.2",
     "webpack-node-externals": "^3.0.0",
