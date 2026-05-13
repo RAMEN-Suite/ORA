@@ -1,6 +1,6 @@
 import { Preset } from '@primeuix/themes/types';
 import { definePreset } from '@primeuix/themes';
-import Aura from '@primeuix/themes/Aura';
+import Aura from '@primeuix/themes/aura';
 
 export const SuitePreset: Preset = definePreset(Aura, {
   semantic: {
