@@ -14,8 +14,8 @@
   "scripts": {
     "docs": "node openapi/generator.js",
     "build": "webpack",
-    "dev:api:ora": "tsx watch --env-file=.env src/ora.api.ts | pino-pretty",
-    "prod:api:ora": "node dist/ora.api.js",
+    "ora:dev": "tsx watch --env-file=.env src/ora.api.ts | pino-pretty",
+    "ora:prod": "node dist/ora.api.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --check src",

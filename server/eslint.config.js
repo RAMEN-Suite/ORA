@@ -4,26 +4,31 @@ import tseslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
 
 export default [
-  // Ignore build output
   {
     ignores: ['dist/**', 'coverage/**', 'node_modules/**', 'openapi/**', '**/*.js', 'build/**'],
   },
 
-  // Base JS recommended
   js.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
+  ...tseslint.configs.strictTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
 
-  // Node environment globals
   {
+    files: ['**/*.ts'],
     languageOptions: {
       parserOptions: {
         projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
       globals: {
         ...globals.node,
       },
     },
     rules: {
+      '@typescript-eslint/no-inferrable-types': 'off',
+      '@typescript-eslint/no-extraneous-class': 'off',
+      '@typescript-eslint/no-confusing-void-expression': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+
       '@typescript-eslint/no-unused-vars': [
         'error',
         {

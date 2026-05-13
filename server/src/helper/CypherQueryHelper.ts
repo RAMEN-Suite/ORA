@@ -33,7 +33,7 @@ export class CypherQueryHelper {
   public static applyFilter(context: QueryContext, filters: ActiveFilter[]): void {
     for (const [index, filter] of filters.entries()) {
       const path: AccessPath = AccessParser.parse(filter.field);
-      CypherFilterHelper.filter(path, context.query, context.conditions, context.params, `filter${index}`, filter);
+      CypherFilterHelper.filter(path, context.query, context.conditions, context.params, `filter${String(index)}`, filter);
     }
   }
 

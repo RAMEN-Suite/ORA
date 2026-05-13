@@ -18,8 +18,11 @@ export class CypherAccessHelper {
     const build: BuildContext = { prefix, params };
 
     return path.steps.map((step: AccessStep, index: number): string => {
-      const previous: string = index === 0 ? 'r' : `${prefix}${index - 1}`;
-      const alias: string = `${prefix}${index}`;
+      const indexValue: string = String(index);
+      const previousIndex: string = String(index - 1);
+
+      const previous: string = index === 0 ? 'r' : `${prefix}${previousIndex}`;
+      const alias: string = `${prefix}${indexValue}`;
       const context: MatchContext = { previous, alias, index, build, optional };
 
       return this.matchStep(step, context);
@@ -27,7 +30,8 @@ export class CypherAccessHelper {
   }
 
   public static expression(path: AccessPath, prefix: string, params: Record<string, unknown>): string {
-    const alias: string = path.steps.length === 0 ? 'r' : `${prefix}${path.steps.length - 1}`;
+    const lastIndex: string = String(path.steps.length - 1);
+    const alias: string = path.steps.length === 0 ? 'r' : `${prefix}${lastIndex}`;
     const param: string = `${prefix}Field`;
 
     params[param] = path.field;
@@ -39,8 +43,7 @@ export class CypherAccessHelper {
     if (step.name === 'entity') return this.matchEntity(step, context);
     if (step.name === 'collection') return this.matchCollection(step, context);
     if (step.name === 'content') return this.matchContent(step, context);
-    if (step.name === 'refers') return this.matchRefers(step, context);
-    return this.assertNever(step.name);
+    return this.matchRefers(step, context);
   }
 
   private static matchAnnotation(step: AccessStep, context: MatchContext): string {
@@ -97,12 +100,8 @@ export class CypherAccessHelper {
   }
 
   private static setParam(context: BuildContext, index: number, name: string, value: unknown): string {
-    const param: string = `${context.prefix}${index}${name}`;
+    const param: string = `${context.prefix}${String(index)}${name}`;
     context.params[param] = value;
     return param;
-  }
-
-  private static assertNever(value: never): never {
-    throw new Error(`Unsupported access step: ${value}`);
   }
 }

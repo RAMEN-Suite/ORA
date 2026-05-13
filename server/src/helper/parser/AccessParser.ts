@@ -36,8 +36,8 @@ export class AccessParser {
 
   private static parseSegment(value: string): Segment {
     const match: RegExpMatchArray | null = value.match(this.SEGMENT_EXP);
-    const name: string | undefined = match?.groups?.['name'];
-    const filter: string | undefined = match?.groups?.['filter'];
+    const name: string | undefined = match?.groups?.name;
+    const filter: string | undefined = match?.groups?.filter;
 
     if (!name) throw new Error(`Invalid segment: ${value}`);
     return { name, filter };

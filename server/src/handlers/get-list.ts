@@ -6,7 +6,7 @@ import { List, Listable, ListOptions, Pagination } from '../models/List';
 import { matchedData } from 'express-validator';
 import { FilterParser } from '../helper/parser/FilterParser';
 
-export async function getList<T>(resource: Listable, req: Request, res: Response): Promise<void> {
+export async function getList(resource: Listable, req: Request, res: Response): Promise<void> {
   const query: Record<string, unknown> = matchedData(req);
 
   const specifiedLabel: string | undefined = Utils.parseString(query.label);
@@ -20,7 +20,7 @@ export async function getList<T>(resource: Listable, req: Request, res: Response
     filters: FilterParser.parseMany(Utils.parseStringArray(query.filters)),
   };
 
-  const data: T[] = await ListDAO.getList(resource, specifiedLabel, options);
+  const data: unknown[] = await ListDAO.getList(resource, specifiedLabel, options);
   const total: number = await ListDAO.getCount(resource, specifiedLabel, options);
 
   const pagination: Pagination = {
@@ -31,6 +31,6 @@ export async function getList<T>(resource: Listable, req: Request, res: Response
     hasNext: options.skip + data.length < total,
     hasPrevious: options.skip > 0,
   };
-  const response: List<T> = { data, pagination };
+  const response: List<unknown> = { data, pagination };
   res.status(STATUS_CODE.OK).json(response);
 }

@@ -13,7 +13,7 @@ export class ConfigUtils {
 
   private static mergeArray(base: readonly unknown[], override: readonly unknown[]): unknown[] {
     const merged: unknown[] = [...base];
-    const indexByIdentity: Map<string, number> = new Map();
+    const indexByIdentity: Map<string, number> = new Map<string, number>();
 
     for (const [index, item] of merged.entries()) {
       const identity: string | undefined = ConfigUtils.identity(item);

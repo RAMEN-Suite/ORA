@@ -5,13 +5,14 @@ import { AccessParser, AccessPath } from '../helper/parser/AccessParser';
 import { FacetGroup, FacetOptions, FacetValue } from '../models/Facet';
 import { CypherAccessHelper } from '../helper/CypherAccessHelper';
 import { CypherQueryHelper, QueryContext } from '../helper/CypherQueryHelper';
+import { Utils } from '../utils/Utils';
 
 export class FacetDAO {
-  public static async getFacets(resource: Listable, label: string | undefined, options: FacetOptions): Promise<FacetGroup[]> {
+  public static async getFacets(listable: Listable, label: string | undefined, options: FacetOptions): Promise<FacetGroup[]> {
     const groups: FacetGroup[] = [];
 
     for (const field of options.facets) {
-      const values: FacetValue[] = await this.getFacetValues(resource, label, field, options);
+      const values: FacetValue[] = await this.getFacetValues(listable, label, field, options);
       groups.push({ field, values });
     }
 
@@ -51,13 +52,12 @@ export class FacetDAO {
   }
 
   private static mapFacetValues(result: QueryResult | null): FacetValue[] {
-    return (
-      result?.records.map(
-        (record: Record): FacetValue => ({
-          value: String(record.get('value')),
-          count: record.get('count') ?? 0,
-        }),
-      ) ?? []
-    );
+    if (!result) return [];
+
+    return result.records.map((record: Record): FacetValue => {
+      const value: unknown = record.get('value');
+      const count: unknown = record.get('count');
+      return { value: Utils.parseString(value) ?? '', count: Utils.parseNumber(count) ?? 0 };
+    });
   }
 }

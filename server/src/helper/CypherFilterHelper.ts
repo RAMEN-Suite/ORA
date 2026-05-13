@@ -25,7 +25,7 @@ export class CypherFilterHelper {
     const context: FilterContext = { query, conditions, prefix, params, expression };
 
     if (filter.kind === 'equal') return this.equals(context, filter.value);
-    if (filter.kind === 'range') return this.range(context, filter.min, filter.max);
+    return this.range(context, filter.min, filter.max);
   }
 
   private static equals(context: FilterContext, value: unknown): void {

@@ -2,8 +2,8 @@ import { REGEXP } from '../../constants/REGEXP';
 import { ActiveFilter } from '../../models/Facet';
 
 export class FilterParser {
-  private static readonly SEPARATOR: '~' = '~';
-  private static readonly RANGE: '..' = '..';
+  private static readonly SEPARATOR: '~' = '~' as const;
+  private static readonly RANGE: '..' = '..' as const;
 
   public static parse(value: string): ActiveFilter {
     const [field, rawValue] = this.parseFilterParts(value);

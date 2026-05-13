@@ -30,7 +30,7 @@ export class I18nService {
 
   private static async readJSON(filePath: string): Promise<Translation> {
     const data: string = await fs.readFile(filePath, 'utf-8');
-    return JSON.parse(data);
+    return JSON.parse(data) as Translation;
   }
 
   private static async accessJSON(filePath: string): Promise<Translation> {

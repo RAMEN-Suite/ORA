@@ -39,7 +39,7 @@ export class ConfigService {
 
   private static async readJSON(filePath: string): Promise<JSON> {
     const data: string = await fs.readFile(filePath, 'utf-8');
-    return JSON.parse(data);
+    return JSON.parse(data) as JSON;
   }
 
   private static async accessJSON(filePath: string): Promise<JSON> {
