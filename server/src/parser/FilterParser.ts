@@ -1,18 +1,33 @@
-import { REGEXP } from "../../constants/REGEXP";
-import { ActiveFilter } from "../../models/Facet";
+import { REGEXP } from "../constants/REGEXP";
+import { Filter } from "../models/Filter";
+
+/**
+ * Parses serialized query filters.
+ *
+ * Supported formats:
+ * - equal: "<field>~<value>"
+ * - range: "<field>~<min>..<max>"
+ * - open range: "<field>~<min>.." or "<field>~..<max>"
+ *
+ * Examples:
+ * - "label~Hamburg"
+ * - "date~1600..1700"
+ * - "date~1600.."
+ * - "date~..1700"
+ */
 
 export class FilterParser {
   private static readonly SEPARATOR: "~" = "~" as const;
   private static readonly RANGE: ".." = ".." as const;
 
-  public static parse(value: string): ActiveFilter {
+  public static parse(value: string): Filter {
     const [field, rawValue] = this.parseFilterParts(value);
-    if (value.includes(this.RANGE)) return this.parseRange(value, field, rawValue);
+    if (rawValue.includes(this.RANGE)) return this.parseRange(value, field, rawValue);
     return { kind: "equal", field, value: rawValue };
   }
 
-  public static parseMany(values: string[]): ActiveFilter[] {
-    return values.map((value: string): ActiveFilter => this.parse(value));
+  public static parseMany(values: string[]): Filter[] {
+    return values.map((value: string): Filter => this.parse(value));
   }
 
   private static parseFilterParts(value: string): [field: string, rawValue: string] {
@@ -32,7 +47,7 @@ export class FilterParser {
     return [field, rawValue];
   }
 
-  private static parseRange(value: string, field: string, rawValue: string): ActiveFilter {
+  private static parseRange(value: string, field: string, rawValue: string): Filter {
     const [rawMin, rawMax] = this.parseRangeParts(value, rawValue);
     const min: number | undefined = this.parseRangeBoundary(value, rawMin);
     const max: number | undefined = this.parseRangeBoundary(value, rawMax);

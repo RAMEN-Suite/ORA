@@ -1,63 +1,66 @@
-import { QueryResult, Record } from "neo4j-driver";
+import { QueryResult, Record as Neo4jRecord } from "neo4j-driver";
 import { Neo4jService } from "../services/Neo4jService";
-import { Listable } from "../models/List";
-import { AccessParser, AccessPath } from "../helper/parser/AccessParser";
+import { AccessParser, AccessPath } from "../parser/AccessParser";
 import { FacetGroup, FacetOptions, FacetValue } from "../models/Facet";
-import { CypherAccessHelper } from "../helper/CypherAccessHelper";
-import { CypherQueryHelper, QueryContext } from "../helper/CypherQueryHelper";
+import { QueryAccessBuilder } from "./cypher/QueryAccessBuilder";
+import { BuiltQuery, QueryBuilder } from "./cypher/QueryBuilder";
 import { Utils } from "../utils/Utils";
+import { CypherUtils } from "../utils/CypherUtils";
+import { Resource } from "../models/RAMEN";
 
 export class FacetDAO {
-  public static async getFacets(listable: Listable, label: string | undefined, options: FacetOptions): Promise<FacetGroup[]> {
+  public static async getFacets(listable: Resource, label: string | undefined, options: FacetOptions): Promise<FacetGroup[]> {
     const groups: FacetGroup[] = [];
 
     for (const field of options.facets) {
-      const values: FacetValue[] = await this.getFacetValues(listable, label, field, options);
+      const values: FacetValue[] = await this.getValues(listable, label, field, options);
       groups.push({ field, values });
     }
 
     return groups;
   }
 
-  private static async getFacetValues(
-    resource: Listable,
+  private static async getValues(
+    resource: Resource,
     label: string | undefined,
     facet: string,
     options: FacetOptions,
   ): Promise<FacetValue[]> {
-    const context: QueryContext = CypherQueryHelper.createContext(resource, label);
+    const builder: QueryBuilder = new QueryBuilder(resource, label);
 
-    CypherQueryHelper.applySearch(context, options.field, options.search);
-    CypherQueryHelper.applyFilter(context, options.filters ?? []);
-    CypherQueryHelper.applyWhere(context);
+    builder.search(options.field, options.search);
+    builder.filters(options.filters ?? []);
+    builder.where();
 
-    this.applyFacet(context, facet);
+    this.applyFacet(builder, facet);
 
-    const result: QueryResult | null = await Neo4jService.run(context.query.join(" "), context.params);
+    const query: BuiltQuery = builder.build();
+    const result: QueryResult | null = await Neo4jService.run(query.cypher, query.params);
     return this.mapFacetValues(result);
   }
 
-  private static applyFacet(context: QueryContext, field: string): void {
+  private static applyFacet(builder: QueryBuilder, field: string): void {
     const prefix = "facet";
     const path: AccessPath = AccessParser.parse(field);
+    const params: Record<string, unknown> = builder.parameters();
 
-    context.query.push(`WITH DISTINCT r`);
-    context.query.push(...CypherAccessHelper.matches(path, prefix, context.params));
-    const expression: string = CypherAccessHelper.expression(path, prefix, context.params);
+    builder.append("WITH DISTINCT r");
+    builder.append(...QueryAccessBuilder.matches(path, prefix, params));
 
-    context.query.push(`WITH ${expression} AS value, r`);
-    context.query.push(`WHERE value IS NOT NULL`);
-    context.query.push(`RETURN value, count(DISTINCT r) AS count`);
-    context.query.push(`ORDER BY count DESC, value ASC`);
+    const expression: string = QueryAccessBuilder.expression(path, prefix, params);
+    builder.append(`WITH ${expression} AS value, r`);
+    builder.append("WHERE value IS NOT NULL");
+    builder.append("RETURN value, count(DISTINCT r) AS count");
+    builder.append("ORDER BY count DESC, value ASC");
   }
 
   private static mapFacetValues(result: QueryResult | null): FacetValue[] {
     if (!result) return [];
 
-    return result.records.map((record: Record): FacetValue => {
+    return result.records.map((record: Neo4jRecord): FacetValue => {
       const value: unknown = record.get("value");
       const count: unknown = record.get("count");
-      return { value: Utils.parseString(value) ?? "", count: Utils.parseNumber(count) ?? 0 };
+      return { value: Utils.parseString(value) ?? "", count: CypherUtils.parseNumber(count) };
     });
   }
 }

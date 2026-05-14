@@ -3,11 +3,8 @@ import fs from "fs/promises";
 import { ServiceError } from "../models/utility/Error";
 import { ERROR_CODE } from "../constants/ERROR_CODE";
 import { logger } from "../utils/logger";
-import { deepmerge } from "deepmerge-ts";
 
 export type Translation = Record<string, unknown>;
-
-const DEFAULT_LANGUAGES_PATH: string = path.resolve(process.cwd(), "i18n");
 
 export class I18nService {
   private static languagesPath: string | undefined;
@@ -23,9 +20,7 @@ export class I18nService {
 
   public static async fetchTranslation(lang: string): Promise<Translation> {
     if (!this.languagesPath) throw new ServiceError(ERROR_CODE.NOT_INITIALIZED, "I18nService not initialized");
-    const defaults: Translation = await this.accessJSON(path.join(DEFAULT_LANGUAGES_PATH, `${lang}.json`));
-    const custom: Translation = await this.accessJSON(path.join(this.languagesPath, `${lang}.json`));
-    return deepmerge(defaults, custom);
+    return await this.accessJSON(path.join(this.languagesPath, `${lang}.json`));
   }
 
   private static async readJSON(filePath: string): Promise<Translation> {

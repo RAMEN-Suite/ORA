@@ -2,11 +2,12 @@ import { Utils } from "../utils/Utils";
 import { Request, Response } from "express";
 import { STATUS_CODE } from "../constants/STATUS_CODE";
 import { ListDAO } from "../database/ListDAO";
-import { List, Listable, ListOptions, Pagination } from "../models/List";
+import { List, ListOptions, Pagination } from "../models/List";
 import { matchedData } from "express-validator";
-import { FilterParser } from "../helper/parser/FilterParser";
+import { FilterParser } from "../parser/FilterParser";
+import { Resource } from "../models/RAMEN";
 
-export async function getList(resource: Listable, req: Request, res: Response): Promise<void> {
+export async function getList(resource: Resource, req: Request, res: Response): Promise<void> {
   const query: Record<string, unknown> = matchedData(req);
 
   const specifiedLabel: string | undefined = Utils.parseString(query.label);

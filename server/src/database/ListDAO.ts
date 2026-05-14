@@ -1,38 +1,42 @@
 import { QueryResult } from "neo4j-driver";
 import { Neo4jService } from "../services/Neo4jService";
-import { Listable, ListOptions } from "../models/List";
-import { CypherQueryHelper, QueryContext } from "../helper/CypherQueryHelper";
+import { ListOptions } from "../models/List";
+import { BuiltQuery, QueryBuilder } from "./cypher/QueryBuilder";
+import { Resource } from "../models/RAMEN";
+import { CypherUtils } from "../utils/CypherUtils";
 import { Utils } from "../utils/Utils";
 
 export class ListDAO {
-  public static async getList<T>(listable: Listable, label: string | undefined, options: ListOptions): Promise<T[]> {
-    const context: QueryContext = CypherQueryHelper.createContext(listable, label);
+  public static async getList(resource: Resource, label: string | undefined, options: ListOptions): Promise<unknown[]> {
+    const builder: QueryBuilder = new QueryBuilder(resource, label);
 
-    CypherQueryHelper.applySearch(context, options.field, options.search);
-    CypherQueryHelper.applyFilter(context, options.filters ?? []);
-    CypherQueryHelper.applyWhere(context);
-    CypherQueryHelper.applySorting(context, options.orderBy, options.asc);
-    CypherQueryHelper.applySkip(context, options.skip);
-    CypherQueryHelper.applyLimit(context, options.limit);
+    builder.search(options.field, options.search);
+    builder.filters(options.filters ?? []);
+    builder.where();
+    builder.sort(options.orderBy, options.asc);
+    builder.skip(options.skip);
+    builder.limit(options.limit);
+    builder.append("RETURN collect(DISTINCT r {.*, _labels: labels(r)}) AS resource");
 
-    context.query.push(`RETURN collect(DISTINCT r {.*, _types: labels(r)}) AS resource`);
+    const query: BuiltQuery = builder.build();
+    const result: QueryResult | null = await Neo4jService.run(query.cypher, query.params);
+    const value: unknown = result?.records[0]?.get("resource");
 
-    const result: QueryResult | null = await Neo4jService.run(context.query.join(" "), context.params);
-    const resource: unknown = result?.records[0]?.get("resource");
-    return Array.isArray(resource) ? (resource as T[]) : [];
+    return Utils.parseArray(value);
   }
 
-  public static async getCount(resource: Listable, label: string | undefined, options: ListOptions): Promise<number> {
-    const context: QueryContext = CypherQueryHelper.createContext(resource, label);
+  public static async getCount(resource: Resource, label: string | undefined, options: ListOptions): Promise<number> {
+    const builder: QueryBuilder = new QueryBuilder(resource, label);
 
-    CypherQueryHelper.applySearch(context, options.field, options.search);
-    CypherQueryHelper.applyFilter(context, options.filters ?? []);
-    CypherQueryHelper.applyWhere(context);
+    builder.search(options.field, options.search);
+    builder.filters(options.filters ?? []);
+    builder.where();
+    builder.append("RETURN count(DISTINCT r) AS total");
 
-    context.query.push(`RETURN count(DISTINCT r) AS total`);
+    const query: BuiltQuery = builder.build();
+    const result: QueryResult | null = await Neo4jService.run(query.cypher, query.params);
+    const value: unknown = result?.records[0]?.get("total");
 
-    const result: QueryResult | null = await Neo4jService.run(context.query.join(" "), context.params);
-    const total: unknown = result?.records[0]?.get("total");
-    return Utils.parseNumber(total) ?? 0;
+    return CypherUtils.parseNumber(value);
   }
 }

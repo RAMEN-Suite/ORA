@@ -20,6 +20,7 @@ export class Utils {
   }
 
   public static parseArray(value: unknown): unknown[] {
+    if (value === undefined || value === null) return [];
     return Array.isArray(value) ? value : [value];
   }
 

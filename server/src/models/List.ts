@@ -1,9 +1,4 @@
-import { ActiveFilter } from "./Facet";
-
-export enum Listable {
-  COLLECTION = "Collection",
-  ENTITY = "Entity",
-}
+import { Filter } from "./Filter";
 
 export interface List<T> {
   data: T[];
@@ -26,5 +21,5 @@ export interface ListOptions {
   asc?: boolean;
   search?: string;
   field?: string;
-  filters?: ActiveFilter[];
+  filters?: Filter[];
 }

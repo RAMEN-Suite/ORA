@@ -28,6 +28,8 @@ export default [
       "@typescript-eslint/no-extraneous-class": "off",
       "@typescript-eslint/no-confusing-void-expression": "off",
       "@typescript-eslint/unbound-method": "off",
+      "@typescript-eslint/restrict-template-expressions": "off",
+      "@typescript-eslint/no-unnecessary-condition": "off",
 
       "@typescript-eslint/no-unused-vars": [
         "error",
