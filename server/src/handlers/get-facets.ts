@@ -8,14 +8,14 @@ import { FilterParser } from "../parser/FilterParser";
 import { Resource } from "../models/RAMEN";
 
 export async function getFacets(resource: Resource, req: Request, res: Response): Promise<void> {
-  const queries: Record<string, unknown> = matchedData(req);
+  const params: Record<string, unknown> = matchedData(req);
 
-  const specifiedLabel: string | undefined = Utils.parseString(queries.label);
+  const specifiedLabel: string | undefined = Utils.parseString(params.label);
   const options: FacetOptions = {
-    search: Utils.parseString(queries.search),
-    field: Utils.parseString(queries.field),
-    facets: Utils.parseStringArray(queries.facets),
-    filters: FilterParser.parseMany(Utils.parseStringArray(queries.filters)),
+    search: Utils.parseString(params.search),
+    field: Utils.parseString(params.field),
+    facets: Utils.parseStringArray(params.facets),
+    filters: FilterParser.parseMany(Utils.parseStringArray(params.filters)),
   };
 
   const response: FacetGroup[] = await FacetDAO.getFacets(resource, specifiedLabel, options);

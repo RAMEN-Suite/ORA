@@ -1,19 +1,18 @@
 import { QueryResult, Record as Neo4jRecord } from "neo4j-driver";
 import { Neo4jService } from "../services/Neo4jService";
-import { AccessParser, AccessPath } from "../parser/AccessParser";
 import { FacetGroup, FacetOptions, FacetValue } from "../models/Facet";
-import { QueryAccessBuilder } from "./cypher/QueryAccessBuilder";
-import { BuiltQuery, QueryBuilder } from "./cypher/QueryBuilder";
+import { AccessPattern } from "./cypher/AccessPattern";
+import { BuiltQuery, QueryAssembler } from "./cypher/QueryAssembler";
 import { Utils } from "../utils/Utils";
 import { CypherUtils } from "../utils/CypherUtils";
 import { Resource } from "../models/RAMEN";
 
 export class FacetDAO {
-  public static async getFacets(listable: Resource, label: string | undefined, options: FacetOptions): Promise<FacetGroup[]> {
+  public static async getFacets(resource: Resource, label: string | undefined, options: FacetOptions): Promise<FacetGroup[]> {
     const groups: FacetGroup[] = [];
 
     for (const field of options.facets) {
-      const values: FacetValue[] = await this.getValues(listable, label, field, options);
+      const values: FacetValue[] = await this.getValues(resource, label, field, options);
       groups.push({ field, values });
     }
 
@@ -26,32 +25,31 @@ export class FacetDAO {
     facet: string,
     options: FacetOptions,
   ): Promise<FacetValue[]> {
-    const builder: QueryBuilder = new QueryBuilder(resource, label);
+    const assembler: QueryAssembler = new QueryAssembler(resource, label);
 
-    builder.search(options.field, options.search);
-    builder.filters(options.filters ?? []);
-    builder.where();
+    assembler.search(options.field, options.search);
+    assembler.filters(options.filters ?? []);
+    assembler.where();
 
-    this.applyFacet(builder, facet);
-
-    const query: BuiltQuery = builder.build();
+    this.applyFacet(assembler, facet);
+    const query: BuiltQuery = assembler.build();
     const result: QueryResult | null = await Neo4jService.run(query.cypher, query.params);
+
     return this.mapFacetValues(result);
   }
 
-  private static applyFacet(builder: QueryBuilder, field: string): void {
-    const prefix = "facet";
-    const path: AccessPath = AccessParser.parse(field);
-    const params: Record<string, unknown> = builder.parameters();
+  private static applyFacet(assembler: QueryAssembler, field: string): void {
+    const alias: string = assembler.getAlias();
+    const pattern: AccessPattern = assembler.access(field, "facet");
 
-    builder.append("WITH DISTINCT r");
-    builder.append(...QueryAccessBuilder.matches(path, prefix, params));
+    assembler.append(`WITH DISTINCT ${alias}`);
+    assembler.append(...pattern.match());
 
-    const expression: string = QueryAccessBuilder.expression(path, prefix, params);
-    builder.append(`WITH ${expression} AS value, r`);
-    builder.append("WHERE value IS NOT NULL");
-    builder.append("RETURN value, count(DISTINCT r) AS count");
-    builder.append("ORDER BY count DESC, value ASC");
+    const expression: string = pattern.expression();
+    assembler.append(`WITH ${expression} AS value, ${alias}`);
+    assembler.append("WHERE value IS NOT NULL");
+    assembler.append(`RETURN value, count(DISTINCT ${alias}) AS count`);
+    assembler.append("ORDER BY count DESC, value ASC");
   }
 
   private static mapFacetValues(result: QueryResult | null): FacetValue[] {

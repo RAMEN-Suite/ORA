@@ -8,17 +8,17 @@ import { FilterParser } from "../parser/FilterParser";
 import { Resource } from "../models/RAMEN";
 
 export async function getList(resource: Resource, req: Request, res: Response): Promise<void> {
-  const query: Record<string, unknown> = matchedData(req);
+  const params: Record<string, unknown> = matchedData(req);
 
-  const specifiedLabel: string | undefined = Utils.parseString(query.label);
+  const specifiedLabel: string | undefined = Utils.parseString(params.label);
   const options: ListOptions = {
-    orderBy: Utils.parseString(query.orderBy),
-    asc: Utils.parseBoolean(query.asc),
-    limit: Utils.parseNumber(query.limit) ?? 25,
-    skip: Utils.parseNumber(query.skip) ?? 0,
-    search: Utils.parseString(query.search),
-    field: Utils.parseString(query.field),
-    filters: FilterParser.parseMany(Utils.parseStringArray(query.filters)),
+    orderBy: Utils.parseString(params.orderBy),
+    asc: Utils.parseBoolean(params.asc),
+    limit: Utils.parseNumber(params.limit) ?? 25,
+    skip: Utils.parseNumber(params.skip) ?? 0,
+    search: Utils.parseString(params.search),
+    field: Utils.parseString(params.field),
+    filters: FilterParser.parseMany(Utils.parseStringArray(params.filters)),
   };
 
   const data: unknown[] = await ListDAO.getList(resource, specifiedLabel, options);

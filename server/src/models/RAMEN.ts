@@ -5,6 +5,12 @@ export enum Resource {
   ANNOTATION = "Annotation",
 }
 
+export enum Relation {
+  HAS_ANNOTATION = "HAS_ANNOTATION",
+  REFERS_TO = "REFERS_TO",
+  PART_OF = "PART_OF",
+}
+
 export interface Node {
   _labels: string[];
   [key: string]: unknown;

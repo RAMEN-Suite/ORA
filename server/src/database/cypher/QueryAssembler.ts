@@ -1,5 +1,5 @@
 import neo4j from "neo4j-driver";
-import { QueryAccessBuilder } from "./QueryAccessBuilder";
+import { AccessPattern } from "./AccessPattern";
 import { AccessParser, AccessPath } from "../../parser/AccessParser";
 import { Resource } from "../../models/RAMEN";
 import { Filter } from "../../models/Filter";
@@ -9,28 +9,31 @@ export interface BuiltQuery {
   params: Record<string, unknown>;
 }
 
-export class QueryBuilder {
+export class QueryAssembler {
+  private readonly alias: string;
   private readonly query: string[] = [];
   private readonly params: Record<string, unknown> = {};
   private readonly conditions: string[] = [];
 
-  public constructor(resource: Resource, label?: string) {
+  public constructor(resource: Resource, label?: string, alias: string = "r") {
+    this.alias = alias;
     this.match(resource, label);
   }
 
-  public parameters(): Record<string, unknown> {
+  public getAlias(): string {
+    return this.alias;
+  }
+
+  public getParams(): Record<string, unknown> {
     return this.params;
   }
 
   public search(field: string | undefined, search: string | undefined): this {
     if (!search) return this;
+    const pattern: AccessPattern = this.access(field ?? "label", "search");
 
-    const prefix = "search";
-    const path: AccessPath = AccessParser.parse(field ?? "label");
-    this.query.push(...QueryAccessBuilder.matches(path, prefix, this.params));
-
-    const property: string = QueryAccessBuilder.expression(path, prefix, this.params);
-    this.conditions.push(`apoc.text.clean(${property}) CONTAINS apoc.text.clean($search)`);
+    this.query.push(...pattern.match());
+    this.conditions.push(`apoc.text.clean(${pattern.expression()}) CONTAINS apoc.text.clean($search)`);
     this.params.search = search;
 
     return this;
@@ -39,10 +42,10 @@ export class QueryBuilder {
   public filters(filters: Filter[]): this {
     for (const [index, filter] of filters.entries()) {
       const prefix: string = `filter${index}`;
-      const path: AccessPath = AccessParser.parse(filter.field);
+      const pattern: AccessPattern = this.access(filter.field, prefix, false);
 
-      this.query.push(...QueryAccessBuilder.matches(path, prefix, this.params, false));
-      const expression: string = QueryAccessBuilder.expression(path, prefix, this.params);
+      const expression: string = pattern.expression();
+      this.query.push(...pattern.match());
 
       if (filter.kind === "equal") {
         this.equal(prefix, expression, filter.value);
@@ -62,20 +65,16 @@ export class QueryBuilder {
 
   public sort(field: string | undefined, asc: boolean | undefined): this {
     if (!field) return this;
-
-    const prefix = "sort";
-    const path: AccessPath = AccessParser.parse(field);
+    const pattern: AccessPattern = this.access(field, "sort");
     const direction: string = asc === false ? "DESC" : "ASC";
 
-    this.query.push(...QueryAccessBuilder.matches(path, prefix, this.params));
-    this.query.push(`ORDER BY ${QueryAccessBuilder.expression(path, prefix, this.params)} ${direction}`);
-
+    this.query.push(...pattern.match());
+    this.query.push(`ORDER BY ${pattern.expression()} ${direction}`);
     return this;
   }
 
   public skip(skip: number | undefined): this {
     if (!skip || skip <= 0) return this;
-
     this.query.push("SKIP $skip");
     this.params.skip = neo4j.int(skip);
 
@@ -84,7 +83,6 @@ export class QueryBuilder {
 
   public limit(limit: number | undefined): this {
     if (!limit || limit <= 0) return this;
-
     this.query.push("LIMIT $limit");
     this.params.limit = neo4j.int(limit);
 
@@ -100,16 +98,21 @@ export class QueryBuilder {
     return { cypher: this.query.join(" "), params: this.params };
   }
 
+  public access(field: string, prefix: string, isOptional: boolean = true): AccessPattern {
+    const path: AccessPath = AccessParser.parse(field);
+    return new AccessPattern(path, this.alias, prefix, this.params, isOptional);
+  }
+
   private match(resource: Resource, label?: string): void {
     this.params.resource = resource;
 
     if (!label) {
-      this.query.push("MATCH (r:$($resource))");
+      this.query.push(`MATCH (${this.alias}:$($resource))`);
       return;
     }
 
     this.params.label = label;
-    this.query.push("MATCH (r:$($resource):$($label))");
+    this.query.push(`MATCH (${this.alias}:$($resource):$($label))`);
   }
 
   private equal(prefix: string, expression: string, value: unknown): void {
