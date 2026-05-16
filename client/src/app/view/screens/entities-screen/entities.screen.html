@@ -6,10 +6,10 @@
       <div class="space-y-5">
         <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
           <shared-select
-            label="app.entities.select"
-            [items]="nodeOptions"
-            [activeItem]="activeNode()"
-            (activeItemChange)="handleNodeChange($event)"
+            label="app.screens.entities.select"
+            [items]="items"
+            [activeItem]="activeItem()"
+            (activeItemChange)="handleActiveItemChange($event)"
           />
         </div>
 
@@ -24,7 +24,7 @@
               [ngModel]="searchPhrase()"
               (ngModelChange)="handleSearchChange($event)"
             />
-            <label for="search">{{ t("app.entities.search") }}</label>
+            <label for="search">{{ t("app.screens.entities.search") }}</label>
           </p-ifta-label>
 
           <div class="animate__animated animate__fadeIn">
@@ -55,11 +55,11 @@
     <section class="border-surface-300 bg-surface-0/75 rounded-md border p-5">
       <header class="mb-6 pb-5 select-none">
         <h1 class="text-4xl font-semibold tracking-tight">
-          {{ t(activeNode().label) }}
+          {{ t(activeItem().label) }}
         </h1>
 
         <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
-          {{ t("app.entities.entries", { value: activeIndexLabel() }) }}
+          {{ t("app.screens.entities.entries", { value: activeIndexLabel() }) }}
         </p>
       </header>
 
@@ -75,7 +75,7 @@
           </ng-template>
           <ng-template #emptymessage>
             <div [hidden]="$list.isLoading()">
-              {{ t("app.entities.empty") }}
+              {{ t("app.screens.entities.empty") }}
             </div>
           </ng-template>
         </p-data-view>

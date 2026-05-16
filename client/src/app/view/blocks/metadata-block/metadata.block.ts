@@ -1,5 +1,5 @@
 import { Component, input, InputSignal } from '@angular/core';
-import { MetadataItem, MetadataProperties } from '../../../models/Config';
+import { MetadataItem, MetadataProps } from '../../../models/Config';
 import { BlockValueResolver } from '../../../resolvers/block-value.resolver';
 import { Fieldset } from 'primeng/fieldset';
 
@@ -9,7 +9,7 @@ import { Fieldset } from 'primeng/fieldset';
   templateUrl: './metadata.block.html',
 })
 export class MetadataBlock {
-  public readonly props: InputSignal<MetadataProperties> = input.required();
+  public readonly props: InputSignal<MetadataProps> = input.required();
   public readonly values: InputSignal<Record<string, unknown>> = input({});
 
   protected title(): string {

@@ -45,7 +45,7 @@ export class BibleListHelper {
     }
 
     const options: BibleOption[] = [...result.values()].sort((a: BibleOption, b: BibleOption): number => a.order - b.order);
-    if (isUnknown) options.push({ label: 'app.shared.bibleList.unknown', value: '#', order: Number.MAX_SAFE_INTEGER });
+    if (isUnknown) options.push({ label: 'app.features.bibleList.unknown', value: '#', order: Number.MAX_SAFE_INTEGER });
     return options;
   }
 

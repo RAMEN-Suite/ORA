@@ -1,5 +1,5 @@
 import { Component, input, InputSignal } from '@angular/core';
-import { HeadlineProperties } from '../../../models/Config';
+import { HeadlineProps } from '../../../models/Config';
 import { BlockValueResolver } from '../../../resolvers/block-value.resolver';
 
 @Component({
@@ -8,7 +8,7 @@ import { BlockValueResolver } from '../../../resolvers/block-value.resolver';
   templateUrl: './headline.block.html',
 })
 export class HeadlineBlock {
-  public readonly props: InputSignal<HeadlineProperties> = input.required();
+  public readonly props: InputSignal<HeadlineProps> = input.required();
   public readonly values: InputSignal<Record<string, unknown>> = input({});
 
   protected title(): string {

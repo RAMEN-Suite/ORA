@@ -1,15 +1,4 @@
-import {
-  ComposedScreen,
-  Config,
-  Features,
-  FilterOption,
-  ListScreen,
-  NodeOption,
-  Option,
-  Property,
-  Screens,
-  Selection,
-} from './Config';
+import { Choice, Config, DetailView, Features, FilterChoice, ListItem, ListView, Property, Screens, Selection } from './Config';
 
 export class Registry {
   constructor(private readonly config: Config) {}
@@ -22,9 +11,9 @@ export class Registry {
     return this.config.features[key];
   }
 
-  public composed(key: 'collection' | 'entity', labels: string[]): ComposedScreen {
-    const views: ComposedScreen[] = this.config.screens[key];
-    const view: ComposedScreen | undefined = views.find((candidate: ComposedScreen): boolean => {
+  public composed(key: 'collection' | 'entity', labels: string[]): DetailView {
+    const views: DetailView[] = this.config.screens[key];
+    const view: DetailView | undefined = views.find((candidate: DetailView): boolean => {
       return this.matches(candidate.match, labels);
     });
 
@@ -32,33 +21,33 @@ export class Registry {
     return view;
   }
 
-  public node<TOption extends Option>(screen: ListScreen<TOption>, value: string): TOption | undefined {
-    return screen.nodes.find((node: TOption): boolean => node.value === value);
+  public node<TOption extends Choice>(screen: ListView<TOption>, value: string): TOption | undefined {
+    return screen.items.find((node: TOption): boolean => node.value === value);
   }
 
-  public properties(screen: ListScreen, node: NodeOption): Property[] {
+  public properties(screen: ListView, node: ListItem): Property[] {
     return this.mergeProperties(screen.properties, node.properties);
   }
 
-  public option<TOption extends Option>(options: TOption[], value: string): TOption | undefined {
+  public option<TOption extends Choice>(options: TOption[], value: string): TOption | undefined {
     return options.find((option: TOption): boolean => option.value === value);
   }
 
-  public filters(node: NodeOption): FilterOption[] {
+  public filters(node: ListItem): FilterChoice[] {
     return node.filters ?? [];
   }
 
-  public filterPaths(node: NodeOption): string[] {
-    return this.filters(node).map((filter: FilterOption): string => filter.value);
+  public filterPaths(node: ListItem): string[] {
+    return this.filters(node).map((filter: FilterChoice): string => filter.value);
   }
 
-  public initialNode<TOption extends Option>(screen: ListScreen<TOption>): TOption {
-    const node: TOption | undefined = screen.nodes.find((option: TOption): boolean => option.value === screen.initial);
+  public initialNode<TOption extends Choice>(screen: ListView<TOption>): TOption {
+    const node: TOption | undefined = screen.items.find((option: TOption): boolean => option.value === screen.initial);
     if (!node) throw new Error(`Missing initial node: ${screen.initial}`);
     return node;
   }
 
-  public initialOption<TOption extends Option>(selection: Selection<TOption> | undefined): TOption | undefined {
+  public initialOption<TOption extends Choice>(selection: Selection<TOption> | undefined): TOption | undefined {
     if (!selection) return undefined;
     return selection.options.find((option: TOption): boolean => option.value === selection.initial) ?? selection.options[0];
   }

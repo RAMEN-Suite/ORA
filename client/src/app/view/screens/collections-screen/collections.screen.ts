@@ -8,7 +8,6 @@ import { ConfigService } from '../../../services/config.service';
 import { NavigationService } from '../../../services/navigation.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { PreviousLinkedValue } from '../../../../types/global';
-import { ROUTES } from '../../../app.routes';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationUtils } from '../../../utils/PaginationUtils';
 import { SelectComponent } from '../../shared/select/select.component';
@@ -23,8 +22,9 @@ import { ActiveFilter, FacetGroup, FacetOptions } from '../../../models/Facet';
 import { FacetListComponent } from '../../shared/facet-list/facet-list.component';
 import { FilterUtils } from '../../../utils/FilterUtils';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { FilterOption, ListScreen, NodeOption, Option, Property } from '../../../models/Config';
+import { Choice, FilterChoice, ListItem, ListView, Property } from '../../../models/Config';
 import { Collection } from '../../../models/RAMEN';
+import { ROUTES } from '../../../app.routes';
 
 @Component({
   selector: 'screen-collections',
@@ -51,37 +51,37 @@ export class CollectionsScreen {
   private readonly facetListComponent: Signal<FacetListComponent | undefined> = viewChild(FacetListComponent);
 
   private readonly config: Registry = this.configService.config();
-  private readonly screen: ListScreen = this.config.screen('collections');
+  private readonly view: ListView = this.config.screen('collections');
 
-  protected readonly nodeOptions: NodeOption[] = this.screen.nodes;
-  protected readonly activeNode: WritableSignal<NodeOption> = signal<NodeOption>(this.config.initialNode(this.screen));
-  protected readonly activeNodeLabel: Signal<string> = computed((): string => this.activeNode().value);
+  protected readonly items: ListItem[] = this.view.items;
+  protected readonly activeItem: WritableSignal<ListItem> = signal<ListItem>(this.config.initialNode(this.view));
+  protected readonly activeItemLabel: Signal<string> = computed((): string => this.activeItem().value);
   protected readonly activeProperties: Signal<Property[]> = computed((): Property[] =>
-    this.config.properties(this.screen, this.activeNode()),
+    this.config.properties(this.view, this.activeItem()),
   );
 
-  protected readonly filters: Signal<FilterOption[]> = computed((): FilterOption[] => this.config.filters(this.activeNode()));
+  protected readonly filters: Signal<FilterChoice[]> = computed((): FilterChoice[] => this.config.filters(this.activeItem()));
   protected readonly activeFilters: WritableSignal<ActiveFilter[]> = signal<ActiveFilter[]>([]);
 
-  protected readonly sort: Signal<Option[]> = computed((): Option[] => this.activeNode().sort?.options ?? []);
-  protected readonly activeSort: WritableSignal<Option | undefined> = signal(this.config.initialOption(this.activeNode().sort));
+  protected readonly sort: Signal<Choice[]> = computed((): Choice[] => this.activeItem().sort?.options ?? []);
+  protected readonly activeSort: WritableSignal<Choice | undefined> = signal(this.config.initialOption(this.activeItem().sort));
 
-  protected readonly facetOptions: WritableSignal<FacetOptions> = signal({ facets: this.config.filterPaths(this.activeNode()) });
+  protected readonly facetOptions: WritableSignal<FacetOptions> = signal({ facets: this.config.filterPaths(this.activeItem()) });
   protected readonly listOptions: WritableSignal<ListOptions> = signal({
     orderBy: this.activeSort()?.value ?? 'label',
-    asc: this.activeNode().sort?.direction === 'asc',
+    asc: this.activeItem().sort?.direction === 'asc',
     limit: 25,
     skip: 0,
   });
 
   public readonly $list: HttpResourceRef<List<Collection>> = this.listService.fetchList(
     Listable.COLLECTION,
-    this.activeNodeLabel,
+    this.activeItemLabel,
     this.listOptions,
   );
   public readonly $facets: HttpResourceRef<FacetGroup[]> = this.listService.fetchFacets(
     Listable.COLLECTION,
-    this.activeNodeLabel,
+    this.activeItemLabel,
     this.facetOptions,
   );
 
@@ -118,7 +118,7 @@ export class CollectionsScreen {
     this.navigationService.updateQuery(this.route, params, { scroll: 'manual' });
   }
 
-  protected handleNodeChange(option: NodeOption | undefined): void {
+  protected handleActiveItemChange(option: ListItem | undefined): void {
     if (!option) return;
 
     const params: Params = { label: option.value, limit: this.listOptions().limit, page: 1, orderBy: null };
@@ -169,7 +169,7 @@ export class CollectionsScreen {
     const list: ListOptions = { limit, skip, search, orderBy, asc, filters: this.activeFilters() };
     this.listOptions.update((current: ListOptions): ListOptions => ({ ...current, ...list }));
 
-    const facet: FacetOptions = { search, facets: this.config.filterPaths(this.activeNode()), filters: this.activeFilters() };
+    const facet: FacetOptions = { search, facets: this.config.filterPaths(this.activeItem()), filters: this.activeFilters() };
     this.facetOptions.update((current: FacetOptions): FacetOptions => ({ ...current, ...facet }));
   }
 
@@ -177,8 +177,8 @@ export class CollectionsScreen {
     const label: string | undefined = Utils.parseString(params['label']);
     if (label === undefined) return;
 
-    const existing: NodeOption | undefined = this.config.node(this.screen, label);
-    if (existing) this.activeNode.set(existing);
+    const existing: ListItem | undefined = this.config.node(this.view, label);
+    if (existing) this.activeItem.set(existing);
   }
 
   private applyFilterParams(params: Params): void {
@@ -189,13 +189,13 @@ export class CollectionsScreen {
 
   private applySortParams(params: Params): Pick<ListOptions, 'orderBy' | 'asc'> {
     const rawOrderBy: string | undefined = Utils.parseString(params['orderBy']);
-    const existing: Option | undefined = this.config.option(this.activeNode().sort?.options ?? [], rawOrderBy ?? '');
-    const initial: Option | undefined = this.config.initialOption(this.activeNode().sort);
+    const existing: Choice | undefined = this.config.option(this.activeItem().sort?.options ?? [], rawOrderBy ?? '');
+    const initial: Choice | undefined = this.config.initialOption(this.activeItem().sort);
     this.activeSort.set(existing ?? initial);
 
     return {
       orderBy: this.activeSort()?.value ?? 'label',
-      asc: Utils.parseBoolean(params['asc']) ?? this.activeNode().sort?.direction === 'asc',
+      asc: Utils.parseBoolean(params['asc']) ?? this.activeItem().sort?.direction === 'asc',
     };
   }
 

@@ -4,20 +4,20 @@ export interface Config {
 }
 
 export interface Screens {
-  entities: ListScreen<EntityOption>;
-  collections: ListScreen;
-  collection: ComposedScreen[];
-  entity: ComposedScreen[];
+  entities: ListView<EntityItem>;
+  collections: ListView;
+  collection: DetailView[];
+  entity: DetailView[];
 }
 
-export interface ComposedScreen {
+export interface DetailView {
   match: string[];
   blocks: Block[];
 }
 
-export interface ListScreen<TOption extends Option = NodeOption> {
+export interface ListView<TItem extends Choice = ListItem> {
   initial: string;
-  nodes: TOption[];
+  items: TItem[];
   properties?: Property[];
 }
 
@@ -33,29 +33,29 @@ export interface BibleBook {
 export type SortDirection = 'asc' | 'desc';
 export type EntityIndex = 'character' | 'bible';
 
-export interface Option {
+export interface Choice {
   icon?: string;
   label: string;
   value: string;
 }
 
-export interface FilterOption extends Option {
+export interface FilterChoice extends Choice {
   display?: 'list' | 'range';
   valueMap?: Record<string, string>;
 }
 
-export interface NodeOption extends Option {
+export interface ListItem extends Choice {
   properties?: Property[];
   sort?: SortSelection;
-  filters?: FilterOption[];
+  filters?: FilterChoice[];
 }
 
-export interface EntityOption extends Option {
+export interface EntityItem extends Choice {
   properties?: Property[];
   index?: EntityIndex;
 }
 
-export interface Selection<TOption extends Option = Option> {
+export interface Selection<TOption extends Choice = Choice> {
   initial: string;
   options: TOption[];
 }
@@ -65,44 +65,46 @@ export interface SortSelection extends Selection {
 }
 
 export interface Property {
-  name: string;
+  name: AccessPath;
   display?: string;
   valueMap?: Record<string, string>;
 }
 
-export type Headline = Base<'headline', HeadlineProperties>;
-export type Metadata = Base<'metadata', MetadataProperties>;
-export type Text = Base<'text', TextProperties>;
-
 export type Block = Headline | Metadata | Text;
+
+export type Headline = BlockOf<'headline', HeadlineProps>;
+export type Metadata = BlockOf<'metadata', MetadataProps>;
+export type Text = BlockOf<'text', TextProps>;
+
+export type AccessPath = string;
 export type Value<T = unknown> = T | Binding<T>;
 
-export interface Base<TType extends string, TProperties> {
+export interface BlockOf<TType extends string, TProps> {
   type: TType;
-  properties: TProperties;
+  properties: TProps;
 }
 
-export interface HeadlineProperties {
+export interface HeadlineProps {
   title: Value<string>;
 }
 
-export interface MetadataProperties {
+export interface MetadataProps {
   title?: Value<string>;
   items: MetadataItem[];
   link?: 'entity' | 'collection';
 }
 
 export interface MetadataItem {
-  label: Value<string>;
+  label: string;
   value: Value<string | string[]>;
 }
 
-export interface TextProperties {
-  title?: Value<string>;
+export interface TextProps {
+  title?: string;
   text: Value<string>;
 }
 
 export interface Binding<T = unknown> {
-  path: string;
+  path: AccessPath;
   fallback?: T;
 }

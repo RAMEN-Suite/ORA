@@ -11,7 +11,7 @@ import { Registry } from '../models/Registry';
 })
 export class ConfigService {
   private readonly http: HttpClient = inject(HttpClient);
-  private readonly url: string = `${environment.apiBaseUrl}${environment.apiPaths.config}`;
+  private readonly baseUrl: string = `${environment.apiBaseUrl}${environment.apiPaths.config}`;
 
   private readonly configState: WritableSignal<Config | null> = signal(null);
   private readonly errorState: WritableSignal<unknown> = signal(null);
@@ -28,7 +28,7 @@ export class ConfigService {
   public async init(): Promise<void> {
     try {
       const context: HttpContext = withCache({ storage: 'localStorage', ttl: 1 });
-      const config: Config = await firstValueFrom(this.http.get<Config>(this.url, { context }));
+      const config: Config = await firstValueFrom(this.http.get<Config>(this.baseUrl, { context }));
       this.configState.set(config);
     } catch (error: unknown) {
       this.errorState.set(error);

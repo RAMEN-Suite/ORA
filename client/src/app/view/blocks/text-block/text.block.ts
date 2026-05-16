@@ -1,7 +1,7 @@
 import { Component, input, InputSignal } from '@angular/core';
 import { BlockValueResolver } from '../../../resolvers/block-value.resolver';
 import { Fieldset } from 'primeng/fieldset';
-import { TextProperties } from '../../../models/Config';
+import { TextProps } from '../../../models/Config';
 
 @Component({
   selector: 'block-text',
@@ -9,7 +9,7 @@ import { TextProperties } from '../../../models/Config';
   templateUrl: './text.block.html',
 })
 export class TextBlock {
-  public readonly props: InputSignal<TextProperties> = input.required<TextProperties>();
+  public readonly props: InputSignal<TextProps> = input.required<TextProps>();
   public readonly values: InputSignal<Record<string, unknown>> = input({});
 
   protected title(): string {

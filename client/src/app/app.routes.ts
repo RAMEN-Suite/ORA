@@ -5,12 +5,21 @@ import { ErrorScreen } from './view/screens/error-screen/error.screen';
 import { CollectionScreen } from './view/screens/collection-screen/collection.screen';
 import { CollectionsScreen } from './view/screens/collections-screen/collections.screen';
 import { EntityScreen } from './view/screens/entity-screen/entity.screen';
+import { NotFoundScreen } from './view/screens/not-found-screen/not-found.screen';
+import { viewRedirect } from './guards/view.redirect';
 
 export enum ROUTES {
   ENTITIES = 'entities',
   ENTITY = 'entity',
   COLLECTIONS = 'collections',
   COLLECTION = 'collection',
+  IDENTIFIER = 'id',
+  ERROR = 'error',
+  NOT_FOUND = 'not-found',
+}
+
+export enum PARAMS {
+  UUID = 'uuid',
 }
 
 export const routes: Routes = [
@@ -18,11 +27,14 @@ export const routes: Routes = [
     path: '',
     canActivate: [configGuard],
     children: [
+      { path: `${ROUTES.IDENTIFIER}/:${PARAMS.UUID}`, redirectTo: viewRedirect },
       { path: ROUTES.COLLECTIONS, component: CollectionsScreen },
       { path: ROUTES.ENTITIES, component: EntitiesScreen },
-      { path: `${ROUTES.ENTITY}/:id`, component: EntityScreen },
-      { path: `${ROUTES.COLLECTION}/:id`, component: CollectionScreen },
+      { path: `${ROUTES.ENTITY}/:${PARAMS.UUID}`, component: EntityScreen },
+      { path: `${ROUTES.COLLECTION}/:${PARAMS.UUID}`, component: CollectionScreen },
     ],
   },
-  { path: 'error', component: ErrorScreen },
+  { path: ROUTES.NOT_FOUND, component: NotFoundScreen },
+  { path: ROUTES.ERROR, component: ErrorScreen },
+  { path: '**', redirectTo: ROUTES.NOT_FOUND },
 ];
