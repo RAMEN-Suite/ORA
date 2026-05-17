@@ -5,7 +5,7 @@ import { AccessPattern } from "./cypher/AccessPattern";
 import { BuiltQuery, QueryAssembler } from "./cypher/QueryAssembler";
 import { Utils } from "../utils/Utils";
 import { CypherUtils } from "../utils/CypherUtils";
-import { Resource } from "../models/RAMEN";
+import { Resource } from "../models/Node";
 
 export class FacetDAO {
   public static async getFacets(resource: Resource, label: string | undefined, options: FacetOptions): Promise<FacetGroup[]> {

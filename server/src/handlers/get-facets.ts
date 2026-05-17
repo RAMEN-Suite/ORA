@@ -5,7 +5,7 @@ import { FacetGroup, FacetOptions } from "../models/Facet";
 import { FacetDAO } from "../database/FacetDAO";
 import { matchedData } from "express-validator";
 import { FilterParser } from "../parser/FilterParser";
-import { Resource } from "../models/RAMEN";
+import { Resource } from "../models/Node";
 
 export async function getFacets(resource: Resource, req: Request, res: Response): Promise<void> {
   const params: Record<string, unknown> = matchedData(req);

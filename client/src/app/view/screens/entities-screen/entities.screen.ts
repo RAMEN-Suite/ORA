@@ -20,10 +20,11 @@ import { Registry } from '../../../models/Registry';
 import { BibleListComponent } from '../../features/bible-list/bible-list.component';
 import { BibleAlias, BibleListHelper } from '../../features/bible-list/bible-list.helper';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
-import { BibleBook, EntityIndex, EntityItem, ListView, Property } from '../../../models/Config';
-import { Entity } from '../../../models/RAMEN';
+import { Entity } from '../../../models/Node';
+import { EntityIndex, EntityOption, Property } from '../../../models/config/Options';
+import { BibleBook, ListScreen } from '../../../models/config/Config';
 
-const DEFAULT_OPTION: EntityItem = {
+const DEFAULT_OPTION: EntityOption = {
   icon: 'pi pi-folder-open',
   label: 'app.screens.entities.default',
   index: 'character',
@@ -53,16 +54,16 @@ export class EntitiesScreen {
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
   private readonly config: Registry = this.configService.config();
-  private readonly view: ListView<EntityItem> = this.config.screen('entities');
+  private readonly screen: ListScreen<EntityOption> = this.config.screen('entities');
 
   protected readonly bibleBooks: BibleBook[] = this.config.features('bible');
   protected readonly bibleAliases: BibleAlias[] = BibleListHelper.createIndex(this.bibleBooks);
 
-  protected readonly items: EntityItem[] = [...this.view.items, DEFAULT_OPTION];
-  protected readonly activeItem: WritableSignal<EntityItem> = signal<EntityItem>(this.config.initialNode(this.view));
+  protected readonly items: EntityOption[] = [...this.screen.options, DEFAULT_OPTION];
+  protected readonly activeItem: WritableSignal<EntityOption> = signal<EntityOption>(this.config.initialNode(this.screen));
   protected readonly activeItemLabel: Signal<string> = computed((): string => this.activeItem().value);
   protected readonly activeProperties: Signal<Property[]> = computed((): Property[] =>
-    this.config.properties(this.view, this.activeItem()),
+    this.config.properties(this.screen, this.activeItem()),
   );
 
   protected readonly indexType: Signal<EntityIndex> = computed((): EntityIndex => this.activeItem().index ?? 'character');
@@ -102,7 +103,7 @@ export class EntitiesScreen {
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(this.applyQueryParams.bind(this));
   }
 
-  protected handleActiveItemChange(option: EntityItem | undefined): void {
+  protected handleActiveItemChange(option: EntityOption | undefined): void {
     if (!option) return;
     this.activeItem.set(option);
     this.activeIndex.set('');
@@ -161,7 +162,7 @@ export class EntitiesScreen {
     const label: string | undefined = Utils.parseString(params['label']);
 
     if (label !== undefined) {
-      const existing: EntityItem | undefined = this.config.node(this.view, label);
+      const existing: EntityOption | undefined = this.config.node(this.screen, label);
       if (existing) this.activeItem.set(existing);
     }
 

@@ -1,19 +1,27 @@
-<p-fieldset styleClass="border-surface-300! bg-surface-100/25! border-l-0! border-r-0! rounded-none! pt-5! pb-10! px-10!">
+<p-fieldset
+  styleClass="border-surface-300! bg-surface-100/25! border-l-0! border-r-0! rounded-none! pt-5! pb-10! px-10!"
+  [hidden]="metadata().length === 0"
+>
   <ng-template #header>
-    <span class="font-bold font-stretch-semi-condensed select-none">
-      {{ title() }}
+    <span class="font-bold font-stretch-semi-condensed select-none" *transloco="let t">
+      {{ t(title()) }}
     </span>
   </ng-template>
 
   <div class="grid gap-8 px-3 md:grid-cols-2 lg:gap-6 xl:grid-cols-3">
-    @for (item of props().items; track $index) {
+    @for (item of metadata(); track $index) {
       <div>
         <div class="flex items-baseline gap-3">
           <i class="pi pi-angle-right text-sm!"></i>
 
           <div class="flex flex-col gap-1">
-            <h3 class="text-lg font-semibold">{{ label(item) }}:</h3>
-            <span>{{ value(item) }}</span>
+            <h3 class="text-lg font-semibold" *transloco="let t">{{ t(item.label) }}:</h3>
+
+            @if (item.href) {
+              <a [routerLink]="item.href" class="underline underline-offset-2">{{ item.value }}</a>
+            } @else {
+              <span *transloco="let t">{{ item.value !== "" ? item.value : t("app.blocks.metadata.missing") }}</span>
+            }
           </div>
         </div>
       </div>

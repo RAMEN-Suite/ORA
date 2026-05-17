@@ -1,4 +1,4 @@
-import { Node } from "../models/RAMEN";
+import { Node } from "../models/Node";
 import { QueryResult, Record as Neo4jRecord } from "neo4j-driver";
 import { Neo4jService } from "../services/Neo4jService";
 import { AccessParser, AccessPath } from "../parser/AccessParser";

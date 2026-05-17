@@ -1,25 +1,28 @@
-<div class="min-h-screen px-6 py-10">
+@if ($view.isLoading()) {
+  <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+    <p-progress-spinner class="spinner-base" />
+  </div>
+}
+
+<div class="animate__animated animate__fadeIn min-h-screen px-6 py-10" [hidden]="$view.isLoading()">
   <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_350px]">
     <main class="border-surface-300 bg-surface-0/75 flex flex-col gap-6 rounded-md border py-10">
-      <!--      @for (block of blocks(); track $index) {-->
-      <!--        @switch (block.type) {-->
-      <!--          @case ("headline") {-->
-      <!--            <block-headline [props]="block.props" [values]="values" />-->
-      <!--          }-->
-      <!--          @case ("metadata") {-->
-      <!--            <block-metadata [props]="block.props" [values]="values" />-->
-      <!--          }-->
-      <!--          @case ("text") {-->
-      <!--            <block-text [props]="block.props" [values]="values" />-->
-      <!--          }-->
-      <!--        }-->
-      <!--      }-->
+      @for (block of blocks(); track $index) {
+        @switch (block.type) {
+          @case ("headline") {
+            <block-headline [properties]="block.properties" [values]="values()" />
+          }
+          @case ("metadata") {
+            <block-metadata [properties]="block.properties" [values]="values()" />
+          }
+          @case ("text") {
+            <block-text [properties]="block.properties" [values]="values()" />
+          }
+        }
+      }
     </main>
     <aside class="order-2 space-y-3 self-start overflow-y-auto lg:sticky lg:top-10 lg:max-h-[calc(100vh-5rem)]">
-      <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">Text Box 1</div>
-      <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">Text Box 2</div>
-      <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">Text Box 3</div>
-      <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">Text Box 3</div>
+      <!-- <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">Text Box 1</div> -->
     </aside>
   </div>
 </div>

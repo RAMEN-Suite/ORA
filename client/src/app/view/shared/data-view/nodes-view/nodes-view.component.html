@@ -6,7 +6,7 @@
   }
 
   @for (node of nodes(); track node.uuid; let last = $last) {
-    <a [routerLink]="routeTarget().length > 0 ? [...routeTarget(), node.uuid] : null">
+    <a [routerLink]="routeTarget().length > 0 && !isLoading() ? [...routeTarget(), node.uuid] : null">
       <div class="flex cursor-pointer items-center gap-3 transition-opacity select-none hover:opacity-70">
         <div class="px-3"><i class="pi pi-angle-right text-xs!"></i></div>
 

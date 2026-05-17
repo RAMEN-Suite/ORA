@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { PartialMatchRouteSnapshot, RedirectFunction, Router, UrlTree } from '@angular/router';
 import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
 import { PARAMS, ROUTES } from '../app.routes';
-import { Node } from '../models/RAMEN';
+import { Node } from '../models/Node';
 import { ViewService } from '../services/view.service';
 import { Utils } from '../utils/Utils';
 

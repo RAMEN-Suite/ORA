@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Config } from '../models/Config';
+import { Config } from '../models/config/Config';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { withCache } from '@ngneat/cashew';
 import { firstValueFrom } from 'rxjs';

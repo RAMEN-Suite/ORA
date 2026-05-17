@@ -1,0 +1,5 @@
+export enum RELATION {
+  HAS_ANNOTATION = "HAS_ANNOTATION",
+  REFERS_TO = "REFERS_TO",
+  PART_OF = "PART_OF",
+}

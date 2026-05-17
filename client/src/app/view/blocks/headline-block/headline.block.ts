@@ -1,6 +1,7 @@
-import { Component, input, InputSignal } from '@angular/core';
-import { HeadlineProps } from '../../../models/Config';
+import { Component, computed, input, InputSignal, Signal } from '@angular/core';
 import { BlockValueResolver } from '../../../resolvers/block-value.resolver';
+import { HeadlineProps } from '../../../models/config/Block';
+import { AccessValue } from '../../../models/config/Access';
 
 @Component({
   selector: 'block-headline',
@@ -8,10 +9,12 @@ import { BlockValueResolver } from '../../../resolvers/block-value.resolver';
   templateUrl: './headline.block.html',
 })
 export class HeadlineBlock {
-  public readonly props: InputSignal<HeadlineProps> = input.required();
+  public readonly properties: InputSignal<HeadlineProps | undefined> = input();
   public readonly values: InputSignal<Record<string, unknown>> = input({});
 
-  protected title(): string {
-    return BlockValueResolver.resolveString(this.props().title, this.values());
-  }
+  protected readonly title: Signal<string> = computed((): string => {
+    const title: AccessValue<string> | undefined = this.properties()?.title;
+    if (!title) console.warn('Missing Headline Property: title');
+    return BlockValueResolver.resolveString(title, this.values());
+  });
 }

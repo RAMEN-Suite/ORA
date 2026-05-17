@@ -1,5 +1,6 @@
 export interface Node {
   _labels: string[];
+  uuid: string;
   [key: string]: unknown;
 }
 

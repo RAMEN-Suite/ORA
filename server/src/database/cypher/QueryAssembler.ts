@@ -1,7 +1,7 @@
 import neo4j from "neo4j-driver";
 import { AccessPattern } from "./AccessPattern";
 import { AccessParser, AccessPath } from "../../parser/AccessParser";
-import { Resource } from "../../models/RAMEN";
+import { Resource } from "../../models/Node";
 import { Filter } from "../../models/Filter";
 
 export interface BuiltQuery {

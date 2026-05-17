@@ -22,9 +22,10 @@ import { ActiveFilter, FacetGroup, FacetOptions } from '../../../models/Facet';
 import { FacetListComponent } from '../../shared/facet-list/facet-list.component';
 import { FilterUtils } from '../../../utils/FilterUtils';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { Choice, FilterChoice, ListItem, ListView, Property } from '../../../models/Config';
-import { Collection } from '../../../models/RAMEN';
+import { Collection } from '../../../models/Node';
 import { ROUTES } from '../../../app.routes';
+import { FilterOption, ListOption, Option, Property } from '../../../models/config/Options';
+import { ListScreen } from '../../../models/config/Config';
 
 @Component({
   selector: 'screen-collections',
@@ -51,20 +52,20 @@ export class CollectionsScreen {
   private readonly facetListComponent: Signal<FacetListComponent | undefined> = viewChild(FacetListComponent);
 
   private readonly config: Registry = this.configService.config();
-  private readonly view: ListView = this.config.screen('collections');
+  private readonly screen: ListScreen = this.config.screen('collections');
 
-  protected readonly items: ListItem[] = this.view.items;
-  protected readonly activeItem: WritableSignal<ListItem> = signal<ListItem>(this.config.initialNode(this.view));
+  protected readonly items: ListOption[] = this.screen.options;
+  protected readonly activeItem: WritableSignal<ListOption> = signal<ListOption>(this.config.initialNode(this.screen));
   protected readonly activeItemLabel: Signal<string> = computed((): string => this.activeItem().value);
   protected readonly activeProperties: Signal<Property[]> = computed((): Property[] =>
-    this.config.properties(this.view, this.activeItem()),
+    this.config.properties(this.screen, this.activeItem()),
   );
 
-  protected readonly filters: Signal<FilterChoice[]> = computed((): FilterChoice[] => this.config.filters(this.activeItem()));
+  protected readonly filters: Signal<FilterOption[]> = computed((): FilterOption[] => this.config.filters(this.activeItem()));
   protected readonly activeFilters: WritableSignal<ActiveFilter[]> = signal<ActiveFilter[]>([]);
 
-  protected readonly sort: Signal<Choice[]> = computed((): Choice[] => this.activeItem().sort?.options ?? []);
-  protected readonly activeSort: WritableSignal<Choice | undefined> = signal(this.config.initialOption(this.activeItem().sort));
+  protected readonly sort: Signal<Option[]> = computed((): Option[] => this.activeItem().sort?.options ?? []);
+  protected readonly activeSort: WritableSignal<Option | undefined> = signal(this.config.initialOption(this.activeItem().sort));
 
   protected readonly facetOptions: WritableSignal<FacetOptions> = signal({ facets: this.config.filterPaths(this.activeItem()) });
   protected readonly listOptions: WritableSignal<ListOptions> = signal({
@@ -118,7 +119,7 @@ export class CollectionsScreen {
     this.navigationService.updateQuery(this.route, params, { scroll: 'manual' });
   }
 
-  protected handleActiveItemChange(option: ListItem | undefined): void {
+  protected handleActiveItemChange(option: ListOption | undefined): void {
     if (!option) return;
 
     const params: Params = { label: option.value, limit: this.listOptions().limit, page: 1, orderBy: null };
@@ -177,7 +178,7 @@ export class CollectionsScreen {
     const label: string | undefined = Utils.parseString(params['label']);
     if (label === undefined) return;
 
-    const existing: ListItem | undefined = this.config.node(this.view, label);
+    const existing: ListOption | undefined = this.config.node(this.screen, label);
     if (existing) this.activeItem.set(existing);
   }
 
@@ -189,8 +190,8 @@ export class CollectionsScreen {
 
   private applySortParams(params: Params): Pick<ListOptions, 'orderBy' | 'asc'> {
     const rawOrderBy: string | undefined = Utils.parseString(params['orderBy']);
-    const existing: Choice | undefined = this.config.option(this.activeItem().sort?.options ?? [], rawOrderBy ?? '');
-    const initial: Choice | undefined = this.config.initialOption(this.activeItem().sort);
+    const existing: Option | undefined = this.config.option(this.activeItem().sort?.options ?? [], rawOrderBy ?? '');
+    const initial: Option | undefined = this.config.initialOption(this.activeItem().sort);
     this.activeSort.set(existing ?? initial);
 
     return {

@@ -2,7 +2,7 @@ import { QueryResult } from "neo4j-driver";
 import { Neo4jService } from "../services/Neo4jService";
 import { ListOptions } from "../models/List";
 import { BuiltQuery, QueryAssembler } from "./cypher/QueryAssembler";
-import { Resource } from "../models/RAMEN";
+import { Resource } from "../models/Node";
 import { CypherUtils } from "../utils/CypherUtils";
 import { Utils } from "../utils/Utils";
 
