@@ -1,21 +1,21 @@
-name: Server CI
+name: Client CI
 
 on:
   pull_request:
     paths:
-      - "server/**"
-      - ".github/workflows/server.yml"
+      - "client/**"
+      - ".github/workflows/client.yml"
   push:
     paths:
-      - "server/**"
-      - ".github/workflows/server.yml"
-
-defaults:
-  run:
-    working-directory: server
+      - "client/**"
+      - ".github/workflows/client.yml"
 
 env:
   REGISTRY: ghcr.io
+
+defaults:
+  run:
+    working-directory: client
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: "24"
           cache: "npm"
-          cache-dependency-path: server/package-lock.json
+          cache-dependency-path: client/package-lock.json
       - name: Install dependencies
         run: npm ci
       - name: Lint
@@ -67,7 +67,7 @@ jobs:
         uses: docker/metadata-action@v6.0.0
         id: meta
         with:
-          images: ${{ env.REGISTRY }}/${{ github.repository }}/server
+          images: ${{ env.REGISTRY }}/${{ github.repository }}/client
           tags: |
             type=raw,value=${{ github.ref_name }}
             type=sha,format=short
