@@ -3,5 +3,5 @@ useDefault = true
 
 [allowlist]
 paths = [
-  '''^server/config/*.config.json''',
+  '''^server/config/.*\.config\.json$''',
 ]
