@@ -13,7 +13,7 @@ import { providePrimeNG } from 'primeng/config';
 import { SuitePreset } from '../styles/suite-preset.js';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideHttpCache, withHttpCacheInterceptor, withLocalStorage } from '@ngneat/cashew';
-import { ConfigService } from './services/config-service/config.service';
+import { ConfigService } from './services/config.service';
 import { provideMarkdown } from 'ngx-markdown';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@jsverse/transloco';

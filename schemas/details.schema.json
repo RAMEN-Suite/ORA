@@ -44,7 +44,7 @@
         }
       }
     },
-    "metadataValueItem": {
+    "attributesValueItem": {
       "type": "object",
       "additionalProperties": false,
       "required": ["label", "value"],
@@ -64,7 +64,7 @@
         }
       }
     },
-    "metadataNodeItem": {
+    "attributesNodeItem": {
       "type": "object",
       "additionalProperties": false,
       "required": ["label", "kind", "value", "property"],
@@ -87,17 +87,17 @@
         }
       }
     },
-    "metadataItem": {
+    "attributesItem": {
       "oneOf": [
         {
-          "$ref": "#/$defs/metadataNodeItem"
+          "$ref": "#/$defs/attributesNodeItem"
         },
         {
-          "$ref": "#/$defs/metadataValueItem"
+          "$ref": "#/$defs/attributesValueItem"
         }
       ]
     },
-    "metadataProps": {
+    "attributesProps": {
       "type": "object",
       "additionalProperties": false,
       "required": ["items"],
@@ -108,7 +108,7 @@
         "items": {
           "type": "array",
           "items": {
-            "$ref": "#/$defs/metadataItem"
+            "$ref": "#/$defs/attributesItem"
           }
         }
       }
@@ -127,17 +127,17 @@
         }
       }
     },
-    "metadataBlock": {
+    "attributesBlock": {
       "type": "object",
       "additionalProperties": false,
       "required": ["type", "properties"],
       "properties": {
         "type": {
           "type": "string",
-          "const": "metadata"
+          "const": "attributes"
         },
         "properties": {
-          "$ref": "#/$defs/metadataProps"
+          "$ref": "#/$defs/attributesProps"
         }
       }
     },
@@ -161,7 +161,7 @@
           "$ref": "#/$defs/headlineBlock"
         },
         {
-          "$ref": "#/$defs/metadataBlock"
+          "$ref": "#/$defs/attributesBlock"
         },
         {
           "$ref": "#/$defs/textBlock"

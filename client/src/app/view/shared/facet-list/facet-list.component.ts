@@ -1,4 +1,4 @@
-import { Component, input, InputSignal, output, OutputEmitterRef, signal, WritableSignal } from '@angular/core';
+import { Component, effect, input, InputSignal, output, OutputEmitterRef, signal, WritableSignal } from '@angular/core';
 import { Accordion, AccordionContent, AccordionHeader, AccordionPanel } from 'primeng/accordion';
 import { ActiveFilter, FacetGroup } from '../../../models/Facet';
 import { FormsModule } from '@angular/forms';
@@ -36,6 +36,14 @@ export class FacetListComponent {
 
   protected readonly expandedFacets: WritableSignal<string[]> = signal<string[]>([]);
 
+  public constructor() {
+    effect((): void => {
+      const fields: string[] = this.activeFilterFields();
+      if (fields.length === 0) return;
+      this.expandedFacets.update((current: string[]): string[] => Array.from(new Set([...current, ...fields])));
+    });
+  }
+
   public collapseAccordions(): void {
     this.expandedFacets.set([]);
   }
@@ -55,5 +63,14 @@ export class FacetListComponent {
 
   protected getFacetLabel(field: string): string {
     return this.getFilter(field)?.label ?? field;
+  }
+
+  private activeFilterFields(): string[] {
+    const facetFields: Set<string> = new Set<string>(this.facets().map((facet: FacetGroup): string => facet.field));
+    const fields: string[] = this.activeFilters()
+      .map((filter: ActiveFilter): string => filter.field)
+      .filter((field: string): boolean => facetFields.has(field));
+
+    return Array.from(new Set(fields));
   }
 }

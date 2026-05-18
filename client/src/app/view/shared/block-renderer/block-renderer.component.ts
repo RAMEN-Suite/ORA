@@ -1,12 +1,12 @@
 import { Component, input, InputSignal } from '@angular/core';
 import { HeadlineBlock } from '../../blocks/headline-block/headline.block';
-import { MetadataBlock } from '../../blocks/metadata-block/metadata.block';
+import { AttributesBlock } from '../../blocks/attributes-block/attributes.block';
 import { TextBlock } from '../../blocks/text-block/text.block';
 import { Block } from '../../../models/config/DetailViews';
 
 @Component({
   selector: 'shared-block-renderer',
-  imports: [HeadlineBlock, MetadataBlock, TextBlock],
+  imports: [HeadlineBlock, AttributesBlock, TextBlock],
   templateUrl: './block-renderer.component.html',
 })
 export class BlockRendererComponent {

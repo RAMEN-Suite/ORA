@@ -2,15 +2,17 @@
   <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
     <p-progress-spinner class="spinner-base" />
   </div>
-}
+} @else {
+  <div class="animate__animated animate__fadeIn min-h-screen px-6 py-10">
+    <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_350px]">
+      <main class="border-surface-300 bg-surface-0/75 rounded-md border py-10">
+        <shared-block-renderer class="flex flex-col gap-6" [blocks]="blocks()" [values]="values()" />
+      </main>
 
-<div class="animate__animated animate__fadeIn min-h-screen px-6 py-10" [hidden]="$view.isLoading()">
-  <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_350px]">
-    <main class="border-surface-300 bg-surface-0/75 rounded-md border py-10">
-      <shared-block-renderer [blocks]="blocks()" [values]="values()" class="flex flex-col gap-6" />
-    </main>
-    <aside class="order-2 space-y-3 self-start overflow-y-auto lg:sticky lg:top-10 lg:max-h-[calc(100vh-5rem)]">
-      <!-- <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">Text Box 1</div> -->
-    </aside>
+      <aside class="order-2 space-y-3 self-start overflow-y-auto lg:sticky lg:top-10 lg:max-h-[calc(100vh-5rem)]">
+        <!-- Sidebar content -->
+        <!-- <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">Text Box 1</div> -->
+      </aside>
+    </div>
   </div>
-</div>
+}

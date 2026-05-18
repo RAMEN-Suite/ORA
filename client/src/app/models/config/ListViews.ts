@@ -1,7 +1,7 @@
 import { BindingPath } from './Config';
 
 export interface ListViews {
-  entities: ListView<EntityOption>;
+  entities: ListView<EntityListOption>;
   collections: ListView;
 }
 
@@ -26,6 +26,11 @@ export interface ListOption extends Option {
   filters?: FilterOption[];
 }
 
+export interface EntityListOption extends ListOption {
+  properties?: Property[];
+  index?: EntityIndex;
+}
+
 export interface FilterOption extends Option {
   display?: 'list' | 'range';
   value: BindingPath;
@@ -34,11 +39,6 @@ export interface FilterOption extends Option {
 
 export interface SortOption extends Option {
   value: BindingPath;
-}
-
-export interface EntityOption extends Option {
-  properties?: Property[];
-  index?: EntityIndex;
 }
 
 export interface OptionGroup<TOption extends Option = Option> {

@@ -1,10 +1,10 @@
-@for (block of blocks(); track $index) {
+@for (block of blocks(); track block.type + "-" + $index) {
   @switch (block.type) {
     @case ("headline") {
       <block-headline [properties]="block.properties" [values]="values()" />
     }
-    @case ("metadata") {
-      <block-metadata [properties]="block.properties" [values]="values()" />
+    @case ("attributes") {
+      <block-attributes [properties]="block.properties" [values]="values()" />
     }
     @case ("text") {
       <block-text [properties]="block.properties" [values]="values()" />

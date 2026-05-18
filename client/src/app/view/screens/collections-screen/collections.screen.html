@@ -1,16 +1,20 @@
 <main class="min-h-screen px-6 py-10" *transloco="let t">
   @if (collections(); as list) {
-    <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_350px]">
-      <section class="border-surface-300 bg-surface-0/75 order-2 rounded-md border p-5 lg:order-1!">
-        <header class="mb-3 pb-5 select-none">
-          <h1 class="text-4xl font-semibold tracking-tight">{{ t(activeItem().label) }}</h1>
-          <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
-            {{ t("app.screens.collections.available", { count: list.pagination.total }) }}
-          </p>
-        </header>
+    @if (activeOption(); as active) {
+      <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_350px]">
+        <section class="border-surface-300 bg-surface-0/75 order-2 rounded-md border p-5 lg:order-1!">
+          <header class="mb-3 pb-5 select-none">
+            <h1 class="text-4xl font-semibold tracking-tight">
+              {{ t(active.label) }}
+            </h1>
 
-        <div class="animate__animated animate__fadeIn">
+            <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
+              {{ t("app.screens.collections.available", { count: list.pagination.total }) }}
+            </p>
+          </header>
+
           <shared-paginated-list
+            class="animate__animated animate__fadeIn"
             [items]="list.data"
             [properties]="properties()"
             [totalRecords]="list.pagination.total"
@@ -20,21 +24,20 @@
             [isLoading]="$list.isLoading()"
             (pageChange)="handlePaginationChange($event)"
           />
-        </div>
-      </section>
-      <aside class="order-1 lg:order-2">
-        <div class="space-y-5">
-          <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
+        </section>
+
+        <aside class="order-1 space-y-5 lg:order-2">
+          <section class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
             <shared-select
               label="app.screens.collections.select"
-              [items]="items"
-              [activeItem]="activeItem()"
+              [items]="listOptions()"
+              [activeItem]="active"
               (activeItemChange)="handleActiveItemChange($event)"
             />
-          </div>
+          </section>
 
-          <div class="border-surface-300 bg-surface-0 space-y-3 rounded-md border p-5 select-none">
-            <div class="flex flex-row gap-3">
+          <section class="border-surface-300 bg-surface-0 space-y-3 rounded-md border p-5 select-none">
+            <div class="flex gap-3">
               <p-ifta-label class="w-full">
                 <input
                   id="search"
@@ -45,7 +48,10 @@
                   [ngModel]="queryOptions().search ?? ''"
                   (ngModelChange)="handleSearchChange($event)"
                 />
-                <label for="search">{{ t("app.screens.collections.search") }}</label>
+
+                <label for="search">
+                  {{ t("app.screens.collections.search") }}
+                </label>
               </p-ifta-label>
 
               <p-button
@@ -53,14 +59,14 @@
                 styleClass="h-full! w-12!"
                 tooltipPosition="bottom"
                 positionTop="5"
-                [pTooltip]="t('app.screens.collections.tooltips.reset')"
-                (click)="handleClearFilter()"
                 showDelay="500"
                 outlined
+                [pTooltip]="t('app.screens.collections.tooltips.reset')"
+                (click)="handleClearFilter()"
               />
             </div>
 
-            <div class="flex flex-row gap-3">
+            <div class="flex gap-3">
               <shared-select
                 class="w-full"
                 label="app.screens.collections.sort"
@@ -70,30 +76,32 @@
               />
 
               <p-button
-                icon="pi {{ queryOptions().asc ? 'pi-sort-amount-up' : 'pi-sort-amount-down-alt' }}"
                 styleClass="h-full! w-12!"
                 tooltipPosition="bottom"
                 positionTop="5"
+                showDelay="500"
+                outlined
+                [icon]="queryOptions().asc ? 'pi pi-sort-amount-up' : 'pi pi-sort-amount-down-alt'"
                 [pTooltip]="
                   queryOptions().asc ? t('app.screens.collections.tooltips.ascending') : t('app.screens.collections.tooltips.descending')
                 "
                 (click)="handleSortChange({ asc: !queryOptions().asc })"
-                showDelay="500"
-                outlined
               />
             </div>
-          </div>
+          </section>
 
-          <div class="border-surface-300 bg-surface-0 space-y-3 rounded-md border p-5 select-none" [hidden]="filters().length === 0">
-            <shared-facet-list
-              [facets]="facets()"
-              [filters]="activeItem().filters ?? []"
-              [activeFilters]="activeFilters()"
-              (activeFiltersChange)="handleFilterChange($event)"
-            />
-          </div>
-        </div>
-      </aside>
-    </div>
+          @if (filters().length > 0) {
+            <section class="border-surface-300 bg-surface-0 space-y-3 rounded-md border p-5 select-none">
+              <shared-facet-list
+                [facets]="facets()"
+                [filters]="active.filters ?? []"
+                [activeFilters]="activeFilters()"
+                (activeFiltersChange)="handleFilterChange($event)"
+              />
+            </section>
+          }
+        </aside>
+      </div>
+    }
   }
 </main>

@@ -1,10 +1,10 @@
 import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { environment } from '../../../environments/environment';
-import { Config } from '../../models/config/Config';
+import { environment } from '../../environments/environment';
+import { Config } from '../models/config/Config';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { withCache } from '@ngneat/cashew';
 import { firstValueFrom } from 'rxjs';
-import { ConfigRegistry } from './config.registry';
+import { Registry } from '../models/Registry';
 
 @Injectable({
   providedIn: 'root',
@@ -19,10 +19,10 @@ export class ConfigService {
   public readonly hasConfig: Signal<boolean> = computed((): boolean => this.configState() !== null);
   public readonly error: Signal<unknown> = this.errorState.asReadonly();
 
-  public readonly config: Signal<ConfigRegistry> = computed((): ConfigRegistry => {
+  public readonly config: Signal<Registry> = computed((): Registry => {
     const config: Config | null = this.configState();
     if (!config) throw new Error('Application cannot start without configuration.');
-    return new ConfigRegistry(config);
+    return new Registry(config);
   });
 
   public async init(): Promise<void> {

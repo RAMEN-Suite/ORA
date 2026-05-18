@@ -1,17 +1,18 @@
 @let isSearching = searchPhrase() !== "";
+@let active = activeOption();
 
 <main class="min-h-screen px-6 py-10" *transloco="let t">
   <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[350px_minmax(0,1fr)]">
     <aside class="self-start lg:sticky lg:top-10">
       <div class="space-y-5">
-        <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
+        <section class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
           <shared-select
             label="app.screens.entities.select"
-            [items]="items"
-            [activeItem]="activeItem()"
+            [items]="listOptions()"
+            [activeItem]="active"
             (activeItemChange)="handleActiveItemChange($event)"
           />
-        </div>
+        </section>
 
         <nav class="border-surface-300 bg-surface-0 space-y-5 rounded-md border p-5 select-none">
           <p-ifta-label>
@@ -24,11 +25,14 @@
               [ngModel]="searchPhrase()"
               (ngModelChange)="handleSearchChange($event)"
             />
-            <label for="search">{{ t("app.screens.entities.search") }}</label>
+
+            <label for="search">
+              {{ t("app.screens.entities.search") }}
+            </label>
           </p-ifta-label>
 
           <div class="animate__animated animate__fadeIn">
-            @switch (this.indexType()) {
+            @switch (indexType()) {
               @case ("bible") {
                 <feature-bible-list
                   [isDisabled]="isSearching"
@@ -38,6 +42,7 @@
                   (activeBookChange)="handleIndexChange($event)"
                 />
               }
+
               @default {
                 <shared-character-list
                   [isDisabled]="isSearching"
@@ -54,32 +59,33 @@
 
     <section class="border-surface-300 bg-surface-0/75 rounded-md border p-5">
       <header class="mb-6 pb-5 select-none">
-        <h1 class="text-4xl font-semibold tracking-tight">
-          {{ t(activeItem().label) }}
-        </h1>
+        @if (active) {
+          <h1 class="text-4xl font-semibold tracking-tight">
+            {{ t(active.label) }}
+          </h1>
+        }
 
         <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
           {{ t("app.screens.entities.entries", { value: activeIndexLabel() }) }}
         </p>
       </header>
 
-      <div class="animate__animated animate__fadeIn">
-        <p-data-view [value]="filteredEntities()">
-          <ng-template #list let-items>
-            <shared-nodes-view
-              [nodes]="items"
-              [properties]="properties()"
-              [isLoading]="$list.isLoading()"
-              [routeTarget]="['/', ROUTES.ENTITY]"
-            />
-          </ng-template>
-          <ng-template #emptymessage>
-            <div [hidden]="$list.isLoading()">
-              {{ t("app.screens.entities.empty") }}
-            </div>
-          </ng-template>
-        </p-data-view>
-      </div>
+      <p-data-view class="animate__animated animate__fadeIn" [value]="filteredEntities()">
+        <ng-template #list let-items>
+          <shared-nodes-view
+            [nodes]="items"
+            [properties]="properties()"
+            [isLoading]="$list.isLoading()"
+            [routeTarget]="['/', ROUTES.ENTITY]"
+          />
+        </ng-template>
+
+        <ng-template #emptymessage>
+          @if (!$list.isLoading()) {
+            {{ t("app.screens.entities.empty") }}
+          }
+        </ng-template>
+      </p-data-view>
     </section>
   </div>
 </main>

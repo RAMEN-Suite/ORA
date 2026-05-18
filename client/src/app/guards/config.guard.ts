@@ -1,5 +1,5 @@
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
-import { ConfigService } from '../services/config-service/config.service';
+import { ConfigService } from '../services/config.service';
 import { inject } from '@angular/core';
 
 export const configGuard: CanActivateFn = (): true | UrlTree => {

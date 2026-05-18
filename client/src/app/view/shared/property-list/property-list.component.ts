@@ -27,7 +27,7 @@ export class PropertyListComponent {
   );
 
   private formatString(property: Property): string {
-    const value: string | string[] | null = this.getValue(property.name);
+    const value: string | string[] | null = Utils.stringifyValue(this.item()[property.name]);
     if (value === null) return '';
 
     const values: string[] = this.getMappedValues(value, property);
@@ -36,15 +36,8 @@ export class PropertyListComponent {
     return this.translocoService.translate(property.display, { value: values[0], values });
   }
 
-  private getValue(property: string): string | string[] | null {
-    const value: unknown = this.item()[property];
-    if (value === null || value === undefined || value === '') return null;
-    return Array.isArray(value) ? value.map(String) : Utils.parseStringArray(value);
-  }
-
   private getMappedValues(value: string | string[], property: Property): string[] {
     const values: string[] = Array.isArray(value) ? value : [value];
-
     return values.map((value: string): string => {
       const mapped: string | undefined = property.valueMap?.[value];
       return mapped ? this.translocoService.translate(mapped) : value;

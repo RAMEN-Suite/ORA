@@ -1,8 +1,7 @@
-import { Component, computed, inject, linkedSignal, Signal, signal, WritableSignal } from '@angular/core';
+import { Component, computed, inject, Signal, signal, WritableSignal } from '@angular/core';
 import { IftaLabel } from 'primeng/iftalabel';
 import { InputText } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
-import { ListService } from '../../../services/list.service';
 import { HttpResourceRef } from '@angular/common/http';
 import { DataView } from 'primeng/dataview';
 import { CharacterListComponent } from '../../shared/character-list/character-list.component';
@@ -10,22 +9,19 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Utils } from '../../../utils/Utils';
 import { NavigationService } from '../../../services/navigation.service';
 import { List, Listable, QueryOptions } from '../../../models/List';
-import { ConfigService } from '../../../services/config-service/config.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SelectComponent } from '../../shared/select/select.component';
 import { ROUTES } from '../../../app.routes';
 import { NodesViewComponent } from '../../shared/data-view/nodes-view/nodes-view.component';
-import { PreviousLinkedValue } from '../../../../types/global';
 import { BibleListComponent } from '../../features/bible-list/bible-list.component';
 import { BibleAlias, BibleListHelper } from '../../features/bible-list/bible-list.helper';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { Entity } from '../../../models/Node';
-import { EntityIndex, EntityOption, Property } from '../../../models/config/ListViews';
-import { ListRegistry } from '../../../services/config-service/list.registry';
+import { EntityIndex, EntityListOption, Property } from '../../../models/config/ListViews';
 import { BibleBook } from '../../../models/config/Features';
-import { ConfigRegistry } from '../../../services/config-service/config.registry';
+import { AbstractListScreen } from '../abstract-list.screen';
 
-const DEFAULT_OPTION: EntityOption = {
+const DEFAULT_OPTION: EntityListOption = {
   icon: 'pi pi-folder-open',
   label: 'app.screens.entities.default',
   index: 'character',
@@ -47,25 +43,15 @@ const DEFAULT_OPTION: EntityOption = {
   ],
   templateUrl: './entities.screen.html',
 })
-export class EntitiesScreen {
+export class EntitiesScreen extends AbstractListScreen<EntityListOption> {
   private readonly translocoService: TranslocoService = inject(TranslocoService);
   private readonly navigationService: NavigationService = inject(NavigationService);
-  private readonly configService: ConfigService = inject(ConfigService);
-  private readonly listService: ListService = inject(ListService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
-
-  private readonly config: ConfigRegistry = this.configService.config();
-  private readonly view: ListRegistry = this.config.list('entities');
 
   protected readonly bibleBooks: BibleBook[] = this.config.feature('bible');
   protected readonly bibleAliases: BibleAlias[] = BibleListHelper.createIndex(this.bibleBooks);
 
-  protected readonly items: EntityOption[] = [...this.view.options(), DEFAULT_OPTION];
-  protected readonly activeItem: WritableSignal<EntityOption> = signal<EntityOption>(this.view.activeOption());
-  protected readonly activeItemLabel: Signal<string> = computed((): string => this.activeItem().value);
-  protected readonly activeProperties: Signal<Property[]> = computed((): Property[] => this.view.properties(this.activeItem()));
-
-  protected readonly indexType: Signal<EntityIndex> = computed((): EntityIndex => this.activeItem().index ?? 'character');
+  protected readonly indexType: Signal<EntityIndex> = computed((): EntityIndex => this.activeOption()?.index ?? 'character');
   protected readonly activeIndex: WritableSignal<string> = signal('');
   protected readonly activeIndexLabel: Signal<string> = computed((): string => {
     if (this.searchPhrase()) return this.searchPhrase();
@@ -76,35 +62,46 @@ export class EntitiesScreen {
   protected readonly searchPhrase: WritableSignal<string> = signal('');
   protected readonly filteredEntities: Signal<Entity[]> = computed((): Entity[] => this.filterEntityList());
 
-  protected readonly queryOptions: Signal<QueryOptions> = signal({ orderBy: 'label', asc: true, limit: 0, skip: 0 });
+  protected readonly entityLabels: Signal<string[]> = computed((): string[] =>
+    this.entities().data.map((entity: Entity): string => entity.label),
+  );
+
+  protected readonly queryOptions: Signal<QueryOptions> = signal({
+    orderBy: 'label',
+    asc: true,
+    limit: 0,
+    skip: 0,
+  });
+
   protected readonly $list: HttpResourceRef<List<Entity>> = this.listService.fetchList(
     Listable.ENTITY,
-    this.activeItemLabel,
+    this.activeOptionLabel,
     this.queryOptions,
   );
 
-  protected readonly entities: Signal<List<Entity>> = linkedSignal({
-    source: (): List<Entity> => this.$list.value(),
-    computation: (source: List<Entity>, previous: PreviousLinkedValue<List<Entity>>): List<Entity> =>
-      this.$list.isLoading() ? (previous?.value ?? source) : source,
-  });
-  protected readonly entityLabels: Signal<string[]> = computed((): string[] =>
-    this.entities().data.map((e: Entity): string => e.label),
+  protected readonly entities: Signal<List<Entity>> = this.onLoading(
+    (): List<Entity> => this.$list.value(),
+    (): boolean => this.$list.isLoading(),
   );
 
-  protected readonly properties: Signal<Property[]> = linkedSignal({
-    source: (): Property[] => this.activeProperties(),
-    computation: (source: Property[], previous: PreviousLinkedValue<Property[]>): Property[] =>
-      this.$list.isLoading() ? (previous?.value ?? source) : source,
-  });
+  protected readonly properties: Signal<Property[]> = this.onLoading(
+    (): Property[] => this.activeProperties(),
+    (): boolean => this.$list.isLoading(),
+  );
 
   constructor() {
+    super();
+    this.init(this.config.list('entities'));
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(this.applyQueryParams.bind(this));
   }
 
-  protected handleActiveItemChange(option: EntityOption | undefined): void {
+  protected override additionalListOptions(): EntityListOption[] {
+    return [DEFAULT_OPTION];
+  }
+
+  protected handleActiveItemChange(option: EntityListOption | undefined): void {
     if (!option) return;
-    this.activeItem.set(option);
+    this.activeOption.set(option);
     this.activeIndex.set('');
     this.navigationService.updateQuery(this.route, { label: option.value || null, index: null });
   }
@@ -117,8 +114,8 @@ export class EntitiesScreen {
   protected handleSearchChange(input: string): void {
     const phrase: string = input.trim();
     if (phrase !== '' && phrase.length < 3) return;
-
     this.searchPhrase.set(phrase);
+
     const index: string | null = phrase === '' ? this.activeIndex() : null;
     this.navigationService.updateQuery(this.route, { index, search: phrase || null });
   }
@@ -130,27 +127,27 @@ export class EntitiesScreen {
 
     if (searchPhrase !== '') return this.filterBySearch(entities, searchPhrase);
     if (currentIndex === '') return [];
-
     if (this.indexType() === 'bible') return this.filterByBible(entities, currentIndex);
+
     return this.filterByDefault(entities, currentIndex);
   }
 
   private filterBySearch(entities: Entity[], searchPhrase: string): Entity[] {
-    return entities.filter((e: Entity): boolean => {
-      const normalized: string = Utils.normalize(e.label, { toLower: true });
+    return entities.filter((entity: Entity): boolean => {
+      const normalized: string = Utils.normalize(entity.label, { toLower: true });
       return normalized.includes(searchPhrase);
     });
   }
 
   private filterByBible(entities: Entity[], currentIndex: string): Entity[] {
     return entities
-      .filter((e: Entity): boolean => BibleListHelper.value(e.label, this.bibleAliases) === currentIndex)
+      .filter((entity: Entity): boolean => BibleListHelper.value(entity.label, this.bibleAliases) === currentIndex)
       .sort((a: Entity, b: Entity): number => BibleListHelper.compare(a.label, b.label, this.bibleAliases));
   }
 
   private filterByDefault(entities: Entity[], currentIndex: string): Entity[] {
-    return entities.filter((e: Entity): boolean => {
-      const index: string = Utils.firstCharacter(e.label);
+    return entities.filter((entity: Entity): boolean => {
+      const index: string = Utils.firstCharacter(entity.label);
       return currentIndex === '' || currentIndex === index;
     });
   }
@@ -160,10 +157,8 @@ export class EntitiesScreen {
     const searchPhrase: string | undefined = Utils.parseString(params['search']);
     const label: string | undefined = Utils.parseString(params['label']);
 
-    if (label !== undefined) {
-      const existing: EntityOption | undefined = this.view.option(label);
-      if (existing) this.activeItem.set(existing);
-    }
+    const option: EntityListOption | undefined = this.findOption(label, this.listOptions());
+    if (option) this.activeOption.set(option);
 
     this.searchPhrase.set(searchPhrase ?? '');
     this.activeIndex.set(index ?? '');

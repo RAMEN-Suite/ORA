@@ -10,7 +10,7 @@ export interface DetailView {
   blocks: Block[];
 }
 
-export type Block = Headline | Metadata | Text;
+export type Block = Headline | Attributes | Text;
 
 export interface BlockOf<TType extends string, TProps> {
   type: TType;
@@ -18,7 +18,7 @@ export interface BlockOf<TType extends string, TProps> {
 }
 
 export type Headline = BlockOf<'headline', HeadlineProps>;
-export type Metadata = BlockOf<'metadata', MetadataProps>;
+export type Attributes = BlockOf<'attributes', AttributesProps>;
 export type Text = BlockOf<'text', TextProps>;
 
 export interface HeadlineProps {
@@ -26,28 +26,28 @@ export interface HeadlineProps {
 }
 
 export interface TextProps {
-  title?: string;
+  title?: Binding | string;
   text: Binding;
   annotations?: Binding;
 }
 
-export interface MetadataProps {
+export interface AttributesProps {
   title?: Binding;
-  items: MetadataItem[];
+  items: AttributesItem[];
 }
 
-export type MetadataItem = MetadataValueItem | MetadataNodeItem;
+export type AttributesItem = AttributesValueItem | AttributesNodeItem;
 
-export interface MetadataBaseItem {
+export interface AttributesBaseItem {
   label: string;
 }
 
-export interface MetadataValueItem extends MetadataBaseItem {
+export interface AttributesValueItem extends AttributesBaseItem {
   kind?: 'value';
   value: Binding;
 }
 
-export interface MetadataNodeItem extends MetadataBaseItem {
+export interface AttributesNodeItem extends AttributesBaseItem {
   kind: 'node';
   value: Binding;
   property: string;

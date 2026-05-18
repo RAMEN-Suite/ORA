@@ -1,14 +1,13 @@
-import { Config } from '../../models/config/Config';
-import { Features } from '../../models/config/Features';
-import { DetailView, DetailViews } from '../../models/config/DetailViews';
-import { ListViews } from '../../models/config/ListViews';
-import { ListRegistry } from './list.registry';
+import { Config } from './config/Config';
+import { Features } from './config/Features';
+import { DetailView, DetailViews } from './config/DetailViews';
+import { ListViews } from './config/ListViews';
 
-export class ConfigRegistry {
+export class Registry {
   constructor(private readonly config: Config) {}
 
-  public list(key: keyof ListViews): ListRegistry {
-    return new ListRegistry(this.config.lists[key]);
+  public list<K extends keyof ListViews>(key: K): ListViews[K] {
+    return this.config.lists[key];
   }
 
   public feature<K extends keyof Features>(key: K): Features[K] {

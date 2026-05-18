@@ -4,7 +4,7 @@ import { Binding } from '../models/config/Config';
 
 export class BlockValueResolver {
   public static resolveString(value: Binding | undefined, values: Record<string, unknown>): string {
-    return this.stringify(this.resolve(value, values));
+    return Utils.stringify(this.resolve(value, values)) ?? '';
   }
 
   public static resolveNode(value: Binding | undefined, values: Record<string, unknown>): Node | undefined {
@@ -22,12 +22,6 @@ export class BlockValueResolver {
     if (value === undefined) return undefined;
     if (this.isBinding(value)) return values[value.path];
     return value;
-  }
-
-  private static stringify(value: unknown): string {
-    if (Array.isArray(value)) return value.map(String).join('; ');
-    if (value === undefined || value === null) return '';
-    return Utils.parseString(value) ?? '';
   }
 
   private static isNode(value: unknown): value is Node {

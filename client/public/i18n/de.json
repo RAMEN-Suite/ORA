@@ -26,11 +26,6 @@
         "empty": "Keine Einträge vorhanden."
       }
     },
-    "blocks": {
-      "metadata": {
-        "missing": "–"
-      }
-    },
     "features": {
       "bibleList": {
         "search": "Nach Buch suchen:",
