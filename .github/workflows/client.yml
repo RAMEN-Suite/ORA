@@ -76,7 +76,7 @@ jobs:
         uses: docker/build-push-action@v7.1.0
         with:
           context: client
-          file: dockerfile
+          file: client/dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
