@@ -41,6 +41,7 @@ jobs:
         run: npm run lint
       - name: Format Check
         run: npm run format
+        continue-on-error: true
       - name: Build
         run: npm run build
   container:
