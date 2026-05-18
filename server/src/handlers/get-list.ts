@@ -5,9 +5,9 @@ import { ListDAO } from "../database/ListDAO";
 import { List, ListOptions, Pagination } from "../models/List";
 import { matchedData } from "express-validator";
 import { FilterParser } from "../parser/FilterParser";
-import { Resource } from "../models/Node";
+import { RESOURCE } from "../constants/RESOURCE";
 
-export async function getList(resource: Resource, req: Request, res: Response): Promise<void> {
+export async function getList(resource: RESOURCE, req: Request, res: Response): Promise<void> {
   const params: Record<string, unknown> = matchedData(req);
 
   const specifiedLabel: string | undefined = Utils.parseString(params.label);

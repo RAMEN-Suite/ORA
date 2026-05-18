@@ -5,10 +5,10 @@ import { AccessPattern } from "./cypher/AccessPattern";
 import { BuiltQuery, QueryAssembler } from "./cypher/QueryAssembler";
 import { Utils } from "../utils/Utils";
 import { CypherUtils } from "../utils/CypherUtils";
-import { Resource } from "../models/Node";
+import { RESOURCE } from "../constants/RESOURCE";
 
 export class FacetDAO {
-  public static async getFacets(resource: Resource, label: string | undefined, options: FacetOptions): Promise<FacetGroup[]> {
+  public static async getFacets(resource: RESOURCE, label: string | undefined, options: FacetOptions): Promise<FacetGroup[]> {
     const groups: FacetGroup[] = [];
 
     for (const field of options.facets) {
@@ -20,7 +20,7 @@ export class FacetDAO {
   }
 
   private static async getValues(
-    resource: Resource,
+    resource: RESOURCE,
     label: string | undefined,
     facet: string,
     options: FacetOptions,

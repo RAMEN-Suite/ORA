@@ -2,12 +2,12 @@ import { QueryResult } from "neo4j-driver";
 import { Neo4jService } from "../services/Neo4jService";
 import { ListOptions } from "../models/List";
 import { BuiltQuery, QueryAssembler } from "./cypher/QueryAssembler";
-import { Resource } from "../models/Node";
 import { CypherUtils } from "../utils/CypherUtils";
 import { Utils } from "../utils/Utils";
+import { RESOURCE } from "../constants/RESOURCE";
 
 export class ListDAO {
-  public static async getList(resource: Resource, label: string | undefined, options: ListOptions): Promise<unknown[]> {
+  public static async getList(resource: RESOURCE, label: string | undefined, options: ListOptions): Promise<unknown[]> {
     const assembler: QueryAssembler = new QueryAssembler(resource, label);
 
     assembler.search(options.field, options.search);
@@ -27,7 +27,7 @@ export class ListDAO {
     return Utils.parseArray(value);
   }
 
-  public static async getCount(resource: Resource, label: string | undefined, options: ListOptions): Promise<number> {
+  public static async getCount(resource: RESOURCE, label: string | undefined, options: ListOptions): Promise<number> {
     const assembler: QueryAssembler = new QueryAssembler(resource, label);
 
     assembler.search(options.field, options.search);

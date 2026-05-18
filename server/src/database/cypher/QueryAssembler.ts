@@ -1,8 +1,8 @@
 import neo4j from "neo4j-driver";
 import { AccessPattern } from "./AccessPattern";
 import { AccessParser, AccessPath } from "../../parser/AccessParser";
-import { Resource } from "../../models/Node";
 import { Filter } from "../../models/Filter";
+import { RESOURCE } from "../../constants/RESOURCE";
 
 export interface BuiltQuery {
   cypher: string;
@@ -15,17 +15,13 @@ export class QueryAssembler {
   private readonly params: Record<string, unknown> = {};
   private readonly conditions: string[] = [];
 
-  public constructor(resource: Resource, label?: string, alias: string = "r") {
+  public constructor(resource: RESOURCE, label?: string, alias: string = "r") {
     this.alias = alias;
     this.match(resource, label);
   }
 
   public getAlias(): string {
     return this.alias;
-  }
-
-  public getParams(): Record<string, unknown> {
-    return this.params;
   }
 
   public search(field: string | undefined, search: string | undefined): this {
@@ -103,7 +99,7 @@ export class QueryAssembler {
     return new AccessPattern(path, this.alias, prefix, this.params, isOptional);
   }
 
-  private match(resource: Resource, label?: string): void {
+  private match(resource: RESOURCE, label?: string): void {
     this.params.resource = resource;
 
     if (!label) {

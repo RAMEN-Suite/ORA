@@ -5,9 +5,9 @@ import { FacetGroup, FacetOptions } from "../models/Facet";
 import { FacetDAO } from "../database/FacetDAO";
 import { matchedData } from "express-validator";
 import { FilterParser } from "../parser/FilterParser";
-import { Resource } from "../models/Node";
+import { RESOURCE } from "../constants/RESOURCE";
 
-export async function getFacets(resource: Resource, req: Request, res: Response): Promise<void> {
+export async function getFacets(resource: RESOURCE, req: Request, res: Response): Promise<void> {
   const params: Record<string, unknown> = matchedData(req);
 
   const specifiedLabel: string | undefined = Utils.parseString(params.label);
