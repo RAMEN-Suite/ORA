@@ -1,7 +1,7 @@
 import { Injectable, Signal } from '@angular/core';
 import { HttpParams, httpResource, HttpResourceRef, HttpResourceRequest } from '@angular/common/http';
 import { withCache } from '@ngneat/cashew';
-import { List, Listable, ListOptions } from '../models/List';
+import { List, Listable, QueryOptions } from '../models/List';
 import { environment } from '../../environments/environment';
 import { FacetGroup, FacetOptions } from '../models/Facet';
 import { FilterUtils } from '../utils/FilterUtils';
@@ -22,7 +22,7 @@ const DEFAULT_PAGINATION = {
 export class ListService {
   private readonly baseUrl: string = `${environment.apiBaseUrl}${environment.apiPaths.view}`;
 
-  public fetchList<T>(list: Listable, label: Signal<string>, options?: Signal<ListOptions>): HttpResourceRef<List<T>> {
+  public fetchList<T>(list: Listable, label: Signal<string>, options?: Signal<QueryOptions>): HttpResourceRef<List<T>> {
     return httpResource(
       (): HttpResourceRequest => ({
         url: `${this.baseUrl}/${list}`,
@@ -57,7 +57,7 @@ export class ListService {
     return params;
   }
 
-  private getHttpListParams(label?: string, options?: ListOptions): HttpParams {
+  private getHttpListParams(label?: string, options?: QueryOptions): HttpParams {
     let params: HttpParams = new HttpParams();
 
     if (label) params = params.set('label', label);

@@ -1,5 +1,5 @@
 import { CanActivateFn, Router, UrlTree } from '@angular/router';
-import { ConfigService } from '../services/config.service';
+import { ConfigService } from '../services/config-service/config.service';
 import { inject } from '@angular/core';
 
 export const configGuard: CanActivateFn = (): true | UrlTree => {
@@ -7,5 +7,5 @@ export const configGuard: CanActivateFn = (): true | UrlTree => {
   const router: Router = inject(Router);
 
   if (config.hasConfig()) return true;
-  return router.createUrlTree(['/error'], { queryParams: { reason: 'config' } });
+  return router.createUrlTree(['/error']);
 };

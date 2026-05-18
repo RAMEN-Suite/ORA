@@ -6,20 +6,8 @@
 
 <div class="animate__animated animate__fadeIn min-h-screen px-6 py-10" [hidden]="$view.isLoading()">
   <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_350px]">
-    <main class="border-surface-300 bg-surface-0/75 flex flex-col gap-6 rounded-md border py-10">
-      @for (block of blocks(); track $index) {
-        @switch (block.type) {
-          @case ("headline") {
-            <block-headline [properties]="block.properties" [values]="values()" />
-          }
-          @case ("metadata") {
-            <block-metadata [properties]="block.properties" [values]="values()" />
-          }
-          @case ("text") {
-            <block-text [properties]="block.properties" [values]="values()" />
-          }
-        }
-      }
+    <main class="border-surface-300 bg-surface-0/75 rounded-md border py-10">
+      <shared-block-renderer [blocks]="blocks()" [values]="values()" class="flex flex-col gap-6" />
     </main>
     <aside class="order-2 space-y-3 self-start overflow-y-auto lg:sticky lg:top-10 lg:max-h-[calc(100vh-5rem)]">
       <!-- <div class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">Text Box 1</div> -->

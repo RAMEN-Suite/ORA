@@ -1,4 +1,14 @@
-import { Access, AccessValue } from './Access';
+import { Binding } from './Config';
+
+export interface DetailViews {
+  entity: DetailView[];
+  collection: DetailView[];
+}
+
+export interface DetailView {
+  match: string[];
+  blocks: Block[];
+}
 
 export type Block = Headline | Metadata | Text;
 
@@ -12,16 +22,17 @@ export type Metadata = BlockOf<'metadata', MetadataProps>;
 export type Text = BlockOf<'text', TextProps>;
 
 export interface HeadlineProps {
-  title: AccessValue<string>;
+  title: Binding;
 }
 
 export interface TextProps {
-  title?: AccessValue<string>;
-  text: AccessValue<string>;
+  title?: string;
+  text: Binding;
+  annotations?: Binding;
 }
 
 export interface MetadataProps {
-  title?: AccessValue<string>;
+  title?: Binding;
   items: MetadataItem[];
 }
 
@@ -33,12 +44,12 @@ export interface MetadataBaseItem {
 
 export interface MetadataValueItem extends MetadataBaseItem {
   kind?: 'value';
-  value: AccessValue<string>;
+  value: Binding;
 }
 
 export interface MetadataNodeItem extends MetadataBaseItem {
   kind: 'node';
-  value: Access;
+  value: Binding;
   property: string;
   isLinked?: boolean;
 }

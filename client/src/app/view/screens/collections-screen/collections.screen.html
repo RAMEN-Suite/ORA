@@ -42,7 +42,7 @@
                   fluid
                   type="search"
                   autocomplete="off"
-                  [ngModel]="listOptions().search ?? ''"
+                  [ngModel]="queryOptions().search ?? ''"
                   (ngModelChange)="handleSearchChange($event)"
                 />
                 <label for="search">{{ t("app.screens.collections.search") }}</label>
@@ -70,14 +70,14 @@
               />
 
               <p-button
-                icon="pi {{ listOptions().asc ? 'pi-sort-amount-up' : 'pi-sort-amount-down-alt' }}"
+                icon="pi {{ queryOptions().asc ? 'pi-sort-amount-up' : 'pi-sort-amount-down-alt' }}"
                 styleClass="h-full! w-12!"
                 tooltipPosition="bottom"
                 positionTop="5"
                 [pTooltip]="
-                  listOptions().asc ? t('app.screens.collections.tooltips.ascending') : t('app.screens.collections.tooltips.descending')
+                  queryOptions().asc ? t('app.screens.collections.tooltips.ascending') : t('app.screens.collections.tooltips.descending')
                 "
-                (click)="handleSortChange({ asc: !listOptions().asc })"
+                (click)="handleSortChange({ asc: !queryOptions().asc })"
                 showDelay="500"
                 outlined
               />

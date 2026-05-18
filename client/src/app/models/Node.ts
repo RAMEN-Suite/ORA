@@ -1,15 +1,11 @@
+export type IdentifiableNode = Node & { uuid: string };
+
 export interface Node {
   _labels: string[];
-  uuid: string;
   [key: string]: unknown;
 }
 
 export interface Entity extends Node {
-  uuid: string;
-  label: string;
-}
-
-export interface Content extends Node {
   uuid: string;
   label: string;
 }

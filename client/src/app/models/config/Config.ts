@@ -1,34 +1,15 @@
-import { EntityOption, ListOption, Option, Property } from './Options';
-import { Block } from './Block';
+import { ListViews } from './ListViews';
+import { DetailViews } from './DetailViews';
+import { Features } from './Features';
+
+export type BindingPath = string;
 
 export interface Config {
-  screens: Screens;
+  lists: ListViews;
+  details: DetailViews;
   features: Features;
 }
 
-export interface Screens {
-  entities: ListScreen<EntityOption>;
-  collections: ListScreen;
-  collection: DetailScreen[];
-  entity: DetailScreen[];
-}
-
-export interface ListScreen<TItem extends Option = ListOption> {
-  initial: string;
-  options: TItem[];
-  properties?: Property[];
-}
-
-export interface DetailScreen {
-  match: string[];
-  blocks: Block[];
-}
-
-export interface Features {
-  bible: BibleBook[];
-}
-
-export interface BibleBook {
-  key: string;
-  aliases: string[];
+export interface Binding {
+  path: BindingPath;
 }

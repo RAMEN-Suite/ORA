@@ -2,9 +2,9 @@ import { Component, computed, inject, linkedSignal, signal, Signal, viewChild, W
 import { TableModule } from 'primeng/table';
 import { PaginatedListComponent } from '../../shared/paginated-list/paginated-list.component';
 import { ListService } from '../../../services/list.service';
-import { List, Listable, ListOptions } from '../../../models/List';
+import { List, Listable, QueryOptions } from '../../../models/List';
 import { HttpResourceRef } from '@angular/common/http';
-import { ConfigService } from '../../../services/config.service';
+import { ConfigService } from '../../../services/config-service/config.service';
 import { NavigationService } from '../../../services/navigation.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { PreviousLinkedValue } from '../../../../types/global';
@@ -15,7 +15,6 @@ import { FormsModule } from '@angular/forms';
 import { IftaLabel } from 'primeng/iftalabel';
 import { InputText } from 'primeng/inputtext';
 import { Button } from 'primeng/button';
-import { Registry } from '../../../models/Registry';
 import { Utils } from '../../../utils/Utils';
 import { Tooltip } from 'primeng/tooltip';
 import { ActiveFilter, FacetGroup, FacetOptions } from '../../../models/Facet';
@@ -24,8 +23,8 @@ import { FilterUtils } from '../../../utils/FilterUtils';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Collection } from '../../../models/Node';
 import { ROUTES } from '../../../app.routes';
-import { FilterOption, ListOption, Option, Property } from '../../../models/config/Options';
-import { ListScreen } from '../../../models/config/Config';
+import { FilterOption, ListOption, Option, Property } from '../../../models/config/ListViews';
+import { ListRegistry } from '../../../services/config-service/list.registry';
 
 @Component({
   selector: 'screen-collections',
@@ -44,42 +43,41 @@ import { ListScreen } from '../../../models/config/Config';
   templateUrl: './collections.screen.html',
 })
 export class CollectionsScreen {
+  private readonly facetListComponent: Signal<FacetListComponent | undefined> = viewChild(FacetListComponent);
+
   private readonly navigationService: NavigationService = inject(NavigationService);
   private readonly configService: ConfigService = inject(ConfigService);
   private readonly listService: ListService = inject(ListService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
-  private readonly facetListComponent: Signal<FacetListComponent | undefined> = viewChild(FacetListComponent);
+  private readonly view: ListRegistry = this.configService.config().list('collections');
 
-  private readonly config: Registry = this.configService.config();
-  private readonly screen: ListScreen = this.config.screen('collections');
-
-  protected readonly items: ListOption[] = this.screen.options;
-  protected readonly activeItem: WritableSignal<ListOption> = signal<ListOption>(this.config.initialNode(this.screen));
+  protected readonly items: ListOption[] = this.view.options();
+  protected readonly activeItem: WritableSignal<ListOption> = signal<ListOption>(this.view.activeOption());
   protected readonly activeItemLabel: Signal<string> = computed((): string => this.activeItem().value);
-  protected readonly activeProperties: Signal<Property[]> = computed((): Property[] =>
-    this.config.properties(this.screen, this.activeItem()),
-  );
+  protected readonly activeProperties: Signal<Property[]> = computed((): Property[] => this.view.properties(this.activeItem()));
 
-  protected readonly filters: Signal<FilterOption[]> = computed((): FilterOption[] => this.config.filters(this.activeItem()));
+  protected readonly filters: Signal<FilterOption[]> = computed((): FilterOption[] => this.activeItem().filters ?? []);
   protected readonly activeFilters: WritableSignal<ActiveFilter[]> = signal<ActiveFilter[]>([]);
 
   protected readonly sort: Signal<Option[]> = computed((): Option[] => this.activeItem().sort?.options ?? []);
-  protected readonly activeSort: WritableSignal<Option | undefined> = signal(this.config.initialOption(this.activeItem().sort));
+  protected readonly activeSort: WritableSignal<Option | undefined> = signal(this.view.activeGroupOption(this.activeItem().sort));
 
-  protected readonly facetOptions: WritableSignal<FacetOptions> = signal({ facets: this.config.filterPaths(this.activeItem()) });
-  protected readonly listOptions: WritableSignal<ListOptions> = signal({
+  protected readonly queryOptions: WritableSignal<QueryOptions> = signal({
     orderBy: this.activeSort()?.value ?? 'label',
     asc: this.activeItem().sort?.direction === 'asc',
     limit: 25,
     skip: 0,
   });
-
   public readonly $list: HttpResourceRef<List<Collection>> = this.listService.fetchList(
     Listable.COLLECTION,
     this.activeItemLabel,
-    this.listOptions,
+    this.queryOptions,
   );
+
+  protected readonly facetOptions: WritableSignal<FacetOptions> = signal({
+    facets: this.view.filterPaths(this.activeItem()),
+  });
   public readonly $facets: HttpResourceRef<FacetGroup[]> = this.listService.fetchFacets(
     Listable.COLLECTION,
     this.activeItemLabel,
@@ -108,9 +106,9 @@ export class CollectionsScreen {
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(this.applyQueryParams.bind(this));
   }
 
-  protected handlePaginationChange(change: Partial<Pick<ListOptions, 'limit' | 'skip'>>): void {
-    const current: ListOptions = this.listOptions();
-    const next: ListOptions = { ...current, ...change };
+  protected handlePaginationChange(change: Partial<Pick<QueryOptions, 'limit' | 'skip'>>): void {
+    const current: QueryOptions = this.queryOptions();
+    const next: QueryOptions = { ...current, ...change };
 
     const limit: number = PaginationUtils.parseLimit(next.limit);
     const page: number = PaginationUtils.skipToPage(next.skip, limit);
@@ -122,7 +120,7 @@ export class CollectionsScreen {
   protected handleActiveItemChange(option: ListOption | undefined): void {
     if (!option) return;
 
-    const params: Params = { label: option.value, limit: this.listOptions().limit, page: 1, orderBy: null };
+    const params: Params = { label: option.value, limit: this.queryOptions().limit, page: 1, orderBy: null };
     this.navigationService.updateQuery(this.route, params);
   }
 
@@ -140,9 +138,9 @@ export class CollectionsScreen {
     this.navigationService.updateQuery(this.route, params, { scroll: 'manual' });
   }
 
-  protected handleSortChange(change: Partial<Pick<ListOptions, 'asc' | 'orderBy'>>): void {
-    const current: ListOptions = this.listOptions();
-    const next: ListOptions = { ...current, ...change };
+  protected handleSortChange(change: Partial<Pick<QueryOptions, 'asc' | 'orderBy'>>): void {
+    const current: QueryOptions = this.queryOptions();
+    const next: QueryOptions = { ...current, ...change };
 
     const orderBy: string = next.orderBy ?? 'label';
     const asc: string = String(next.asc);
@@ -167,10 +165,10 @@ export class CollectionsScreen {
     const search: string | undefined = Utils.parseString(params['search']);
     const { orderBy, asc } = this.applySortParams(params);
 
-    const list: ListOptions = { limit, skip, search, orderBy, asc, filters: this.activeFilters() };
-    this.listOptions.update((current: ListOptions): ListOptions => ({ ...current, ...list }));
+    const list: QueryOptions = { limit, skip, search, orderBy, asc, filters: this.activeFilters() };
+    this.queryOptions.update((current: QueryOptions): QueryOptions => ({ ...current, ...list }));
 
-    const facet: FacetOptions = { search, facets: this.config.filterPaths(this.activeItem()), filters: this.activeFilters() };
+    const facet: FacetOptions = { search, facets: this.view.filterPaths(this.activeItem()), filters: this.activeFilters() };
     this.facetOptions.update((current: FacetOptions): FacetOptions => ({ ...current, ...facet }));
   }
 
@@ -178,7 +176,7 @@ export class CollectionsScreen {
     const label: string | undefined = Utils.parseString(params['label']);
     if (label === undefined) return;
 
-    const existing: ListOption | undefined = this.config.node(this.screen, label);
+    const existing: ListOption | undefined = this.view.option(label);
     if (existing) this.activeItem.set(existing);
   }
 
@@ -188,10 +186,10 @@ export class CollectionsScreen {
     this.activeFilters.set(filters);
   }
 
-  private applySortParams(params: Params): Pick<ListOptions, 'orderBy' | 'asc'> {
+  private applySortParams(params: Params): Pick<QueryOptions, 'orderBy' | 'asc'> {
     const rawOrderBy: string | undefined = Utils.parseString(params['orderBy']);
-    const existing: Option | undefined = this.config.option(this.activeItem().sort?.options ?? [], rawOrderBy ?? '');
-    const initial: Option | undefined = this.config.initialOption(this.activeItem().sort);
+    const existing: Option | undefined = this.view.option(rawOrderBy ?? '', this.activeItem().sort?.options ?? []);
+    const initial: Option | undefined = this.view.activeGroupOption(this.activeItem().sort);
     this.activeSort.set(existing ?? initial);
 
     return {

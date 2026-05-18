@@ -19,7 +19,7 @@ export interface Pagination {
   hasPrevious: boolean;
 }
 
-export interface ListOptions {
+export interface QueryOptions {
   limit: number;
   skip: number;
   orderBy?: string;

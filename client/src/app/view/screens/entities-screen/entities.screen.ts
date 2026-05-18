@@ -9,20 +9,21 @@ import { CharacterListComponent } from '../../shared/character-list/character-li
 import { ActivatedRoute, Params } from '@angular/router';
 import { Utils } from '../../../utils/Utils';
 import { NavigationService } from '../../../services/navigation.service';
-import { List, Listable, ListOptions } from '../../../models/List';
-import { ConfigService } from '../../../services/config.service';
+import { List, Listable, QueryOptions } from '../../../models/List';
+import { ConfigService } from '../../../services/config-service/config.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SelectComponent } from '../../shared/select/select.component';
 import { ROUTES } from '../../../app.routes';
 import { NodesViewComponent } from '../../shared/data-view/nodes-view/nodes-view.component';
 import { PreviousLinkedValue } from '../../../../types/global';
-import { Registry } from '../../../models/Registry';
 import { BibleListComponent } from '../../features/bible-list/bible-list.component';
 import { BibleAlias, BibleListHelper } from '../../features/bible-list/bible-list.helper';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { Entity } from '../../../models/Node';
-import { EntityIndex, EntityOption, Property } from '../../../models/config/Options';
-import { BibleBook, ListScreen } from '../../../models/config/Config';
+import { EntityIndex, EntityOption, Property } from '../../../models/config/ListViews';
+import { ListRegistry } from '../../../services/config-service/list.registry';
+import { BibleBook } from '../../../models/config/Features';
+import { ConfigRegistry } from '../../../services/config-service/config.registry';
 
 const DEFAULT_OPTION: EntityOption = {
   icon: 'pi pi-folder-open',
@@ -53,18 +54,16 @@ export class EntitiesScreen {
   private readonly listService: ListService = inject(ListService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
-  private readonly config: Registry = this.configService.config();
-  private readonly screen: ListScreen<EntityOption> = this.config.screen('entities');
+  private readonly config: ConfigRegistry = this.configService.config();
+  private readonly view: ListRegistry = this.config.list('entities');
 
-  protected readonly bibleBooks: BibleBook[] = this.config.features('bible');
+  protected readonly bibleBooks: BibleBook[] = this.config.feature('bible');
   protected readonly bibleAliases: BibleAlias[] = BibleListHelper.createIndex(this.bibleBooks);
 
-  protected readonly items: EntityOption[] = [...this.screen.options, DEFAULT_OPTION];
-  protected readonly activeItem: WritableSignal<EntityOption> = signal<EntityOption>(this.config.initialNode(this.screen));
+  protected readonly items: EntityOption[] = [...this.view.options(), DEFAULT_OPTION];
+  protected readonly activeItem: WritableSignal<EntityOption> = signal<EntityOption>(this.view.activeOption());
   protected readonly activeItemLabel: Signal<string> = computed((): string => this.activeItem().value);
-  protected readonly activeProperties: Signal<Property[]> = computed((): Property[] =>
-    this.config.properties(this.screen, this.activeItem()),
-  );
+  protected readonly activeProperties: Signal<Property[]> = computed((): Property[] => this.view.properties(this.activeItem()));
 
   protected readonly indexType: Signal<EntityIndex> = computed((): EntityIndex => this.activeItem().index ?? 'character');
   protected readonly activeIndex: WritableSignal<string> = signal('');
@@ -77,11 +76,11 @@ export class EntitiesScreen {
   protected readonly searchPhrase: WritableSignal<string> = signal('');
   protected readonly filteredEntities: Signal<Entity[]> = computed((): Entity[] => this.filterEntityList());
 
-  protected readonly listOptions: Signal<ListOptions> = signal({ orderBy: 'label', asc: true, limit: 0, skip: 0 });
+  protected readonly queryOptions: Signal<QueryOptions> = signal({ orderBy: 'label', asc: true, limit: 0, skip: 0 });
   protected readonly $list: HttpResourceRef<List<Entity>> = this.listService.fetchList(
     Listable.ENTITY,
     this.activeItemLabel,
-    this.listOptions,
+    this.queryOptions,
   );
 
   protected readonly entities: Signal<List<Entity>> = linkedSignal({
@@ -117,7 +116,7 @@ export class EntitiesScreen {
 
   protected handleSearchChange(input: string): void {
     const phrase: string = input.trim();
-    if (phrase !== '' && phrase.length < 2) return;
+    if (phrase !== '' && phrase.length < 3) return;
 
     this.searchPhrase.set(phrase);
     const index: string | null = phrase === '' ? this.activeIndex() : null;
@@ -162,7 +161,7 @@ export class EntitiesScreen {
     const label: string | undefined = Utils.parseString(params['label']);
 
     if (label !== undefined) {
-      const existing: EntityOption | undefined = this.config.node(this.screen, label);
+      const existing: EntityOption | undefined = this.view.option(label);
       if (existing) this.activeItem.set(existing);
     }
 

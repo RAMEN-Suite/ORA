@@ -19,6 +19,12 @@ export class Utils {
     return /^\p{L}$/u.test(firstCharacter) ? firstCharacter : '#';
   }
 
+  public static mergeBy<T>(items: T[], getKey: (item: T) => string): T[] {
+    const map: Map<string, T> = new Map<string, T>();
+    items.forEach((item: T): void => void map.set(getKey(item), item));
+    return Array.from(map.values());
+  }
+
   public static parseBoolean(value: unknown): boolean | undefined {
     if (value === 'true') return true;
     if (value === 'false') return false;

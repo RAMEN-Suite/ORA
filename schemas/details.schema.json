@@ -1,0 +1,210 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ramen-schema.org/ora/2026.1/details.schema.json",
+  "title": "ORA Details",
+  "$ref": "#/$defs/detailViews",
+  "$defs": {
+    "bindingPath": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:\\[\\]*-]+$"
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/bindingPath"
+        }
+      }
+    },
+    "headlineProps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title"],
+      "properties": {
+        "title": {
+          "$ref": "#/$defs/binding"
+        }
+      }
+    },
+    "textProps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text"],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "$ref": "#/$defs/binding"
+        },
+        "annotations": {
+          "$ref": "#/$defs/binding"
+        }
+      }
+    },
+    "metadataValueItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "value"],
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "const": "value"
+        },
+        "value": {
+          "$ref": "#/$defs/binding"
+        },
+        "format": {
+          "type": "string"
+        }
+      }
+    },
+    "metadataNodeItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "kind", "value", "property"],
+      "properties": {
+        "label": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "const": "node"
+        },
+        "value": {
+          "$ref": "#/$defs/binding"
+        },
+        "property": {
+          "type": "string"
+        },
+        "isLinked": {
+          "type": "boolean"
+        }
+      }
+    },
+    "metadataItem": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/metadataNodeItem"
+        },
+        {
+          "$ref": "#/$defs/metadataValueItem"
+        }
+      ]
+    },
+    "metadataProps": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["items"],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/metadataItem"
+          }
+        }
+      }
+    },
+    "headlineBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "properties"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "headline"
+        },
+        "properties": {
+          "$ref": "#/$defs/headlineProps"
+        }
+      }
+    },
+    "metadataBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "properties"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "metadata"
+        },
+        "properties": {
+          "$ref": "#/$defs/metadataProps"
+        }
+      }
+    },
+    "textBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "properties"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "text"
+        },
+        "properties": {
+          "$ref": "#/$defs/textProps"
+        }
+      }
+    },
+    "block": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/headlineBlock"
+        },
+        {
+          "$ref": "#/$defs/metadataBlock"
+        },
+        {
+          "$ref": "#/$defs/textBlock"
+        }
+      ]
+    },
+    "detailView": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["match", "blocks"],
+      "properties": {
+        "match": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "blocks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/block"
+          }
+        }
+      }
+    },
+    "detailViews": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entity", "collection"],
+      "properties": {
+        "entity": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/detailView"
+          }
+        },
+        "collection": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/detailView"
+          }
+        }
+      }
+    }
+  }
+}

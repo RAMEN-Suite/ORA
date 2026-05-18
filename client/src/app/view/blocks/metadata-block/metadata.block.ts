@@ -1,13 +1,14 @@
-import { Component, computed, input, InputSignal, Signal } from '@angular/core';
+import { Component, computed, Signal } from '@angular/core';
 import { BlockValueResolver } from '../../../resolvers/block-value.resolver';
 import { Fieldset } from 'primeng/fieldset';
-import { MetadataItem, MetadataNodeItem, MetadataProps, MetadataValueItem } from '../../../models/config/Block';
-import { AccessValue } from '../../../models/config/Access';
 import { Node } from '../../../models/Node';
 import { Utils } from '../../../utils/Utils';
 import { ROUTES } from '../../../app.routes';
 import { RouterLink } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { AbstractBlock } from '../abstract.block';
+import { MetadataItem, MetadataNodeItem, MetadataProps, MetadataValueItem } from '../../../models/config/DetailViews';
+import { Binding } from '../../../models/config/Config';
 
 interface Metadata {
   label: string;
@@ -20,12 +21,9 @@ interface Metadata {
   imports: [Fieldset, RouterLink, TranslocoDirective],
   templateUrl: './metadata.block.html',
 })
-export class MetadataBlock {
-  public readonly properties: InputSignal<MetadataProps | undefined> = input();
-  public readonly values: InputSignal<Record<string, unknown>> = input({});
-
+export class MetadataBlock extends AbstractBlock<MetadataProps> {
   protected readonly title: Signal<string> = computed((): string => {
-    const title: AccessValue<string> | undefined = this.properties()?.title;
+    const title: Binding | undefined = this.properties()?.title;
     if (!title) console.warn('Missing Metadata Property: title');
     return BlockValueResolver.resolveString(title, this.values());
   });
@@ -54,8 +52,11 @@ export class MetadataBlock {
   }
 
   private resolveHref(node: Node): string[] {
-    if (node._labels.includes('Collection')) return ['/', ROUTES.COLLECTION, node.uuid];
-    if (node._labels.includes('Entity')) return ['/', ROUTES.ENTITY, node.uuid];
-    return ['/', ROUTES.IDENTIFIER, node.uuid];
+    const uuid: string | undefined = Utils.parseString(node['uuid']);
+    if (!uuid) return [];
+
+    if (node._labels.includes('Collection')) return ['/', ROUTES.COLLECTION, uuid];
+    if (node._labels.includes('Entity')) return ['/', ROUTES.ENTITY, uuid];
+    return ['/', ROUTES.IDENTIFIER, uuid];
   }
 }

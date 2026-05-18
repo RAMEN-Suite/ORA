@@ -1,4 +1,15 @@
-import { AccessPath } from './Access';
+import { BindingPath } from './Config';
+
+export interface ListViews {
+  entities: ListView<EntityOption>;
+  collections: ListView;
+}
+
+export interface ListView<TOption extends Option = ListOption> {
+  initial: string;
+  options: TOption[];
+  properties?: Property[];
+}
 
 export type SortDirection = 'asc' | 'desc';
 export type EntityIndex = 'character' | 'bible';
@@ -17,12 +28,12 @@ export interface ListOption extends Option {
 
 export interface FilterOption extends Option {
   display?: 'list' | 'range';
-  value: AccessPath;
+  value: BindingPath;
   valueMap?: Record<string, string>;
 }
 
 export interface SortOption extends Option {
-  value: AccessPath;
+  value: BindingPath;
 }
 
 export interface EntityOption extends Option {
@@ -40,7 +51,7 @@ export interface SortOptionGroup extends OptionGroup<SortOption> {
 }
 
 export interface Property {
-  name: AccessPath;
+  name: BindingPath;
   display?: string;
   valueMap?: Record<string, string>;
 }
