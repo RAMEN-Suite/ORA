@@ -16,6 +16,7 @@ interface Attribute {
 interface AttributeValue {
   value: string;
   href?: string[];
+  isTranslatable?: boolean;
 }
 
 @Component({
@@ -28,8 +29,14 @@ export class AttributesBlock extends AbstractBlock<AttributesProps> {
 
   protected readonly attributes: Signal<Attribute[]> = computed((): Attribute[] => {
     const items: AttributesItem[] = this.properties()?.items ?? [];
-    const attributes: Attribute[] = items.map((item: AttributesItem): Attribute => this.resolveItem(item));
-    return attributes.filter((attribute: Attribute): boolean => attribute.values.length > 0);
+    const attributes: Attribute[] = [];
+
+    for (const item of items) {
+      const attribute: Attribute = this.resolveItem(item);
+      if (attribute.values.length > 0) attributes.push(attribute);
+    }
+
+    return attributes;
   });
 
   private resolveItem(item: AttributesItem): Attribute {
@@ -39,7 +46,9 @@ export class AttributesBlock extends AbstractBlock<AttributesProps> {
 
   private resolveValueItem(item: AttributesValueItem): Attribute {
     const value: string = this.resolveString(item.value);
-    const values: AttributeValue[] = value.trim() ? [{ value }] : [];
+    if (value.trim()) return { label: item.label, values: [{ value }] };
+
+    const values: AttributeValue[] = item.isEmptyVisible ? [this.resolveEmptyValue(item)] : [];
     return { label: item.label, values };
   }
 
@@ -52,6 +61,10 @@ export class AttributesBlock extends AbstractBlock<AttributesProps> {
       if (nodeValue.value.trim()) values.push(nodeValue);
     }
 
+    if (values.length === 0 && item.isEmptyVisible) {
+      values.push(this.resolveEmptyValue(item));
+    }
+
     return { label: item.label, values };
   }
 
@@ -59,6 +72,10 @@ export class AttributesBlock extends AbstractBlock<AttributesProps> {
     const value: string = Utils.parseString(node[item.property]) ?? '';
     const href: string[] | undefined = item.isLinked ? this.resolveHref(node) : undefined;
     return { value, href };
+  }
+
+  private resolveEmptyValue(item: AttributesItem): AttributeValue {
+    return { value: item.emptyLabel ?? this.EMPTY_LABEL, isTranslatable: true };
   }
 
   private resolveHref(node: Node): string[] {
@@ -69,4 +86,6 @@ export class AttributesBlock extends AbstractBlock<AttributesProps> {
     if (node._labels.includes('Entity')) return ['/', ROUTES.ENTITY, uuid];
     return ['/', ROUTES.IDENTIFIER, uuid];
   }
+
+  private readonly EMPTY_LABEL: string = 'app.blocks.attributes.missing';
 }

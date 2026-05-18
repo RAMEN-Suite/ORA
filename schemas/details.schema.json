@@ -18,6 +18,16 @@
         }
       }
     },
+    "bindingOrString": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/binding"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    },
     "headlineProps": {
       "type": "object",
       "additionalProperties": false,
@@ -34,7 +44,7 @@
       "required": ["text"],
       "properties": {
         "title": {
-          "type": "string"
+          "$ref": "#/$defs/bindingOrString"
         },
         "text": {
           "$ref": "#/$defs/binding"
@@ -52,15 +62,18 @@
         "label": {
           "type": "string"
         },
+        "isEmptyVisible": {
+          "type": "boolean"
+        },
+        "emptyLabel": {
+          "type": "string"
+        },
         "kind": {
           "type": "string",
           "const": "value"
         },
         "value": {
           "$ref": "#/$defs/binding"
-        },
-        "format": {
-          "type": "string"
         }
       }
     },
@@ -70,6 +83,12 @@
       "required": ["label", "kind", "value", "property"],
       "properties": {
         "label": {
+          "type": "string"
+        },
+        "isEmptyVisible": {
+          "type": "boolean"
+        },
+        "emptyLabel": {
           "type": "string"
         },
         "kind": {
@@ -100,7 +119,7 @@
     "attributesProps": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["items"],
+      "required": ["items", "title"],
       "properties": {
         "title": {
           "type": "string"

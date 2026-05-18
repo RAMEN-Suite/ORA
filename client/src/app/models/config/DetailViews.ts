@@ -32,7 +32,7 @@ export interface TextProps {
 }
 
 export interface AttributesProps {
-  title?: Binding;
+  title: string;
   items: AttributesItem[];
 }
 
@@ -40,6 +40,8 @@ export type AttributesItem = AttributesValueItem | AttributesNodeItem;
 
 export interface AttributesBaseItem {
   label: string;
+  emptyLabel?: string;
+  isEmptyVisible?: boolean;
 }
 
 export interface AttributesValueItem extends AttributesBaseItem {
