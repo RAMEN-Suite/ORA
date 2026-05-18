@@ -36,7 +36,7 @@ jobs:
           severity: "CRITICAL,HIGH,MEDIUM"
           exit-code: "1"
           output: trivy-config.json
-          version: v0.69.1
+          version: v0.70.0
       - name: Upload Trivy config report
         if: failure()
         uses: actions/upload-artifact@v7
