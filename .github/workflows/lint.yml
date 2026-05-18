@@ -19,13 +19,13 @@ jobs:
         uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: client/dockerfile
-          config: .hadolint.yaml
+          config: .hadolint.yml
           format: tty
       - name: Lint Server Dockerfile
         uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: server/dockerfile
-          config: .hadolint.yaml
+          config: .hadolint.yml
           format: tty
       - name: Lint configs
         uses: aquasecurity/trivy-action@v0.36.0
