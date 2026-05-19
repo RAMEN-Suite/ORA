@@ -7,20 +7,7 @@ import { CollectionsScreen } from './view/screens/collections-screen/collections
 import { EntityScreen } from './view/screens/entity-screen/entity.screen';
 import { NotFoundScreen } from './view/screens/not-found-screen/not-found.screen';
 import { viewRedirect } from './guards/view.redirect';
-
-export enum ROUTES {
-  ENTITIES = 'entities',
-  ENTITY = 'entity',
-  COLLECTIONS = 'collections',
-  COLLECTION = 'collection',
-  IDENTIFIER = 'id',
-  ERROR = 'error',
-  NOT_FOUND = 'not-found',
-}
-
-export enum PARAMS {
-  UUID = 'uuid',
-}
+import { PARAMS, ROUTES } from './constants/ROUTES';
 
 export const routes: Routes = [
   {

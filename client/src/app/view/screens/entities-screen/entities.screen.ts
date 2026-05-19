@@ -11,7 +11,7 @@ import { NavigationService } from '../../../services/navigation.service';
 import { List, Listable, QueryOptions } from '../../../models/List';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SelectComponent } from '../../shared/select/select.component';
-import { ROUTES } from '../../../app.routes';
+import { ROUTES } from '../../../constants/ROUTES';
 import { NodesViewComponent } from '../../shared/data-view/nodes-view/nodes-view.component';
 import { BibleListComponent } from '../../features/bible-list/bible-list.component';
 import { BibleAlias, BibleListHelper } from '../../features/bible-list/bible-list.helper';

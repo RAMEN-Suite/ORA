@@ -1,10 +1,11 @@
 import { inject } from '@angular/core';
 import { PartialMatchRouteSnapshot, RedirectFunction, Router, UrlTree } from '@angular/router';
 import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
-import { PARAMS, ROUTES } from '../app.routes';
+import { PARAMS, REASONS, ROUTES } from '../constants/ROUTES';
 import { Node } from '../models/Node';
 import { ViewService } from '../services/view.service';
 import { Utils } from '../utils/Utils';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export const viewRedirect: RedirectFunction = async (route: PartialMatchRouteSnapshot): Promise<UrlTree> => {
   const viewService: ViewService = inject(ViewService);
@@ -20,7 +21,10 @@ export const viewRedirect: RedirectFunction = async (route: PartialMatchRouteSna
         if (node._labels.includes('Entity')) return router.createUrlTree(['/', ROUTES.ENTITY, uuid]);
         return router.createUrlTree(['/', ROUTES.NOT_FOUND]);
       }),
-      catchError((): Observable<UrlTree> => of(router.createUrlTree(['/', ROUTES.NOT_FOUND]))),
+      catchError((error: unknown): Observable<UrlTree> => {
+        if (error instanceof HttpErrorResponse && error.status === 404) return of(router.createUrlTree(['/', ROUTES.NOT_FOUND]));
+        return of(router.createUrlTree(['/', ROUTES.ERROR], { queryParams: { reason: REASONS.SERVER } }));
+      }),
     ),
   );
 };

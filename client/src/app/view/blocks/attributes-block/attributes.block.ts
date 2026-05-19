@@ -2,7 +2,7 @@ import { Component, computed, Signal } from '@angular/core';
 import { Fieldset } from 'primeng/fieldset';
 import { Node } from '../../../models/Node';
 import { Utils } from '../../../utils/Utils';
-import { ROUTES } from '../../../app.routes';
+import { ROUTES } from '../../../constants/ROUTES';
 import { RouterLink } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { AbstractBlock } from '../abstract.block';

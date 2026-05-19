@@ -18,10 +18,10 @@ import { ActiveFilter, FacetGroup, FacetOptions } from '../../../models/Facet';
 import { FacetListComponent } from '../../shared/facet-list/facet-list.component';
 import { FilterUtils } from '../../../utils/FilterUtils';
 import { Collection } from '../../../models/Node';
-import { ROUTES } from '../../../app.routes';
 import { FilterOption, ListOption, Option, Property } from '../../../models/config/ListViews';
 import { AbstractListScreen } from '../abstract-list.screen';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { ROUTES } from '../../../constants/ROUTES';
 
 @Component({
   selector: 'screen-collections',
