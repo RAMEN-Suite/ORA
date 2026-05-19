@@ -1,0 +1,11 @@
+<div class="max-w-sm space-y-3 text-sm">
+  @for (annotation of annotations(); track annotation.uuid) {
+    <section class="space-y-1">
+      <header class="font-semibold">
+        {{ annotation.type }}
+      </header>
+
+      <pre class="bg-surface-100 overflow-auto rounded p-2 text-xs">{{ annotation.source | json }}</pre>
+    </section>
+  }
+</div>

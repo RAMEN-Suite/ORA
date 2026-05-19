@@ -2,6 +2,7 @@ import { Config } from './config/Config';
 import { Features } from './config/Features';
 import { DetailView, DetailViews } from './config/DetailViews';
 import { ListViews } from './config/ListViews';
+import { Annotations } from '../view/shared/text-view/models/Annotations';
 
 export class Registry {
   constructor(private readonly config: Config) {}
@@ -12,6 +13,10 @@ export class Registry {
 
   public feature<K extends keyof Features>(key: K): Features[K] {
     return this.config.features[key];
+  }
+
+  public annotations(): Annotations {
+    return this.config.annotations;
   }
 
   public composition(key: keyof DetailViews, labels: string[]): DetailView {

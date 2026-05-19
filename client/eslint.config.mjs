@@ -50,7 +50,7 @@ export default defineConfig(
         "error",
         {
           type: "element",
-          prefix: ["root", "shared", "feature", "screen", "block"],
+          prefix: ["root", "annotation", "shared", "feature", "screen", "block"],
           style: "kebab-case",
         },
       ],

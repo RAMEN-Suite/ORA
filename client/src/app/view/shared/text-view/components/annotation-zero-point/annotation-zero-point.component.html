@@ -1,0 +1,27 @@
+@let current = annotation();
+
+@switch (current.definition.behavior) {
+  @case ("line-break") {
+    <br />
+  }
+
+  @case ("page-break") {
+    <span [class]="classes()">
+      [
+      @if (href(); as href) {
+        <a [href]="href" target="_blank" rel="noopener noreferrer">
+          {{ label() }}
+        </a>
+      } @else {
+        {{ label() }}
+      }
+      ]
+    </span>
+  }
+
+  @case ("gap") {
+    <span [class]="classes()">
+      {{ label() }}
+    </span>
+  }
+}

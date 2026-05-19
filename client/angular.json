@@ -33,7 +33,7 @@
             ],
             "styles": [
               "src/styles/tailwind.css",
-              "src/styles/fonts.css",
+              "src/styles/annotations.css",
               "src/styles/customs.css",
               "node_modules/animate.css/animate.css"
             ]
@@ -96,7 +96,7 @@
             ],
             "styles": [
               "src/styles/tailwind.css",
-              "src/styles/fonts.css",
+              "src/styles/annotations.css",
               "src/styles/customs.css",
               "node_modules/animate.css/animate.css"
             ]

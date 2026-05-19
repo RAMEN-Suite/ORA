@@ -2,6 +2,20 @@
 @import "tailwindcss-primeui";
 @import "primeicons/primeicons.css";
 
+/* Annotation colors */
+@source inline("{underline,decoration-{solid,dotted,dashed,wavy},decoration-{1,2,4,8},underline-offset-{1,2,4,8}}");
+@source inline("decoration-{red,green,blue,yellow,rose,emerald,sky,amber,slate,gray,purple,orange,violet}-{50,100,200,300,400,500,600,700,800,900}");
+@source inline("bg-{red,green,blue,yellow,rose,emerald,sky,amber,slate,gray,purple,orange,violet}-{50,100,200,300,400,500,600,700,800,900}");
+@source inline("border-{red,green,blue,yellow,rose,emerald,sky,amber,slate,gray,purple,orange,violet}-{50,100,200,300,400,500,600,700,800,900}");
+
+/* Annotation utility classes */
+@source inline("{border-b,border-b-2,border-b-4,rounded-sm,px-0.5,cursor-pointer,cursor-help,line-through,opacity-70,opacity-80}");
+@source inline("{font-bold,font-semibold,italic,small-caps,align-super,text-xs,text-lg,select-none}");
+@source inline("text-{red,green,blue,yellow,rose,emerald,sky,amber,slate,gray,purple,orange,violet}-{50,100,200,300,400,500,600,700,800,900}");
+@source inline("text-surface-{50,100,200,300,400,500,600,700,800,900}");
+@source inline("bg-surface-{50,100,200,300,400,500,600,700,800,900}");
+@source inline("border-surface-{50,100,200,300,400,500,600,700,800,900}");
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @layer utilities {
@@ -14,3 +28,4 @@
     scrollbar-width: none;
   }
 }
+

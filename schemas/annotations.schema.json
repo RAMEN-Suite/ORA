@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ramen-schema.org/ora/2026.1/annotations.schema.json",
+  "title": "ORA Annotations",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["definitions"],
+  "properties": {
+    "definitions": {
+      "type": "object",
+      "description": "Maps annotation type names to render definitions.",
+      "additionalProperties": {
+        "$ref": "#/$defs/annotationDefinition"
+      }
+    },
+    "renditionClasses": {
+      "type": "object",
+      "description": "Maps rendition tokens to CSS classes. Example: #b -> ['font-bold'].",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "default": {}
+    },
+    "unknownAnnotation": {
+      "$ref": "#/$defs/unknownAnnotationStrategy",
+      "default": "warn"
+    },
+    "invalidRange": {
+      "$ref": "#/$defs/invalidRangeStrategy",
+      "default": "warn"
+    }
+  },
+  "$defs": {
+    "annotationDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["layer", "behavior", "priority"],
+      "properties": {
+        "layer": {
+          "$ref": "#/$defs/annotationLayer"
+        },
+        "behavior": {
+          "$ref": "#/$defs/annotationBehavior"
+        },
+        "priority": {
+          "type": "integer",
+          "description": "Lower priority wraps outside higher priority annotations."
+        },
+        "classes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "classProperty": {
+          "type": "string",
+          "description": "Annotation property whose tokens should be mapped through renditionClasses."
+        },
+        "tooltipProperty": {
+          "type": "string",
+          "description": "Annotation property used as tooltip content."
+        },
+        "hrefProperty": {
+          "type": "string",
+          "description": "Annotation property used as href for external links."
+        },
+        "label": {
+          "type": "string",
+          "description": "Optional translation key or display label for this annotation type."
+        },
+        "target": {
+          "$ref": "#/$defs/annotationTarget"
+        }
+      }
+    },
+    "annotationTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "resource": {
+          "type": "string",
+          "description": "Generic resource name used by the application to fetch details."
+        },
+        "keyProperty": {
+          "type": "string",
+          "description": "Annotation property containing the target key/id."
+        },
+        "route": {
+          "type": "string",
+          "description": "Optional route key used by the application for navigation."
+        },
+        "fetchOnOpen": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "annotationLayer": {
+      "type": "string",
+      "enum": ["inline", "interaction", "zero-point", "structure"]
+    },
+    "annotationBehavior": {
+      "type": "string",
+      "enum": [
+        "mark",
+        "tooltip",
+        "popover",
+        "fetch-popover",
+        "external-link",
+        "line-break",
+        "page-break",
+        "gap",
+        "hidden"
+      ]
+    },
+    "unknownAnnotationStrategy": {
+      "type": "string",
+      "enum": ["ignore", "plain", "warn"]
+    },
+    "invalidRangeStrategy": {
+      "type": "string",
+      "enum": ["ignore", "clamp", "warn"]
+    }
+  }
+}
