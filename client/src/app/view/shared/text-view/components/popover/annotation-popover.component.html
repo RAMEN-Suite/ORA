@@ -1,0 +1,16 @@
+<span
+  class="relative inline"
+  [class]="hostClasses()"
+  [attr.role]="hasPopover() ? 'button' : null"
+  [attr.tabindex]="hasPopover() ? 0 : null"
+  [attr.aria-busy]="isLoadingPopover() ? 'true' : null"
+  (onActivate)="handleOpenPopover($event)"
+>
+  <ng-content />
+</span>
+
+@if (activeItems().length > 0) {
+  <p-popover styleClass="annotation-popover-overlay" appendTo="body" (onHide)="handleHidePopover()">
+    <annotation-popover-content [annotations]="activeItems()" [responses]="responses()" [isOpen]="isPopoverOpen()" />
+  </p-popover>
+}

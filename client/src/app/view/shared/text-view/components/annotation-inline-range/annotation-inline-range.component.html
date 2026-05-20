@@ -1,9 +1,0 @@
-<span [attr.tabindex]="hasPopover() ? 0 : null" [class]="classes()" (onActivate)="handleTogglePopover($event)">
-  <annotation-segments [segments]="segment().children" />
-</span>
-
-@if (hasPopover()) {
-  <p-popover (onHide)="handleHidePopover()">
-    <annotation-popover [annotations]="segment().annotations" [isOpen]="isPopoverOpen()" />
-  </p-popover>
-}

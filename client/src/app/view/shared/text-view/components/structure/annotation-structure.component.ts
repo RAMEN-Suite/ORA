@@ -1,6 +1,6 @@
 import { Component, computed, forwardRef, input, InputSignal, Signal } from '@angular/core';
 import { StructureSegment } from '../../models/TextViewSegments';
-import { TextViewSegmentsComponent } from '../text-view-segments/text-view-segments.component';
+import { TextViewSegmentsComponent } from '../segments/text-view-segments.component';
 
 @Component({
   selector: 'annotation-structure',

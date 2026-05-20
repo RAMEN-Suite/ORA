@@ -1,9 +1,4 @@
-import {
-  AnnotationSegment,
-  ResolvedAnnotation,
-  ResolvedLayoutAnnotation,
-  ResolvedStructureAnnotation,
-} from '../models/TextAnnotation';
+import { AnnotationSegment, LayoutAnnotation, ResolvedAnnotation, StructuredAnnotation } from '../models/TextAnnotation';
 import { AnnotationParser } from './AnnotationParser';
 import {
   ListItemSegment,
@@ -21,25 +16,25 @@ interface TextRange {
 }
 
 interface StructureNode {
-  annotation: ResolvedStructureAnnotation;
+  annotation: StructuredAnnotation;
   children: StructureNode[];
 }
 
-type TextViewNode = StructureNode | ResolvedLayoutAnnotation;
+type TextViewNode = StructureNode | LayoutAnnotation;
 
 export class TextViewParser {
-  private readonly structures: ResolvedStructureAnnotation[];
-  private readonly layouts: ResolvedLayoutAnnotation[];
+  private readonly structures: StructuredAnnotation[];
+  private readonly layouts: LayoutAnnotation[];
 
   public constructor(
     private readonly text: string,
     private readonly annotations: ResolvedAnnotation[],
   ) {
-    const structured: ResolvedStructureAnnotation[] = this.annotations.filter(this.isStructure.bind(this));
-    const visibleStructures: ResolvedStructureAnnotation[] = structured.filter(this.isVisible.bind(this));
+    const structured: StructuredAnnotation[] = this.annotations.filter(this.isStructure.bind(this));
+    const visibleStructures: StructuredAnnotation[] = structured.filter(this.isVisible.bind(this));
 
-    const layout: ResolvedLayoutAnnotation[] = this.annotations.filter(this.isLayout.bind(this));
-    const visibleLayouts: ResolvedLayoutAnnotation[] = layout.filter(this.isVisible.bind(this));
+    const layout: LayoutAnnotation[] = this.annotations.filter(this.isLayout.bind(this));
+    const visibleLayouts: LayoutAnnotation[] = layout.filter(this.isVisible.bind(this));
 
     this.structures = visibleStructures.sort(this.sortAnnotations.bind(this));
     this.layouts = visibleLayouts.sort(this.sortAnnotations.bind(this));
@@ -84,14 +79,14 @@ export class TextViewParser {
   }
 
   private createStructureSegment(node: StructureNode): StructureSegment {
-    const annotation: ResolvedStructureAnnotation = node.annotation;
+    const annotation: StructuredAnnotation = node.annotation;
     const children: TextViewSegment[] = this.parseRange({ start: annotation.start, end: annotation.end }, node.children);
     return { kind: 'structure', annotation, children };
   }
 
-  private createTableSegment(annotation: ResolvedLayoutAnnotation): TableSegment {
-    const rows: TableRowSegment[] = this.tableRows(annotation).map((row: ResolvedLayoutAnnotation): TableRowSegment => {
-      const cells: TableCellSegment[] = this.tableCells(row).map((cell: ResolvedLayoutAnnotation): TableCellSegment => {
+  private createTableSegment(annotation: LayoutAnnotation): TableSegment {
+    const rows: TableRowSegment[] = this.tableRows(annotation).map((row: LayoutAnnotation): TableRowSegment => {
+      const cells: TableCellSegment[] = this.tableCells(row).map((cell: LayoutAnnotation): TableCellSegment => {
         const children: TextViewSegment[] = this.parseRange(
           { start: cell.start, end: cell.end },
           this.structureNodesWithin(cell),
@@ -106,8 +101,8 @@ export class TextViewParser {
     return { kind: 'table', annotation, rows };
   }
 
-  private createListSegment(annotation: ResolvedLayoutAnnotation): ListSegment {
-    const items: ListItemSegment[] = this.listItems(annotation).map((item: ResolvedLayoutAnnotation): ListItemSegment => {
+  private createListSegment(annotation: LayoutAnnotation): ListSegment {
+    const items: ListItemSegment[] = this.listItems(annotation).map((item: LayoutAnnotation): ListItemSegment => {
       const children: TextViewSegment[] = this.parseRange({ start: item.start, end: item.end }, this.structureNodesWithin(item));
       return { kind: 'list-item', annotation: item, children };
     });
@@ -146,7 +141,7 @@ export class TextViewParser {
     return roots;
   }
 
-  private findParent(nodes: StructureNode[], annotation: ResolvedStructureAnnotation): StructureNode | undefined {
+  private findParent(nodes: StructureNode[], annotation: StructuredAnnotation): StructureNode | undefined {
     for (const node of nodes) {
       if (!this.isContaining(node.annotation, annotation)) continue;
       return this.findParent(node.children, annotation) ?? node;
@@ -171,30 +166,30 @@ export class TextViewParser {
     return new AnnotationParser(text, mapped).parse();
   }
 
-  private layoutRootsWithin(range: TextRange): ResolvedLayoutAnnotation[] {
+  private layoutRootsWithin(range: TextRange): LayoutAnnotation[] {
     return this.layouts
-      .filter((layout: ResolvedLayoutAnnotation): boolean => this.isLayoutRoot(layout))
-      .filter((layout: ResolvedLayoutAnnotation): boolean => this.isContaining(range, layout));
+      .filter((layout: LayoutAnnotation): boolean => this.isLayoutRoot(layout))
+      .filter((layout: LayoutAnnotation): boolean => this.isContaining(range, layout));
   }
 
-  private tableRows(table: ResolvedLayoutAnnotation): ResolvedLayoutAnnotation[] {
+  private tableRows(table: LayoutAnnotation): LayoutAnnotation[] {
     return this.layouts
-      .filter((layout: ResolvedLayoutAnnotation): boolean => layout.definition.layoutRole === 'table-row')
-      .filter((row: ResolvedLayoutAnnotation): boolean => this.isContaining(table, row))
+      .filter((layout: LayoutAnnotation): boolean => layout.definition.layoutRole === 'table-row')
+      .filter((row: LayoutAnnotation): boolean => this.isContaining(table, row))
       .sort(this.sortAnnotations.bind(this));
   }
 
-  private tableCells(row: ResolvedLayoutAnnotation): ResolvedLayoutAnnotation[] {
+  private tableCells(row: LayoutAnnotation): LayoutAnnotation[] {
     return this.layouts
-      .filter((layout: ResolvedLayoutAnnotation): boolean => layout.definition.layoutRole === 'table-cell')
-      .filter((cell: ResolvedLayoutAnnotation): boolean => this.isContaining(row, cell))
+      .filter((layout: LayoutAnnotation): boolean => layout.definition.layoutRole === 'table-cell')
+      .filter((cell: LayoutAnnotation): boolean => this.isContaining(row, cell))
       .sort(this.sortAnnotations.bind(this));
   }
 
-  private listItems(list: ResolvedLayoutAnnotation): ResolvedLayoutAnnotation[] {
+  private listItems(list: LayoutAnnotation): LayoutAnnotation[] {
     return this.layouts
-      .filter((layout: ResolvedLayoutAnnotation): boolean => layout.definition.layoutRole === 'list-item')
-      .filter((item: ResolvedLayoutAnnotation): boolean => this.isContaining(list, item))
+      .filter((layout: LayoutAnnotation): boolean => layout.definition.layoutRole === 'list-item')
+      .filter((item: LayoutAnnotation): boolean => this.isContaining(list, item))
       .sort(this.sortAnnotations.bind(this));
   }
 
@@ -206,10 +201,7 @@ export class TextViewParser {
     return this.isStructureNode(node) ? node.annotation : node;
   }
 
-  private sortAnnotations(
-    a: ResolvedStructureAnnotation | ResolvedLayoutAnnotation,
-    b: ResolvedStructureAnnotation | ResolvedLayoutAnnotation,
-  ): number {
+  private sortAnnotations(a: StructuredAnnotation | LayoutAnnotation, b: StructuredAnnotation | LayoutAnnotation): number {
     if (a.start !== b.start) return a.start - b.start;
     return b.end - a.end;
   }
@@ -220,16 +212,16 @@ export class TextViewParser {
 
   private sortNodesAndLayouts(a: TextViewNode, b: TextViewNode): number {
     return this.sortAnnotations(
-      this.nodeRange(a) as ResolvedStructureAnnotation | ResolvedLayoutAnnotation,
-      this.nodeRange(b) as ResolvedStructureAnnotation | ResolvedLayoutAnnotation,
+      this.nodeRange(a) as StructuredAnnotation | LayoutAnnotation,
+      this.nodeRange(b) as StructuredAnnotation | LayoutAnnotation,
     );
   }
 
-  private isStructure(annotation: ResolvedAnnotation): annotation is ResolvedStructureAnnotation {
+  private isStructure(annotation: ResolvedAnnotation): annotation is StructuredAnnotation {
     return annotation.definition.layer === 'structure';
   }
 
-  private isLayout(annotation: ResolvedAnnotation): annotation is ResolvedLayoutAnnotation {
+  private isLayout(annotation: ResolvedAnnotation): annotation is LayoutAnnotation {
     return annotation.definition.layer === 'layout';
   }
 
@@ -241,7 +233,7 @@ export class TextViewParser {
     return 'annotation' in node;
   }
 
-  private isLayoutRoot(annotation: ResolvedLayoutAnnotation): boolean {
+  private isLayoutRoot(annotation: LayoutAnnotation): boolean {
     return annotation.definition.layoutRole === 'table' || annotation.definition.layoutRole === 'list';
   }
 
@@ -249,7 +241,7 @@ export class TextViewParser {
     return parent.start <= child.start && parent.end >= child.end;
   }
 
-  private isAnyOverlapping(nodes: StructureNode[], annotation: ResolvedStructureAnnotation): boolean {
+  private isAnyOverlapping(nodes: StructureNode[], annotation: StructuredAnnotation): boolean {
     return nodes.some((node: StructureNode): boolean => this.isOverlapping(node.annotation, annotation));
   }
 

@@ -24,10 +24,6 @@
     />
   </header>
 
-  @if (isLoading()) {
-    <p-progress-spinner class="spinner-base mt-4" />
-  }
-
   @if (descriptions().length > 0) {
     <div class="flex flex-col gap-2">
       @for (description of descriptions(); track description) {
@@ -60,7 +56,7 @@
     />
   }
 
-  @if (!isLoading() && descriptions().length === 0 && references().length === 0 && !externalLink()) {
+  @if (descriptions().length === 0 && references().length === 0 && !externalLink()) {
     <div class="text-surface-500">
       {{ t("app.shared.textView.annotations.empty") }}
     </div>

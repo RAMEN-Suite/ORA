@@ -230,6 +230,14 @@
                 "$ref": "#/$defs/annotationTokenMapping"
               },
               "default": []
+            },
+            "label": {
+              "type": "array",
+              "description": "Values used to render the visible zero-point marker label.",
+              "items": {
+                "$ref": "#/$defs/annotationValue"
+              },
+              "default": []
             }
           }
         }
@@ -345,7 +353,7 @@
     },
     "zeroPointBehavior": {
       "type": "string",
-      "enum": ["line-break", "page-break", "gap", "hidden"]
+      "enum": ["line-break", "marker", "hidden"]
     },
     "inlineRenderElement": {
       "type": "string",

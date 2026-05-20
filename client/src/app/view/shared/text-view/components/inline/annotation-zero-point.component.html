@@ -1,0 +1,11 @@
+@if (isLineBreak()) {
+  <br />
+} @else {
+  @if (isMargin()) {
+    <span #anchor class="inline-block h-[1em] w-0 align-baseline"></span>
+  }
+
+  <span #marker [class]="markerClasses()" [ngStyle]="isMargin() ? position() : null">
+    {{ displayLabel() }}
+  </span>
+}

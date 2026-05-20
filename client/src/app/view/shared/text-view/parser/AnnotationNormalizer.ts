@@ -106,7 +106,6 @@ export class AnnotationNormalizer {
 
     const end: number = Math.min(Math.max(this.normalizeEndIndex(range, false), 0), this.text.length);
     if (start >= end) return undefined;
-
     return this.createAnnotation(annotation, start, end, false);
   }
 

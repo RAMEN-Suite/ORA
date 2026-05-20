@@ -39,6 +39,7 @@ export interface ZeroPointDefinition extends DefinitionBase {
   layer: 'zero-point';
   behavior: ZeroPointBehavior;
   placement?: AnnotationPlacement;
+  label?: AnnotationValue[];
 }
 
 export interface TokenMapping {
@@ -66,15 +67,13 @@ export interface AnnotationReference {
 
 export type AnnotationLayer = AnnotationDefinition['layer'];
 
-export type AnnotationBehavior = InlineBehavior | StructureBehavior | LayoutBehavior | ZeroPointBehavior;
 export type InlineBehavior = 'mark' | 'popover' | 'hidden';
 export type StructureBehavior = 'mark' | 'hidden';
 export type LayoutBehavior = 'mark' | 'hidden';
-export type ZeroPointBehavior = 'line-break' | 'page-break' | 'gap' | 'hidden';
+export type ZeroPointBehavior = 'line-break' | 'marker' | 'hidden';
 
 export type AnnotationPlacement = 'inline' | 'margin';
 
-export type AnnotationRenderElement = InlineRenderElement | StructureRenderElement | LayoutRenderElement;
 export type InlineRenderElement = 'span' | 'abbr' | 'cite' | 'code' | 'em' | 'mark' | 'strong' | 'sub' | 'sup';
 export type StructureRenderElement =
   | 'div'

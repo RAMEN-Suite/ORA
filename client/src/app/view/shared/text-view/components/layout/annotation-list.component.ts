@@ -1,10 +1,11 @@
 import { Component, computed, forwardRef, input, InputSignal, Signal } from '@angular/core';
+import { Panel } from 'primeng/panel';
 import { ListItemSegment, ListSegment } from '../../models/TextViewSegments';
-import { TextViewSegmentsComponent } from '../text-view-segments/text-view-segments.component';
+import { TextViewSegmentsComponent } from '../segments/text-view-segments.component';
 
 @Component({
   selector: 'annotation-list',
-  imports: [forwardRef(() => TextViewSegmentsComponent)],
+  imports: [Panel, forwardRef(() => TextViewSegmentsComponent)],
   templateUrl: './annotation-list.component.html',
   host: { class: 'contents' },
 })
@@ -16,5 +17,9 @@ export class AnnotationListComponent {
 
   protected itemClasses(item: ListItemSegment): string {
     return item.annotation.classes.join(' ');
+  }
+
+  protected itemLabel(index: number): string {
+    return this.isOrdered() ? `${index + 1}.` : '•';
   }
 }

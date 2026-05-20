@@ -10,16 +10,16 @@ import {
   ZeroPointDefinition,
 } from '../models/Annotations';
 import {
+  InlineAnnotation,
+  LayoutAnnotation,
   NormalizedAnnotation,
   ResolvedAnnotation,
-  ResolvedInlineAnnotation,
   ResolvedInlineDefinition,
-  ResolvedLayoutAnnotation,
   ResolvedLayoutDefinition,
-  ResolvedStructureAnnotation,
   ResolvedStructureDefinition,
-  ResolvedZeroPointAnnotation,
   ResolvedZeroPointDefinition,
+  StructuredAnnotation,
+  ZeroPointAnnotation,
 } from '../models/TextAnnotation';
 
 export class AnnotationResolver {
@@ -50,7 +50,7 @@ export class AnnotationResolver {
     }
   }
 
-  private resolveInline(annotation: NormalizedAnnotation, definition: InlineDefinition): ResolvedInlineAnnotation {
+  private resolveInline(annotation: NormalizedAnnotation, definition: InlineDefinition): InlineAnnotation {
     const resolvedDefinition: ResolvedInlineDefinition = {
       ...definition,
       behavior: definition.behavior ?? 'mark',
@@ -61,7 +61,7 @@ export class AnnotationResolver {
     return { ...annotation, definition: resolvedDefinition, classes: this.resolveClasses(annotation, resolvedDefinition) };
   }
 
-  private resolveStructure(annotation: NormalizedAnnotation, definition: StructureDefinition): ResolvedStructureAnnotation {
+  private resolveStructure(annotation: NormalizedAnnotation, definition: StructureDefinition): StructuredAnnotation {
     const resolvedDefinition: ResolvedStructureDefinition = {
       ...definition,
       behavior: definition.behavior ?? 'mark',
@@ -72,7 +72,7 @@ export class AnnotationResolver {
     return { ...annotation, definition: resolvedDefinition, classes: this.resolveClasses(annotation, resolvedDefinition) };
   }
 
-  private resolveLayout(annotation: NormalizedAnnotation, definition: LayoutDefinition): ResolvedLayoutAnnotation {
+  private resolveLayout(annotation: NormalizedAnnotation, definition: LayoutDefinition): LayoutAnnotation {
     const resolvedDefinition: ResolvedLayoutDefinition = {
       ...definition,
       behavior: definition.behavior ?? 'mark',
@@ -82,7 +82,7 @@ export class AnnotationResolver {
     return { ...annotation, definition: resolvedDefinition, classes: this.resolveClasses(annotation, resolvedDefinition) };
   }
 
-  private resolveZeroPoint(annotation: NormalizedAnnotation, definition: ZeroPointDefinition): ResolvedZeroPointAnnotation {
+  private resolveZeroPoint(annotation: NormalizedAnnotation, definition: ZeroPointDefinition): ZeroPointAnnotation {
     const resolvedDefinition: ResolvedZeroPointDefinition = {
       ...definition,
       priority: definition.priority ?? this.defaultPriority(definition.layer),

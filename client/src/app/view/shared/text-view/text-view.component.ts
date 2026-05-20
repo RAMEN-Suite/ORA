@@ -5,7 +5,7 @@ import { AnnotationNormalizer, NormalizationIssue, NormalizationResult } from '.
 import { TextViewParser } from './parser/TextViewParser';
 import { AnnotationResolver } from './resolver/annotation.resolver';
 import { TextViewSegment } from './models/TextViewSegments';
-import { TextViewSegmentsComponent } from './components/text-view-segments/text-view-segments.component';
+import { TextViewSegmentsComponent } from './components/segments/text-view-segments.component';
 
 @Component({
   selector: 'shared-text-view',

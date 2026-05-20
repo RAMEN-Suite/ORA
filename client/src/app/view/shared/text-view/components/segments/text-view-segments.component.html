@@ -1,0 +1,11 @@
+@for (segment of segments(); track $index) {
+  @if (isStructure(segment)) {
+    <annotation-structure [segment]="segment" />
+  } @else if (isTable(segment)) {
+    <annotation-table [segment]="segment" />
+  } @else if (isList(segment)) {
+    <annotation-list [segment]="segment" />
+  } @else {
+    <annotation-segments [segments]="[segment]" />
+  }
+}

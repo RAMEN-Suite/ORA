@@ -1,0 +1,7 @@
+@for (annotation of popoverAnnotations(); track annotation.uuid) {
+  <annotation-popover-entry [annotation]="annotation" [response]="response(annotation)" [isOpen]="isOpen()" />
+
+  @if (!$last) {
+    <p-divider />
+  }
+}

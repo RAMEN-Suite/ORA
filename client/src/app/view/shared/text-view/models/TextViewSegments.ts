@@ -1,39 +1,39 @@
-import { AnnotationSegment, ResolvedLayoutAnnotation, ResolvedStructureAnnotation } from './TextAnnotation';
+import { AnnotationSegment, LayoutAnnotation, StructuredAnnotation } from './TextAnnotation';
 
 export type TextViewSegment = StructureSegment | TableSegment | ListSegment | AnnotationSegment;
 
 export interface StructureSegment {
   kind: 'structure';
-  annotation: ResolvedStructureAnnotation;
+  annotation: StructuredAnnotation;
   children: TextViewSegment[];
 }
 
 export interface TableSegment {
   kind: 'table';
-  annotation: ResolvedLayoutAnnotation;
+  annotation: LayoutAnnotation;
   rows: TableRowSegment[];
 }
 
 export interface TableRowSegment {
   kind: 'table-row';
-  annotation: ResolvedLayoutAnnotation;
+  annotation: LayoutAnnotation;
   cells: TableCellSegment[];
 }
 
 export interface TableCellSegment {
   kind: 'table-cell';
-  annotation: ResolvedLayoutAnnotation;
+  annotation: LayoutAnnotation;
   children: TextViewSegment[];
 }
 
 export interface ListSegment {
   kind: 'list';
-  annotation: ResolvedLayoutAnnotation;
+  annotation: LayoutAnnotation;
   items: ListItemSegment[];
 }
 
 export interface ListItemSegment {
   kind: 'list-item';
-  annotation: ResolvedLayoutAnnotation;
+  annotation: LayoutAnnotation;
   children: TextViewSegment[];
 }

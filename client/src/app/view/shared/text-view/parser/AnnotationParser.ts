@@ -1,10 +1,10 @@
 import {
   AnnotationSegment,
+  InlineAnnotation,
   InlineRangeSegment,
   ResolvedAnnotation,
-  ResolvedInlineAnnotation,
-  ResolvedZeroPointAnnotation,
   TextSegment,
+  ZeroPointAnnotation,
   ZeroPointSegment,
 } from '../models/TextAnnotation';
 
@@ -14,8 +14,8 @@ interface TextInterval {
 }
 
 export class AnnotationParser {
-  private readonly ranges: ResolvedInlineAnnotation[];
-  private readonly zeroPoints: ResolvedZeroPointAnnotation[];
+  private readonly ranges: InlineAnnotation[];
+  private readonly zeroPoints: ZeroPointAnnotation[];
   private readonly intervals: TextInterval[];
 
   public constructor(
@@ -72,39 +72,39 @@ export class AnnotationParser {
 
   private createZeroPoint(index: number): ZeroPointSegment[] {
     return this.zeroPoints
-      .filter((annotation: ResolvedZeroPointAnnotation): boolean => annotation.start === index)
-      .filter((annotation: ResolvedZeroPointAnnotation): boolean => annotation.definition.behavior !== 'hidden')
-      .sort((a: ResolvedZeroPointAnnotation, b: ResolvedZeroPointAnnotation): number => this.sortPriority(a, b))
-      .map((annotation: ResolvedZeroPointAnnotation): ZeroPointSegment => ({ kind: 'zero-point', annotation }));
+      .filter((annotation: ZeroPointAnnotation): boolean => annotation.start === index)
+      .filter((annotation: ZeroPointAnnotation): boolean => annotation.definition.behavior !== 'hidden')
+      .sort((a: ZeroPointAnnotation, b: ZeroPointAnnotation): number => this.sortPriority(a, b))
+      .map((annotation: ZeroPointAnnotation): ZeroPointSegment => ({ kind: 'zero-point', annotation }));
   }
 
   private createInterval(interval: TextInterval): AnnotationSegment | undefined {
     const text: string = this.text.slice(interval.start, interval.end);
     if (text === '') return undefined;
 
-    const annotations: ResolvedInlineAnnotation[] = this.activeAnnotations(interval);
+    const annotations: InlineAnnotation[] = this.activeAnnotations(interval);
     const textSegment: TextSegment = { kind: 'text', text };
     if (annotations.length === 0) return textSegment;
 
     return this.createInlineRange(textSegment, annotations);
   }
 
-  private activeAnnotations(interval: TextInterval): ResolvedInlineAnnotation[] {
+  private activeAnnotations(interval: TextInterval): InlineAnnotation[] {
     return this.ranges
-      .filter((annotation: ResolvedInlineAnnotation): boolean => annotation.definition.behavior !== 'hidden')
-      .filter((annotation: ResolvedInlineAnnotation): boolean => this.isContainingInterval(annotation, interval))
-      .sort((a: ResolvedInlineAnnotation, b: ResolvedInlineAnnotation): number => this.sortPriority(a, b));
+      .filter((annotation: InlineAnnotation): boolean => annotation.definition.behavior !== 'hidden')
+      .filter((annotation: InlineAnnotation): boolean => this.isContainingInterval(annotation, interval))
+      .sort((a: InlineAnnotation, b: InlineAnnotation): number => this.sortPriority(a, b));
   }
 
-  private createInlineRange(child: AnnotationSegment, annotations: ResolvedInlineAnnotation[]): InlineRangeSegment {
+  private createInlineRange(child: AnnotationSegment, annotations: InlineAnnotation[]): InlineRangeSegment {
     return { kind: 'inline-range', annotations: [...annotations].sort(this.sortPriority.bind(this)), children: [child] };
   }
 
-  private isInlineRange(annotation: ResolvedAnnotation): annotation is ResolvedInlineAnnotation {
+  private isInlineRange(annotation: ResolvedAnnotation): annotation is InlineAnnotation {
     return !annotation.isZeroPoint && annotation.definition.layer === 'inline';
   }
 
-  private isZeroPoint(annotation: ResolvedAnnotation): annotation is ResolvedZeroPointAnnotation {
+  private isZeroPoint(annotation: ResolvedAnnotation): annotation is ZeroPointAnnotation {
     return annotation.isZeroPoint || annotation.definition.layer === 'zero-point';
   }
 

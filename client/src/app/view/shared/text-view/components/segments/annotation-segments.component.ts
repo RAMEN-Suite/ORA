@@ -1,10 +1,11 @@
-import { Component, forwardRef, input, InputSignal } from '@angular/core';
+import { Component, input, InputSignal } from '@angular/core';
 import { AnnotationSegment } from '../../models/TextAnnotation';
-import { AnnotationSegmentComponent } from '../annotation-segment/annotation-segment.component';
+import { AnnotationInlineComponent } from '../inline/annotation-inline.component';
+import { AnnotationZeroPointComponent } from '../inline/annotation-zero-point.component';
 
 @Component({
   selector: 'annotation-segments',
-  imports: [forwardRef(() => AnnotationSegmentComponent)],
+  imports: [AnnotationInlineComponent, AnnotationZeroPointComponent],
   templateUrl: './annotation-segments.component.html',
 })
 export class AnnotationSegmentsComponent {

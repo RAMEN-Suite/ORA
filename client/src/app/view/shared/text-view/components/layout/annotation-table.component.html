@@ -1,0 +1,11 @@
+<p-table [value]="segment().rows" [class]="classes()" [tableStyle]="{ width: '100%' }">
+  <ng-template pTemplate="body" let-row>
+    <tr [class]="rowClasses(row)">
+      @for (cell of row.cells; track cell.annotation.uuid) {
+        <td [class]="cellClasses(cell)">
+          <annotation-text-view-segments [segments]="cell.children" />
+        </td>
+      }
+    </tr>
+  </ng-template>
+</p-table>

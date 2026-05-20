@@ -1,0 +1,15 @@
+<div [class]="classes()">
+  @for (item of segment().items; track item.annotation.uuid; let index = $index) {
+    <p-panel class="mb-2!">
+      <div class="flex gap-3">
+        <div class="text-surface-500 w-6 shrink-0 text-right font-medium">
+          {{ itemLabel(index) }}
+        </div>
+
+        <div class="min-w-0 flex-1" [class]="itemClasses(item)">
+          <annotation-text-view-segments [segments]="item.children" />
+        </div>
+      </div>
+    </p-panel>
+  }
+</div>

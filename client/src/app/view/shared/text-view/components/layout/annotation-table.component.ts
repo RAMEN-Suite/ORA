@@ -1,10 +1,11 @@
 import { Component, computed, forwardRef, input, InputSignal, Signal } from '@angular/core';
 import { TableCellSegment, TableRowSegment, TableSegment } from '../../models/TextViewSegments';
-import { TextViewSegmentsComponent } from '../text-view-segments/text-view-segments.component';
+import { TextViewSegmentsComponent } from '../segments/text-view-segments.component';
+import { TableModule } from 'primeng/table';
 
 @Component({
   selector: 'annotation-table',
-  imports: [forwardRef(() => TextViewSegmentsComponent)],
+  imports: [forwardRef(() => TextViewSegmentsComponent), TableModule],
   templateUrl: './annotation-table.component.html',
   host: { class: 'contents' },
 })

@@ -43,31 +43,27 @@ export type ResolvedZeroPointDefinition = Omit<ZeroPointDefinition, 'priority'> 
   priority: number;
 };
 
-export interface ResolvedInlineAnnotation extends NormalizedAnnotation {
+export interface InlineAnnotation extends NormalizedAnnotation {
   definition: ResolvedInlineDefinition;
   classes: string[];
 }
 
-export interface ResolvedStructureAnnotation extends NormalizedAnnotation {
+export interface StructuredAnnotation extends NormalizedAnnotation {
   definition: ResolvedStructureDefinition;
   classes: string[];
 }
 
-export interface ResolvedLayoutAnnotation extends NormalizedAnnotation {
+export interface LayoutAnnotation extends NormalizedAnnotation {
   definition: ResolvedLayoutDefinition;
   classes: string[];
 }
 
-export interface ResolvedZeroPointAnnotation extends NormalizedAnnotation {
+export interface ZeroPointAnnotation extends NormalizedAnnotation {
   definition: ResolvedZeroPointDefinition;
   classes: string[];
 }
 
-export type ResolvedAnnotation =
-  | ResolvedInlineAnnotation
-  | ResolvedStructureAnnotation
-  | ResolvedLayoutAnnotation
-  | ResolvedZeroPointAnnotation;
+export type ResolvedAnnotation = InlineAnnotation | StructuredAnnotation | LayoutAnnotation | ZeroPointAnnotation;
 
 export type AnnotationSegment = TextSegment | InlineRangeSegment | ZeroPointSegment;
 
@@ -78,11 +74,11 @@ export interface TextSegment {
 
 export interface InlineRangeSegment {
   kind: 'inline-range';
-  annotations: ResolvedInlineAnnotation[];
+  annotations: InlineAnnotation[];
   children: AnnotationSegment[];
 }
 
 export interface ZeroPointSegment {
   kind: 'zero-point';
-  annotation: ResolvedZeroPointAnnotation;
+  annotation: ZeroPointAnnotation;
 }
