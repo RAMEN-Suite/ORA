@@ -1,18 +1,11 @@
 @let current = segment();
-
 @switch (current.kind) {
   @case ("text") {
     <ng-container>{{ current.text }}</ng-container>
   }
-
-  @case ("inline") {
-    <annotation-inline [segment]="current" />
+  @case ("span") {
+    <annotation-span [segment]="current" />
   }
-
-  @case ("interaction") {
-    <annotation-interaction [segment]="current" />
-  }
-
   @case ("zero-point") {
     <annotation-zero-point [segment]="current" />
   }

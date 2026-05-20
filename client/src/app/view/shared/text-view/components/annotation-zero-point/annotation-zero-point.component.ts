@@ -12,14 +12,18 @@ import {
   viewChild,
   WritableSignal,
 } from '@angular/core';
-import { NgStyle, NgTemplateOutlet } from '@angular/common';
+import { NgStyle } from '@angular/common';
+import { AnnotationBehavior } from '../../models/Annotations';
 import { ResolvedAnnotation, ZeroPointAnnotationSegment } from '../../models/TextAnnotation';
 import { MarginPositionHelper } from './annotation-zero-point.helper';
 
 @Component({
   selector: 'annotation-zero-point',
-  imports: [NgTemplateOutlet, NgStyle],
+  imports: [NgStyle],
   templateUrl: './annotation-zero-point.component.html',
+  host: {
+    class: 'contents',
+  },
 })
 export class AnnotationZeroPointComponent {
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
@@ -32,11 +36,19 @@ export class AnnotationZeroPointComponent {
   private readonly marker: Signal<ElementRef<HTMLElement> | undefined> = viewChild('marker');
 
   protected readonly position: WritableSignal<Record<string, string>> = signal<Record<string, string>>({});
+
   protected readonly annotation: Signal<ResolvedAnnotation> = computed((): ResolvedAnnotation => this.segment().annotation);
-  protected readonly behavior: Signal<string> = computed((): string => this.annotation().definition.behavior);
-  protected readonly isMargin: Signal<boolean> = computed((): boolean => this.annotation().definition.placement === 'margin');
+
+  protected readonly behavior: Signal<AnnotationBehavior> = computed((): AnnotationBehavior => {
+    return this.annotation().definition.behavior ?? 'hidden';
+  });
+
+  protected readonly isMargin: Signal<boolean> = computed((): boolean => {
+    return this.annotation().definition.placement === 'margin';
+  });
 
   protected readonly classes: Signal<string> = computed((): string => this.annotation().classes.join(' '));
+
   protected readonly markerClasses: Signal<string> = computed((): string => {
     if (!this.isMargin()) return this.classes();
     return ['inline', 'md:absolute', 'md:text-right', this.classes()].join(' ');
@@ -48,14 +60,14 @@ export class AnnotationZeroPointComponent {
   });
 
   protected readonly label: Signal<string> = computed((): string => {
-    if (this.behavior() === 'page-break') return this.sourceString('n') ?? '';
-    if (this.behavior() === 'gap') return this.gapLabel();
-    return '';
-  });
-
-  protected readonly href: Signal<string | undefined> = computed((): string | undefined => {
-    const property: string | undefined = this.annotation().definition.hrefProperty;
-    return property ? this.sourceString(property) : undefined;
+    switch (this.behavior()) {
+      case 'page-break':
+        return this.sourceString('n');
+      case 'gap':
+        return this.gapLabel();
+      default:
+        return '';
+    }
   });
 
   public constructor() {
@@ -97,14 +109,14 @@ export class AnnotationZeroPointComponent {
 
   private gapLabel(): string {
     const parts: string[] = ['quantity', 'unit', 'reason']
-      .map((property: string): string | undefined => this.sourceString(property))
-      .filter((value: string | undefined): value is string => !!value);
+      .map((property: string): string => this.sourceString(property))
+      .filter((value: string): boolean => value.trim().length > 0);
 
     return parts.length > 0 ? `[${parts.join(' ')}]` : '[…]';
   }
 
-  private sourceString(property: string): string | undefined {
+  private sourceString(property: string): string {
     const value: unknown = this.annotation().source[property];
-    return typeof value === 'string' ? value : undefined;
+    return typeof value === 'string' ? value : '';
   }
 }

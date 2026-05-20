@@ -1,6 +1,8 @@
+import { Binding } from '../../../../models/config/Config';
+
 export interface Annotations {
   definitions: Record<string, AnnotationDefinition>;
-  renditionClasses?: Record<string, string[]>;
+  classMappings?: Record<string, string[]>;
 
   unknownAnnotation?: UnknownAnnotationStrategy;
   invalidRange?: InvalidRangeStrategy;
@@ -8,36 +10,40 @@ export interface Annotations {
 
 export interface AnnotationDefinition {
   layer: AnnotationLayer;
-  behavior: AnnotationBehavior;
-  priority: number;
+  behavior?: AnnotationBehavior;
+  priority?: number;
 
   classes?: string[];
   classProperty?: string;
-  tooltipProperty?: string;
-  hrefProperty?: string;
   placement?: AnnotationPlacement;
 
-  target?: TargetDefinition;
+  popover?: AnnotationPopover;
 }
 
-export interface TargetDefinition {
-  resource?: string;
-  keyProperty?: string;
-  route?: string;
-  fetchOnOpen?: boolean;
+export interface AnnotationPopover {
+  title?: string;
+  description?: AnnotationDisplayDefinition[];
+  externalLink?: AnnotationDisplayDefinition;
+  references?: AnnotationReference[];
 }
-export type AnnotationLayer = 'inline' | 'interaction' | 'zero-point' | 'structure';
+
+export type AnnotationDisplayValue = Binding | AnnotationDisplayDefinition;
+
+export interface AnnotationDisplayDefinition {
+  path: string;
+  display?: string;
+  translationKey?: string;
+}
+
+export interface AnnotationReference {
+  label: Binding;
+  uuid: Binding;
+  icon?: string;
+}
+
+export type AnnotationLayer = 'inline' | 'structure' | 'zero-point';
+export type AnnotationBehavior = 'mark' | 'popover' | 'line-break' | 'page-break' | 'gap' | 'hidden';
 export type AnnotationPlacement = 'inline' | 'margin';
-export type AnnotationBehavior =
-  | 'mark'
-  | 'tooltip'
-  | 'popover'
-  | 'fetch-popover'
-  | 'external-link'
-  | 'line-break'
-  | 'page-break'
-  | 'gap'
-  | 'hidden';
 
 export type UnknownAnnotationStrategy = 'ignore' | 'plain' | 'warn';
 export type InvalidRangeStrategy = 'ignore' | 'clamp' | 'warn';

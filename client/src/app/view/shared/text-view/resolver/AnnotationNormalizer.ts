@@ -41,7 +41,7 @@ export class AnnotationNormalizer {
 
   private normalizeAnnotation(annotation: TextAnnotation): NormalizedAnnotation | undefined {
     if (!this.hasDefinition(annotation)) this.handleUnknownType(annotation);
-    const range: AnnotationRange | undefined = this.getRange(annotation);
+    const range: AnnotationRange | undefined = this.getAnnotationRange(annotation);
 
     if (!range) {
       this.addIssue('missing-range', 'Annotation has no valid startIndex or endIndex.', annotation);
@@ -50,35 +50,30 @@ export class AnnotationNormalizer {
 
     const isZeroPoint: boolean = this.isZeroPoint(annotation, range);
     const start: number = range.startIndex;
-    const end: number = this.normalizeEnd(range, isZeroPoint);
+    const end: number = this.normalizeEndIndex(range, isZeroPoint);
 
     if (!this.isValidRange(start, end, isZeroPoint)) return this.handleInvalidRange(annotation, range, isZeroPoint);
     return this.createAnnotation(annotation, start, end, isZeroPoint);
   }
 
-  private hasDefinition(annotation: TextAnnotation): boolean {
-    return this.config.definitions[annotation.type] !== undefined;
+  private normalizeEndIndex(range: AnnotationRange, isZeroPoint: boolean): number {
+    if (isZeroPoint) return range.startIndex;
+    return range.endIndex + 1;
   }
 
-  private handleUnknownType(annotation: TextAnnotation): void {
-    if (this.config.unknownAnnotation === 'ignore') return;
-    this.addIssue('unknown-type', `Unknown annotation type: ${annotation.type}`, annotation);
-  }
-
-  private getRange(annotation: TextAnnotation): AnnotationRange | undefined {
+  private getAnnotationRange(annotation: TextAnnotation): AnnotationRange | undefined {
     const { startIndex, endIndex } = annotation;
     if (typeof startIndex !== 'number') return undefined;
     if (typeof endIndex !== 'number') return undefined;
     return { startIndex, endIndex };
   }
 
-  private isZeroPoint(annotation: TextAnnotation, range: AnnotationRange): boolean {
-    return annotation.isZeroPoint === true || range.startIndex === range.endIndex;
+  private hasDefinition(annotation: TextAnnotation): boolean {
+    return this.config.definitions[annotation.type] !== undefined;
   }
 
-  private normalizeEnd(range: AnnotationRange, isZeroPoint: boolean): number {
-    if (isZeroPoint) return range.startIndex;
-    return range.endIndex + 1;
+  private isZeroPoint(annotation: TextAnnotation, range: AnnotationRange): boolean {
+    return annotation.isZeroPoint === true || range.startIndex === range.endIndex;
   }
 
   private isValidRange(start: number, end: number, isZeroPoint: boolean): boolean {
@@ -88,6 +83,11 @@ export class AnnotationNormalizer {
     if (end > this.text.length) return false;
     if (isZeroPoint) return start === end;
     return start < end;
+  }
+
+  private handleUnknownType(annotation: TextAnnotation): void {
+    if (this.config.unknownAnnotation === 'ignore') return;
+    this.addIssue('unknown-type', `Unknown annotation type: ${annotation.type}`, annotation);
   }
 
   private handleInvalidRange(

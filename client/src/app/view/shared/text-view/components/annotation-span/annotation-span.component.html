@@ -1,0 +1,6 @@
+<span [class]="classes()" (click)="togglePopover($event)"><annotation-segments [segments]="segment().children" /></span>
+@if (hasPopover()) {
+  <p-popover (onHide)="isPopoverOpen.set(false)">
+    <annotation-popover [annotations]="segment().annotations" [isOpen]="isPopoverOpen()" />
+  </p-popover>
+}

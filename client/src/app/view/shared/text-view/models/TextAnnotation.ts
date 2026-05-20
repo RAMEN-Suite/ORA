@@ -27,21 +27,15 @@ export interface ResolvedAnnotation extends NormalizedAnnotation {
   classes: string[];
 }
 
-export type AnnotationSegment = TextSegment | InlineAnnotationSegment | InteractionAnnotationSegment | ZeroPointAnnotationSegment;
+export type AnnotationSegment = TextSegment | AnnotationSpanSegment | ZeroPointAnnotationSegment;
 
 export interface TextSegment {
   kind: 'text';
   text: string;
 }
 
-export interface InlineAnnotationSegment {
-  kind: 'inline';
-  annotation: ResolvedAnnotation;
-  children: AnnotationSegment[];
-}
-
-export interface InteractionAnnotationSegment {
-  kind: 'interaction';
+export interface AnnotationSpanSegment {
+  kind: 'span';
   annotations: ResolvedAnnotation[];
   children: AnnotationSegment[];
 }

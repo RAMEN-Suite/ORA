@@ -1,0 +1,30 @@
+<section class="flex min-w-72 flex-col gap-3 text-sm">
+  <header class="font-semibold">
+    {{ title() }}
+  </header>
+
+  @if (isLoading()) {
+    <span class="text-surface-500">Lade…</span>
+  }
+
+  @for (description of descriptions(); track description) {
+    <p class="text-surface-700">
+      {{ description }}
+    </p>
+  }
+
+  @if (externalLink()) {
+    <a [href]="externalLink()" target="_blank" rel="noopener noreferrer" class="underline underline-offset-2">
+      {{ externalLink() }}
+    </a>
+  }
+
+  @for (reference of references(); track reference.uuid) {
+    <a class="flex items-center gap-2 underline underline-offset-2" [routerLink]="['/id', reference.uuid]">
+      @if (reference.icon) {
+        <i [class]="reference.icon"></i>
+      }
+      <span>{{ reference.label }}</span>
+    </a>
+  }
+</section>

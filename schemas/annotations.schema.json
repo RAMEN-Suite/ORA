@@ -13,9 +13,9 @@
         "$ref": "#/$defs/annotationDefinition"
       }
     },
-    "renditionClasses": {
+    "classMappings": {
       "type": "object",
-      "description": "Maps rendition tokens to CSS classes. Example: #b -> ['font-bold'].",
+      "description": "Maps tokens read from annotation classProperty values to CSS classes. Example: #b -> ['font-bold'].",
       "additionalProperties": {
         "type": "array",
         "items": {
@@ -37,21 +37,22 @@
     "annotationDefinition": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["layer", "behavior", "priority"],
+      "required": ["layer"],
       "properties": {
         "layer": {
           "$ref": "#/$defs/annotationLayer"
         },
         "behavior": {
-          "$ref": "#/$defs/annotationBehavior"
+          "$ref": "#/$defs/annotationBehavior",
+          "description": "Render behavior. If omitted, the renderer applies a layer-specific default."
         },
         "priority": {
           "type": "integer",
-          "description": "Lower priority wraps outside higher priority annotations."
+          "description": "Optional ordering hint. Lower priority wraps outside higher priority annotations."
         },
         "placement": {
           "$ref": "#/$defs/annotationPlacement",
-          "description": "Controls where an annotation is rendered. Usually only relevant for zero-point annotations like page breaks."
+          "description": "Controls where a zero-point annotation is rendered. Usually only relevant for page breaks."
         },
         "classes": {
           "type": "array",
@@ -62,44 +63,71 @@
         },
         "classProperty": {
           "type": "string",
-          "description": "Annotation property whose tokens should be mapped through renditionClasses."
+          "description": "Annotation property whose whitespace-separated tokens should be mapped through classMappings."
         },
-        "tooltipProperty": {
-          "type": "string",
-          "description": "Annotation property used as tooltip content."
-        },
-        "hrefProperty": {
-          "type": "string",
-          "description": "Annotation property used as href for external links."
-        },
-        "label": {
-          "type": "string",
-          "description": "Optional translation key or display label for this annotation type."
-        },
-        "target": {
-          "$ref": "#/$defs/annotationTarget"
+        "popover": {
+          "$ref": "#/$defs/annotationPopover"
         }
       }
     },
-    "annotationTarget": {
+    "annotationPopover": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "resource": {
+        "title": { 
           "type": "string",
-          "description": "Generic resource name used by the application to fetch details."
+          "description": "Static title shown in the annotation popover."
         },
-        "keyProperty": {
+        "description": {
+          "type": "array",
+          "description": "Description values shown in the popover. Each binding is resolved by the backend view endpoint relative to the annotation node.",
+          "items": {
+            "$ref": "#/$defs/binding"
+          },
+          "default": []
+        },
+        "externalLink": {
+          "$ref": "#/$defs/binding",
+          "description": "Binding resolving to an external URL."
+        },
+        "references": {
+          "type": "array",
+          "description": "Referenced nodes shown in the popover.",
+          "items": {
+            "$ref": "#/$defs/annotationReference"
+          },
+          "default": []
+        }
+      }
+    },
+    "annotationReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "uuid"],
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/binding",
+          "description": "Binding resolving to the reference display label."
+        },
+        "uuid": {
+          "$ref": "#/$defs/binding",
+          "description": "Binding resolving to the referenced node UUID."
+        },
+        "icon": {
           "type": "string",
-          "description": "Annotation property containing the target key/id."
-        },
-        "route": {
+          "description": "Optional icon class, for example a PrimeIcons class."
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": {
           "type": "string",
-          "description": "Optional route key used by the application for navigation."
-        },
-        "fetchOnOpen": {
-          "type": "boolean",
-          "default": false
+          "minLength": 1,
+          "description": "RAMEN access path resolved by the backend view endpoint relative to the annotation node."
         }
       }
     },
@@ -110,21 +138,11 @@
     },
     "annotationLayer": {
       "type": "string",
-      "enum": ["inline", "interaction", "zero-point", "structure"]
+      "enum": ["inline", "structure", "zero-point"]
     },
     "annotationBehavior": {
       "type": "string",
-      "enum": [
-        "mark",
-        "tooltip",
-        "popover",
-        "fetch-popover",
-        "external-link",
-        "line-break",
-        "page-break",
-        "gap",
-        "hidden"
-      ]
+      "enum": ["mark", "popover", "line-break", "page-break", "gap", "hidden"]
     },
     "unknownAnnotationStrategy": {
       "type": "string",

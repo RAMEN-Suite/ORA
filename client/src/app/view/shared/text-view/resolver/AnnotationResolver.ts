@@ -19,15 +19,11 @@ export class AnnotationResolver {
   }
 
   private resolveAnnotation(annotation: NormalizedAnnotation): ResolvedAnnotation | undefined {
-    const definition: AnnotationDefinition | undefined = this.definition(annotation);
+    const definition: AnnotationDefinition | undefined = this.config.definitions[annotation.type];
     if (!definition) return this.resolveUnknownAnnotation(annotation);
 
     const classes: string[] = this.resolveClasses(annotation, definition);
     return { ...annotation, definition, classes };
-  }
-
-  private definition(annotation: NormalizedAnnotation): AnnotationDefinition | undefined {
-    return this.config.definitions[annotation.type];
   }
 
   private resolveUnknownAnnotation(annotation: NormalizedAnnotation): ResolvedAnnotation | undefined {
@@ -40,7 +36,7 @@ export class AnnotationResolver {
   private resolveClasses(annotation: NormalizedAnnotation, definition: AnnotationDefinition): string[] {
     const definitionClasses: string[] = definition.classes ?? [];
     const propertyClasses: string[] = this.resolvePropertyClasses(annotation, definition);
-    return this.unique([...definitionClasses, ...propertyClasses]);
+    return Array.from(new Set<string>([...definitionClasses, ...propertyClasses]));
   }
 
   private resolvePropertyClasses(annotation: NormalizedAnnotation, definition: AnnotationDefinition): string[] {
@@ -52,14 +48,10 @@ export class AnnotationResolver {
     const classes: string[] = [];
 
     for (const token of tokens) {
-      const mapped: string[] | undefined = this.config.renditionClasses?.[token];
+      const mapped: string[] | undefined = this.config.classMappings?.[token];
       if (mapped) classes.push(...mapped);
     }
 
     return classes;
-  }
-
-  private unique(values: string[]): string[] {
-    return Array.from(new Set(values));
   }
 }

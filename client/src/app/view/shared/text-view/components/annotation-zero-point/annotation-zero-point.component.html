@@ -1,33 +1,15 @@
 @let currentBehavior = behavior();
-
 @switch (currentBehavior) {
   @case ("line-break") {
     <br />
   }
-
   @case ("page-break") {
     @if (isMargin()) {
       <span #anchor class="inline-block h-[1em] w-0 align-baseline"></span>
     }
-
-    <span #marker [class]="markerClasses()" [ngStyle]="isMargin() ? position() : null">
-      <ng-container *ngTemplateOutlet="content" />
-    </span>
+    <span #marker [class]="markerClasses()" [ngStyle]="isMargin() ? position() : null">{{ displayLabel() }}</span>
   }
-
   @case ("gap") {
-    <span [class]="classes()">
-      {{ label() }}
-    </span>
+    <span [class]="classes()">{{ label() }}</span>
   }
 }
-
-<ng-template #content>
-  @if (href(); as href) {
-    <a [href]="href" target="_blank" rel="noopener noreferrer">
-      {{ displayLabel() }}
-    </a>
-  } @else {
-    {{ displayLabel() }}
-  }
-</ng-template>

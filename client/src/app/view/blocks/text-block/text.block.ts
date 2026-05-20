@@ -5,7 +5,7 @@ import { AbstractBlock } from '../abstract.block';
 import { TextProps } from '../../../models/config/DetailViews';
 import { TextViewComponent } from '../../shared/text-view/text-view.component';
 import { TextAnnotation } from '../../shared/text-view/models/TextAnnotation';
-import { AnnotationUtils } from '../../shared/text-view/parser/AnnotationUtils';
+import { AnnotationUtils } from '../../shared/text-view/resolver/AnnotationUtils';
 import { ConfigService } from '../../../services/config.service';
 import { Annotations } from '../../shared/text-view/models/Annotations';
 

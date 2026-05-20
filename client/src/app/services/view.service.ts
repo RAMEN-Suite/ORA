@@ -23,6 +23,13 @@ export class ViewService {
       .pipe(map((response: ViewResponse<TNode>): TNode => response.node));
   }
 
+  public fetchViewOnce<TNode extends Node>(uuid: string, paths: string[]): Observable<ViewResponse<TNode>> {
+    return this.http.get<ViewResponse<TNode>>(`${this.baseUrl}/${encodeURIComponent(uuid)}`, {
+      params: { paths },
+      context: withCache(),
+    });
+  }
+
   public fetchView<TNode extends Node>(
     uuid: Signal<string | null | undefined>,
     paths: Signal<string[]>,

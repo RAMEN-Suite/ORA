@@ -1,12 +1,11 @@
 import { Component, input, InputSignal } from '@angular/core';
 import { AnnotationSegment } from '../../models/TextAnnotation';
-import { AnnotationInlineComponent } from '../annotation-inline/annotation-inline.component';
-import { AnnotationInteractionComponent } from '../annotation-interaction/annotation-interaction.component';
 import { AnnotationZeroPointComponent } from '../annotation-zero-point/annotation-zero-point.component';
+import { AnnotationSpanComponent } from '../annotation-span/annotation-span.component';
 
 @Component({
   selector: 'annotation-segment',
-  imports: [AnnotationInlineComponent, AnnotationInteractionComponent, AnnotationZeroPointComponent],
+  imports: [AnnotationZeroPointComponent, AnnotationSpanComponent],
   templateUrl: './annotation-segment.component.html',
 })
 export class AnnotationSegmentComponent {
