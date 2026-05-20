@@ -20,6 +20,7 @@ export class AnnotationListComponent {
   }
 
   protected itemLabel(index: number): string {
-    return this.isOrdered() ? `${index + 1}.` : '•';
+    const indexStr: string = String(index + 1);
+    return this.isOrdered() ? `${indexStr}.` : '•';
   }
 }
