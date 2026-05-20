@@ -13,7 +13,7 @@ export class ExpressUtils {
   }
 
   public static attachGenericResponses(application: Express): void {
-    application.get("/health", this.handleHealthCheck);
+    application.get("/api/health", this.handleHealthCheck);
     application.use(this.handleNotFound);
     application.use(this.handleInternal);
   }
