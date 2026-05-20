@@ -15,7 +15,6 @@ import { AnnotationPopoverComponent } from '../annotation-popover/annotation-pop
     AnnotationPopoverComponent,
   ],
   templateUrl: './annotation-inline-range.component.html',
-  host: { class: 'contents' },
 })
 export class AnnotationInlineRangeComponent {
   public readonly segment: InputSignal<InlineRangeSegment> = input.required<InlineRangeSegment>();

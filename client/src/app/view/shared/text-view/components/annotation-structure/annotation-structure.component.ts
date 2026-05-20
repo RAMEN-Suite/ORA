@@ -1,12 +1,11 @@
 import { Component, computed, forwardRef, input, InputSignal, Signal } from '@angular/core';
-import { AnnotationSegmentsComponent } from '../annotation-segments/annotation-segments.component';
 import { StructureSegment } from '../../models/TextViewSegments';
+import { TextViewSegmentsComponent } from '../text-view-segments/text-view-segments.component';
 
 @Component({
   selector: 'annotation-structure',
-  imports: [forwardRef(() => AnnotationSegmentsComponent)],
+  imports: [forwardRef(() => TextViewSegmentsComponent)],
   templateUrl: './annotation-structure.component.html',
-  host: { class: 'contents' },
 })
 export class AnnotationStructureComponent {
   public readonly segment: InputSignal<StructureSegment> = input.required<StructureSegment>();

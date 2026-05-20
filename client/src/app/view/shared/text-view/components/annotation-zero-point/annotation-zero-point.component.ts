@@ -20,7 +20,6 @@ import { MarginPositionStyle, MarginPositionUtils } from '../../utils/MarginPosi
   selector: 'annotation-zero-point',
   imports: [NgStyle],
   templateUrl: './annotation-zero-point.component.html',
-  host: { class: 'contents' },
 })
 export class AnnotationZeroPointComponent {
   private static readonly markerWidth: number = 70;

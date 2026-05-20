@@ -6,7 +6,6 @@ import { TextViewSegmentComponent } from '../text-view-segment/text-view-segment
   selector: 'annotation-text-view-segments',
   imports: [TextViewSegmentComponent],
   templateUrl: './text-view-segments.component.html',
-  host: { class: 'contents' },
 })
 export class TextViewSegmentsComponent {
   public readonly segments: InputSignal<TextViewSegment[]> = input<TextViewSegment[]>([]);

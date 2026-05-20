@@ -7,6 +7,11 @@ interface TextRange {
   end: number;
 }
 
+interface StructureNode {
+  annotation: ResolvedStructureAnnotation;
+  children: StructureNode[];
+}
+
 export class TextViewParser {
   private readonly structures: ResolvedStructureAnnotation[];
 
@@ -20,26 +25,64 @@ export class TextViewParser {
   }
 
   public parse(): TextViewSegment[] {
-    if (this.structures.length === 0) return this.parseInlineRange({ start: 0, end: this.text.length });
+    const range: TextRange = { start: 0, end: this.text.length };
+    const nodes: StructureNode[] = this.rootNodes();
+    return this.parseRange(range, nodes);
+  }
 
+  private parseRange(range: TextRange, nodes: StructureNode[]): TextViewSegment[] {
     const segments: TextViewSegment[] = [];
-    let cursor: number = 0;
+    let cursor: number = range.start;
 
-    for (const structure of this.structures) {
+    for (const node of nodes) {
+      const structure: ResolvedStructureAnnotation = node.annotation;
+
       if (structure.start < cursor) continue;
       if (cursor < structure.start) segments.push(...this.parseInlineRange({ start: cursor, end: structure.start }));
 
-      segments.push(this.createStructureSegment(structure));
+      segments.push(this.createStructureSegment(node));
       cursor = structure.end;
     }
 
-    if (cursor < this.text.length) segments.push(...this.parseInlineRange({ start: cursor, end: this.text.length }));
+    if (cursor < range.end) segments.push(...this.parseInlineRange({ start: cursor, end: range.end }));
     return segments;
   }
 
-  private createStructureSegment(annotation: ResolvedStructureAnnotation): StructureSegment {
-    const children: AnnotationSegment[] = this.parseInlineRange({ start: annotation.start, end: annotation.end });
+  private createStructureSegment(node: StructureNode): StructureSegment {
+    const annotation: ResolvedStructureAnnotation = node.annotation;
+    const children: TextViewSegment[] = this.parseRange({ start: annotation.start, end: annotation.end }, node.children);
     return { kind: 'structure', annotation, children };
+  }
+
+  private rootNodes(): StructureNode[] {
+    const roots: StructureNode[] = [];
+
+    for (const structure of this.structures) {
+      const node: StructureNode = { annotation: structure, children: [] };
+      const parent: StructureNode | undefined = this.findParent(roots, structure);
+
+      if (parent) {
+        parent.children.push(node);
+        parent.children.sort(this.sortNodes.bind(this));
+        continue;
+      }
+
+      if (this.isAnyOverlapping(roots, structure)) continue;
+
+      roots.push(node);
+      roots.sort(this.sortNodes.bind(this));
+    }
+
+    return roots;
+  }
+
+  private findParent(nodes: StructureNode[], annotation: ResolvedStructureAnnotation): StructureNode | undefined {
+    for (const node of nodes) {
+      if (!this.isContaining(node.annotation, annotation)) continue;
+      return this.findParent(node.children, annotation) ?? node;
+    }
+
+    return undefined;
   }
 
   private parseInlineRange(range: TextRange): AnnotationSegment[] {
@@ -63,11 +106,27 @@ export class TextViewParser {
     return b.end - a.end;
   }
 
+  private sortNodes(a: StructureNode, b: StructureNode): number {
+    return this.sortAnnotations(a.annotation, b.annotation);
+  }
+
   private isStructure(annotation: ResolvedAnnotation): annotation is ResolvedStructureAnnotation {
     return annotation.definition.layer === 'structure';
   }
 
   private isVisible(annotation: ResolvedAnnotation): boolean {
     return annotation.definition.behavior !== 'hidden';
+  }
+
+  private isContaining(parent: TextRange, child: TextRange): boolean {
+    return parent.start <= child.start && parent.end >= child.end;
+  }
+
+  private isAnyOverlapping(nodes: StructureNode[], annotation: ResolvedStructureAnnotation): boolean {
+    return nodes.some((node: StructureNode): boolean => this.isOverlapping(node.annotation, annotation));
+  }
+
+  private isOverlapping(a: TextRange, b: TextRange): boolean {
+    return a.start < b.end && b.start < a.end;
   }
 }

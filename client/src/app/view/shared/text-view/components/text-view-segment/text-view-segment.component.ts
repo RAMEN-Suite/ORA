@@ -8,7 +8,6 @@ import { StructureSegment, TextViewSegment } from '../../models/TextViewSegments
   selector: 'annotation-text-view-segment',
   imports: [AnnotationSegmentComponent, AnnotationStructureComponent],
   templateUrl: './text-view-segment.component.html',
-  host: { class: 'contents' },
 })
 export class TextViewSegmentComponent {
   public readonly segment: InputSignal<TextViewSegment> = input.required<TextViewSegment>();
