@@ -13,7 +13,7 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { NgStyle } from '@angular/common';
-import { ResolvedAnnotation, ZeroPointAnnotationSegment } from '../../models/TextAnnotation';
+import { ResolvedZeroPointAnnotation, ZeroPointSegment } from '../../models/TextAnnotation';
 import { MarginPositionStyle, MarginPositionUtils } from '../../utils/MarginPositionUtils';
 
 @Component({
@@ -25,20 +25,24 @@ import { MarginPositionStyle, MarginPositionUtils } from '../../utils/MarginPosi
 export class AnnotationZeroPointComponent {
   private static readonly markerWidth: number = 70;
   private static readonly markerGap: number = 22;
+
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
-  public readonly segment: InputSignal<ZeroPointAnnotationSegment> = input.required<ZeroPointAnnotationSegment>();
+  public readonly segment: InputSignal<ZeroPointSegment> = input.required<ZeroPointSegment>();
 
   private readonly anchor: Signal<ElementRef<HTMLElement> | undefined> = viewChild('anchor');
   private readonly marker: Signal<ElementRef<HTMLElement> | undefined> = viewChild('marker');
 
   protected readonly position: WritableSignal<MarginPositionStyle> = signal<MarginPositionStyle>({});
-  protected readonly annotation: Signal<ResolvedAnnotation> = computed((): ResolvedAnnotation => this.segment().annotation);
   protected readonly isMargin: Signal<boolean> = computed((): boolean => this.annotation().definition.placement === 'margin');
-  protected readonly classes: Signal<string> = computed((): string => this.annotation().classes.join(' '));
 
+  protected readonly classes: Signal<string> = computed((): string => this.annotation().classes.join(' '));
   protected readonly markerClasses: Signal<string> = computed((): string => {
     return this.isMargin() ? ['inline', 'md:absolute', 'md:text-right', this.classes()].join(' ') : this.classes();
+  });
+
+  protected readonly annotation: Signal<ResolvedZeroPointAnnotation> = computed((): ResolvedZeroPointAnnotation => {
+    return this.segment().annotation;
   });
 
   protected readonly label: Signal<string> = computed((): string => {

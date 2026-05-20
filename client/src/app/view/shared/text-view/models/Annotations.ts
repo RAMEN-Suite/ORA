@@ -7,19 +7,41 @@ export interface Annotations {
   invalidRange?: InvalidRangeStrategy;
 }
 
-export interface AnnotationDefinition {
-  layer: AnnotationLayer;
-  behavior?: AnnotationBehavior;
+export type AnnotationDefinition = InlineDefinition | StructureDefinition | LayoutDefinition | ZeroPointDefinition;
+
+export interface DefinitionBase {
   priority?: number;
-
   classes?: string[];
-  tokens?: AnnotationTokenMapping[];
-  placement?: AnnotationPlacement;
+  tokens?: TokenMapping[];
+}
 
+export interface InlineDefinition extends DefinitionBase {
+  layer: 'inline';
+  behavior?: InlineBehavior;
+  renderAs?: InlineRenderElement;
   popover?: AnnotationPopover;
 }
 
-export interface AnnotationTokenMapping {
+export interface StructureDefinition extends DefinitionBase {
+  layer: 'structure';
+  behavior?: StructureBehavior;
+  renderAs?: StructureRenderElement;
+}
+
+export interface LayoutDefinition extends DefinitionBase {
+  layer: 'layout';
+  behavior?: LayoutBehavior;
+  layoutRole: LayoutRole;
+  renderAs: LayoutRenderElement;
+}
+
+export interface ZeroPointDefinition extends DefinitionBase {
+  layer: 'zero-point';
+  behavior: ZeroPointBehavior;
+  placement?: AnnotationPlacement;
+}
+
+export interface TokenMapping {
   property: string;
   mappings: Record<string, string[]>;
 }
@@ -42,9 +64,35 @@ export interface AnnotationReference {
   icon?: string;
 }
 
-export type AnnotationLayer = 'inline' | 'structure' | 'zero-point';
-export type AnnotationBehavior = 'mark' | 'popover' | 'line-break' | 'page-break' | 'gap' | 'hidden';
+export type AnnotationLayer = AnnotationDefinition['layer'];
+
+export type AnnotationBehavior = InlineBehavior | StructureBehavior | LayoutBehavior | ZeroPointBehavior;
+export type InlineBehavior = 'mark' | 'popover' | 'hidden';
+export type StructureBehavior = 'mark' | 'hidden';
+export type LayoutBehavior = 'mark' | 'hidden';
+export type ZeroPointBehavior = 'line-break' | 'page-break' | 'gap' | 'hidden';
+
 export type AnnotationPlacement = 'inline' | 'margin';
+
+export type AnnotationRenderElement = InlineRenderElement | StructureRenderElement | LayoutRenderElement;
+export type InlineRenderElement = 'span' | 'abbr' | 'cite' | 'code' | 'em' | 'mark' | 'strong' | 'sub' | 'sup';
+export type StructureRenderElement =
+  | 'div'
+  | 'p'
+  | 'section'
+  | 'article'
+  | 'header'
+  | 'footer'
+  | 'address'
+  | 'blockquote'
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'h6';
+export type LayoutRenderElement = 'ul' | 'ol' | 'li' | 'table' | 'thead' | 'tbody' | 'tr' | 'th' | 'td';
+export type LayoutRole = 'list' | 'list-item' | 'table' | 'table-section' | 'table-row' | 'table-cell';
 
 export type UnknownAnnotationStrategy = 'ignore' | 'plain' | 'warn';
 export type InvalidRangeStrategy = 'ignore' | 'clamp' | 'warn';

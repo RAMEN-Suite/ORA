@@ -3,8 +3,8 @@
   @case ("text") {
     <ng-container>{{ current.text }}</ng-container>
   }
-  @case ("span") {
-    <annotation-span [segment]="current" />
+  @case ("inline-range") {
+    <annotation-inline-range [segment]="current" />
   }
   @case ("zero-point") {
     <annotation-zero-point [segment]="current" />

@@ -1,5 +1,5 @@
 import { Annotation } from '../../../../models/Node';
-import { AnnotationDefinition } from './Annotations';
+import { InlineDefinition, LayoutDefinition, StructureDefinition, ZeroPointDefinition } from './Annotations';
 
 export interface TextAnnotation extends Annotation {
   startIndex?: number;
@@ -22,30 +22,67 @@ export interface NormalizedAnnotation {
   source: TextAnnotation;
 }
 
-export type ResolvedDefinition = AnnotationDefinition & {
-  behavior: NonNullable<AnnotationDefinition['behavior']>;
+export type ResolvedInlineDefinition = Omit<InlineDefinition, 'behavior' | 'priority' | 'renderAs'> & {
+  behavior: NonNullable<InlineDefinition['behavior']>;
+  priority: number;
+  renderAs: NonNullable<InlineDefinition['renderAs']>;
+};
+
+export type ResolvedStructureDefinition = Omit<StructureDefinition, 'behavior' | 'priority' | 'renderAs'> & {
+  behavior: NonNullable<StructureDefinition['behavior']>;
+  priority: number;
+  renderAs: NonNullable<StructureDefinition['renderAs']>;
+};
+
+export type ResolvedLayoutDefinition = Omit<LayoutDefinition, 'behavior' | 'priority'> & {
+  behavior: NonNullable<LayoutDefinition['behavior']>;
   priority: number;
 };
 
-export interface ResolvedAnnotation extends NormalizedAnnotation {
-  definition: ResolvedDefinition;
+export type ResolvedZeroPointDefinition = Omit<ZeroPointDefinition, 'priority'> & {
+  priority: number;
+};
+
+export interface ResolvedInlineAnnotation extends NormalizedAnnotation {
+  definition: ResolvedInlineDefinition;
   classes: string[];
 }
 
-export type AnnotationSegment = TextSegment | AnnotationSpanSegment | ZeroPointAnnotationSegment;
+export interface ResolvedStructureAnnotation extends NormalizedAnnotation {
+  definition: ResolvedStructureDefinition;
+  classes: string[];
+}
+
+export interface ResolvedLayoutAnnotation extends NormalizedAnnotation {
+  definition: ResolvedLayoutDefinition;
+  classes: string[];
+}
+
+export interface ResolvedZeroPointAnnotation extends NormalizedAnnotation {
+  definition: ResolvedZeroPointDefinition;
+  classes: string[];
+}
+
+export type ResolvedAnnotation =
+  | ResolvedInlineAnnotation
+  | ResolvedStructureAnnotation
+  | ResolvedLayoutAnnotation
+  | ResolvedZeroPointAnnotation;
+
+export type AnnotationSegment = TextSegment | InlineRangeSegment | ZeroPointSegment;
 
 export interface TextSegment {
   kind: 'text';
   text: string;
 }
 
-export interface AnnotationSpanSegment {
-  kind: 'span';
-  annotations: ResolvedAnnotation[];
+export interface InlineRangeSegment {
+  kind: 'inline-range';
+  annotations: ResolvedInlineAnnotation[];
   children: AnnotationSegment[];
 }
 
-export interface ZeroPointAnnotationSegment {
+export interface ZeroPointSegment {
   kind: 'zero-point';
-  annotation: ResolvedAnnotation;
+  annotation: ResolvedZeroPointAnnotation;
 }

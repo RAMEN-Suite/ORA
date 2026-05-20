@@ -1,7 +1,7 @@
 import { Component, computed, input, InputSignal, Signal } from '@angular/core';
-import { ResolvedAnnotation } from '../../models/TextAnnotation';
-import { AnnotationPopoverEntryComponent } from './annotation-popover-entry/annotation-popover-entry.component';
 import { Divider } from 'primeng/divider';
+import { ResolvedInlineAnnotation } from '../../models/TextAnnotation';
+import { AnnotationPopoverEntryComponent } from './annotation-popover-entry/annotation-popover-entry.component';
 
 @Component({
   selector: 'annotation-popover',
@@ -9,10 +9,12 @@ import { Divider } from 'primeng/divider';
   templateUrl: './annotation-popover.component.html',
 })
 export class AnnotationPopoverComponent {
-  public readonly annotations: InputSignal<ResolvedAnnotation[]> = input.required<ResolvedAnnotation[]>();
+  public readonly annotations: InputSignal<ResolvedInlineAnnotation[]> = input.required<ResolvedInlineAnnotation[]>();
   public readonly isOpen: InputSignal<boolean> = input<boolean>(false);
 
-  protected readonly popoverAnnotations: Signal<ResolvedAnnotation[]> = computed((): ResolvedAnnotation[] => {
-    return this.annotations().filter((annotation: ResolvedAnnotation): boolean => annotation.definition.behavior === 'popover');
+  protected readonly popoverAnnotations: Signal<ResolvedInlineAnnotation[]> = computed((): ResolvedInlineAnnotation[] => {
+    return this.annotations().filter((annotation: ResolvedInlineAnnotation): boolean => {
+      return annotation.definition.behavior === 'popover';
+    });
   });
 }

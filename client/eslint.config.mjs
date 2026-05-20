@@ -25,6 +25,7 @@ export default defineConfig(
       },
     },
     rules: {
+      "@angular-eslint/no-output-on-prefix": "off",
       "@typescript-eslint/no-inferrable-types": "off",
       "@typescript-eslint/no-extraneous-class": "off",
       "@typescript-eslint/no-confusing-void-expression": "off",
@@ -51,7 +52,7 @@ export default defineConfig(
         "error",
         {
           type: "attribute",
-          prefix: "app",
+          prefix: "on",
           style: "camelCase",
         },
       ],

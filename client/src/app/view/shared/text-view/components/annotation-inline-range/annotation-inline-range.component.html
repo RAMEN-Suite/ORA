@@ -1,10 +1,4 @@
-<span
-  [attr.tabindex]="hasPopover() ? 0 : null"
-  [class]="classes()"
-  (click)="handleTogglePopover($event)"
-  (keydown.enter)="handleTogglePopover($event)"
-  (keydown.space)="handleTogglePopover($event)"
->
+<span [attr.tabindex]="hasPopover() ? 0 : null" [class]="classes()" (onActivate)="handleTogglePopover($event)">
   <annotation-segments [segments]="segment().children" />
 </span>
 

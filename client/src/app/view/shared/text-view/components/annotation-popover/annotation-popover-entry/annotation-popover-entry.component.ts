@@ -12,19 +12,19 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AnnotationPopover, AnnotationReference } from '../../../models/Annotations';
-import { ResolvedAnnotation } from '../../../models/TextAnnotation';
-import { ViewResponse, ViewService } from '../../../../../../services/view.service';
-import { Binding } from '../../../../../../models/config/Config';
-import { BlockValueResolver } from '../../../../../../resolvers/block-value.resolver';
-import { BlockPathResolver } from '../../../../../../resolvers/block-path.resolver';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
+import { Popover } from 'primeng/popover';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Tooltip } from 'primeng/tooltip';
+import { Binding } from '../../../../../../models/config/Config';
+import { BlockPathResolver } from '../../../../../../resolvers/block-path.resolver';
+import { BlockValueResolver } from '../../../../../../resolvers/block-value.resolver';
 import { NavigationService } from '../../../../../../services/navigation.service';
+import { ViewResponse, ViewService } from '../../../../../../services/view.service';
+import { AnnotationPopover, AnnotationReference } from '../../../models/Annotations';
+import { ResolvedInlineAnnotation } from '../../../models/TextAnnotation';
 import { AnnotationReferenceResolver } from '../../../resolver/annotation-reference.resolver';
-import { Popover } from 'primeng/popover';
 
 interface AnnotationReferenceView {
   label: string;
@@ -45,7 +45,7 @@ export class AnnotationPopoverEntryComponent {
   private readonly clipboard: Clipboard = inject(Clipboard);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
 
-  public readonly annotation: InputSignal<ResolvedAnnotation> = input.required<ResolvedAnnotation>();
+  public readonly annotation: InputSignal<ResolvedInlineAnnotation> = input.required<ResolvedInlineAnnotation>();
   public readonly isOpen: InputSignal<boolean> = input<boolean>(false);
 
   protected readonly response: WritableSignal<ViewResponse | undefined> = signal<ViewResponse | undefined>(undefined);
