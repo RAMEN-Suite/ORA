@@ -19,7 +19,7 @@ export class ConfigService {
 
   public static async initService(): Promise<void> {
     const overridesPath: string | undefined = process.env.CONFIGURATION_PATH;
-    if (!overridesPath) throw new ServiceError(ERROR_CODE.MISSING_ENV_VAR, "Missing OVERRIDES_PATH");
+    if (!overridesPath) throw new ServiceError(ERROR_CODE.MISSING_ENV_VAR, "Missing CONFIGURATION_PATH");
     this.overridesPath = path.resolve(process.cwd(), overridesPath);
 
     const isOverrideAccessible: boolean = await this.exists(this.overridesPath);
