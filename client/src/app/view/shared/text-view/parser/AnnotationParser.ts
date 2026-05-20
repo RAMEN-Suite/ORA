@@ -89,8 +89,9 @@ export class AnnotationParser {
   private activeAnnotations(interval: TextInterval): ResolvedAnnotation[] {
     return this.ranges
       .filter((annotation: ResolvedAnnotation): boolean => annotation.definition.layer === 'inline')
+      .filter((annotation: ResolvedAnnotation): boolean => annotation.definition.behavior !== 'hidden')
       .filter((annotation: ResolvedAnnotation): boolean => this.isIntervalContaining(annotation, interval))
-      .sort(this.sortPriority);
+      .sort((a: ResolvedAnnotation, b: ResolvedAnnotation): number => this.sortPriority(a, b));
   }
 
   private createSpan(child: AnnotationSegment, annotations: ResolvedAnnotation[]): AnnotationSpanSegment {

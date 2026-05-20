@@ -18,10 +18,13 @@ import { ViewResponse, ViewService } from '../../../../../../services/view.servi
 import { Binding } from '../../../../../../models/config/Config';
 import { BlockValueResolver } from '../../../../../../resolvers/block-value.resolver';
 import { BlockPathResolver } from '../../../../../../resolvers/block-path.resolver';
-import { Utils } from '../../../../../../utils/Utils';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { Tooltip } from 'primeng/tooltip';
+import { NavigationService } from '../../../../../../services/navigation.service';
+import { AnnotationReferenceResolver } from '../../../resolver/annotation-reference.resolver';
+import { Popover } from 'primeng/popover';
 
 interface AnnotationReferenceView {
   label: string;
@@ -31,13 +34,16 @@ interface AnnotationReferenceView {
 
 @Component({
   selector: 'annotation-popover-entry',
-  imports: [TranslocoDirective, Button, ProgressSpinner],
+  imports: [TranslocoDirective, Button, ProgressSpinner, Tooltip],
   templateUrl: './annotation-popover-entry.component.html',
 })
 export class AnnotationPopoverEntryComponent {
+  private readonly navigationService: NavigationService = inject(NavigationService);
+  private readonly viewService: ViewService = inject(ViewService);
+
+  private readonly popoverComponent: Popover = inject(Popover);
   private readonly clipboard: Clipboard = inject(Clipboard);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
-  private readonly viewService: ViewService = inject(ViewService);
 
   public readonly annotation: InputSignal<ResolvedAnnotation> = input.required<ResolvedAnnotation>();
   public readonly isOpen: InputSignal<boolean> = input<boolean>(false);
@@ -51,18 +57,12 @@ export class AnnotationPopoverEntryComponent {
     return this.annotation().definition.popover;
   });
 
-  protected readonly paths: Signal<string[]> = computed((): string[] => {
-    return BlockPathResolver.resolvePaths(this.popover());
-  });
-
+  protected readonly paths: Signal<string[]> = computed((): string[] => BlockPathResolver.resolvePaths(this.popover()));
   protected readonly values: Signal<Record<string, unknown>> = computed((): Record<string, unknown> => {
     return this.response()?.values ?? {};
   });
 
-  protected readonly title: Signal<string> = computed((): string => {
-    return this.popover()?.title ?? this.annotation().type;
-  });
-
+  protected readonly title: Signal<string> = computed((): string => this.popover()?.title ?? this.annotation().type);
   protected readonly descriptions: Signal<string[]> = computed((): string[] => {
     const popover: AnnotationPopover | undefined = this.popover();
     if (!popover) return [];
@@ -79,14 +79,18 @@ export class AnnotationPopoverEntryComponent {
 
   protected readonly references: Signal<AnnotationReferenceView[]> = computed((): AnnotationReferenceView[] => {
     return (this.popover()?.references ?? []).flatMap((reference: AnnotationReference): AnnotationReferenceView[] => {
-      return this.resolveReference(reference);
+      return AnnotationReferenceResolver.resolve(reference, this.values());
     });
   });
 
   public constructor() {
     effect((): void => {
-      if (this.isOpen()) this.loadOnce();
+      if (this.isOpen()) this.loadPopOverContents();
     });
+  }
+
+  protected handlePopoverContentChanged(): void {
+    requestAnimationFrame((): void => this.popoverComponent.align());
   }
 
   protected handleCopyUuid(): void {
@@ -95,7 +99,15 @@ export class AnnotationPopoverEntryComponent {
     window.setTimeout((): void => this.hasCopied.set(false), 1200);
   }
 
-  private loadOnce(): void {
+  protected handleOpenReference(reference: AnnotationReferenceView): void {
+    this.navigationService.toNode(reference.uuid);
+  }
+
+  protected handleOpenExternal(link: string): void {
+    window.open(link, '_blank');
+  }
+
+  private loadPopOverContents(): void {
     if (this.hasLoaded()) return;
 
     const paths: string[] = this.paths();
@@ -105,7 +117,6 @@ export class AnnotationPopoverEntryComponent {
     }
 
     this.isLoading.set(true);
-
     this.viewService
       .fetchViewOnce(this.annotation().uuid, paths)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -114,40 +125,12 @@ export class AnnotationPopoverEntryComponent {
           this.response.set(response);
           this.hasLoaded.set(true);
           this.isLoading.set(false);
+          this.handlePopoverContentChanged();
         },
         error: (): void => {
           this.hasLoaded.set(true);
           this.isLoading.set(false);
         },
       });
-  }
-
-  private resolveReference(reference: AnnotationReference): AnnotationReferenceView[] {
-    const labels: string[] = this.resolveBindingValues(reference.label);
-    const uuids: string[] = this.resolveBindingValues(reference.uuid);
-    const length: number = Math.max(labels.length, uuids.length);
-
-    const result: AnnotationReferenceView[] = [];
-
-    for (let index: number = 0; index < length; index++) {
-      const label: string = labels[index] ?? '';
-      const uuid: string = uuids[index] ?? '';
-
-      if (!label.trim() || !uuid.trim()) continue;
-      result.push({ label, uuid, icon: reference.icon });
-    }
-
-    return result;
-  }
-
-  private resolveBindingValues(binding: Binding): string[] {
-    const value: unknown = this.values()[binding.path];
-
-    if (Array.isArray(value)) {
-      return value.map((item: unknown): string => Utils.stringify(item) ?? '').filter(Boolean);
-    }
-
-    const resolved: string = BlockValueResolver.resolveString(binding, this.values());
-    return resolved ? [resolved] : [];
   }
 }

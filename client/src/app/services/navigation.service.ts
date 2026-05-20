@@ -17,6 +17,10 @@ export class NavigationService {
     });
   }
 
+  public toNode(uuid: string, options?: NavigationExtras): void {
+    void this.router.navigate(['/', ROUTES.IDENTIFIER, uuid], { ...options });
+  }
+
   public toNotFound(options?: NavigationExtras): void {
     void this.router.navigate(['/', ROUTES.NOT_FOUND], { ...options });
   }

@@ -27,10 +27,10 @@
       },
       "textView": {
         "annotations": {
-          "references": "Referenzen",
+          "copyUuid": "UUID kopieren",
+          "references": "Referenziert:",
           "empty": "Keine weiteren Informationen.",
-          "externalLink": "Externen Link öffnen",
-          "uuid": "UUID"
+          "externalLink": "Externen Link öffnen"
         }
       }
     },
