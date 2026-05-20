@@ -13,7 +13,7 @@ WORKDIR /app
 
 RUN addgroup -S webuser && adduser -S webuser -G webuser
 
-COPY --from=build --chown=nodeapp:nodeapp /app/dist/ora/browser /usr/share/caddy
+COPY --from=build --chown=webuser:webuser /app/dist/ora/browser /usr/share/caddy
 
 USER webuser
 EXPOSE 8080
