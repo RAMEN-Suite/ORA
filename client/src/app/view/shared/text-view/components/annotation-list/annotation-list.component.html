@@ -1,0 +1,17 @@
+@if (isOrdered()) {
+  <ol [class]="classes()">
+    @for (item of segment().items; track item.annotation.uuid) {
+      <li [class]="itemClasses(item)">
+        <annotation-text-view-segments [segments]="item.children" />
+      </li>
+    }
+  </ol>
+} @else {
+  <ul [class]="classes()">
+    @for (item of segment().items; track item.annotation.uuid) {
+      <li [class]="itemClasses(item)">
+        <annotation-text-view-segments [segments]="item.children" />
+      </li>
+    }
+  </ul>
+}

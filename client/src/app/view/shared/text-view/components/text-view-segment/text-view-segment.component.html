@@ -1,5 +1,9 @@
-@if (structureSegment(); as structure) {
-  <annotation-structure [segment]="structure" />
-} @else if (annotationSegment(); as annotation) {
-  <annotation-segment [segment]="annotation" />
+@if (isStructure(segment())) {
+  <annotation-structure [segment]="asStructure(segment())" />
+} @else if (isTable(segment())) {
+  <annotation-table [segment]="asTable(segment())" />
+} @else if (isList(segment())) {
+  <annotation-list [segment]="asList(segment())" />
+} @else {
+  <annotation-segment [segment]="asAnnotation(segment())" />
 }
