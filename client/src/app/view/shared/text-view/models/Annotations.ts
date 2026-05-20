@@ -2,7 +2,6 @@ import { Binding } from '../../../../models/config/Config';
 
 export interface Annotations {
   definitions: Record<string, AnnotationDefinition>;
-  classMappings?: Record<string, string[]>;
 
   unknownAnnotation?: UnknownAnnotationStrategy;
   invalidRange?: InvalidRangeStrategy;
@@ -14,10 +13,15 @@ export interface AnnotationDefinition {
   priority?: number;
 
   classes?: string[];
-  classProperty?: string;
+  tokens?: AnnotationTokenMapping[];
   placement?: AnnotationPlacement;
 
   popover?: AnnotationPopover;
+}
+
+export interface AnnotationTokenMapping {
+  property: string;
+  mappings: Record<string, string[]>;
 }
 
 export interface AnnotationPopover {

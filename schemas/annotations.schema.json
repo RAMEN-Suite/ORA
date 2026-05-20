@@ -13,17 +13,6 @@
         "$ref": "#/$defs/annotationDefinition"
       }
     },
-    "classMappings": {
-      "type": "object",
-      "description": "Maps tokens read from annotation classProperty values to CSS classes. Example: #b -> ['font-bold'].",
-      "additionalProperties": {
-        "type": "array",
-        "items": {
-          "type": "string"
-        }
-      },
-      "default": {}
-    },
     "unknownAnnotation": {
       "$ref": "#/$defs/unknownAnnotationStrategy",
       "default": "warn"
@@ -61,12 +50,38 @@
           },
           "default": []
         },
-        "classProperty": {
-          "type": "string",
-          "description": "Annotation property whose whitespace-separated tokens should be mapped through classMappings."
+        "tokens": {
+          "type": "array",
+          "description": "Maps whitespace-separated tokens from annotation properties to CSS classes.",
+          "items": {
+            "$ref": "#/$defs/annotationTokenMapping"
+          },
+          "default": []
         },
         "popover": {
           "$ref": "#/$defs/annotationPopover"
+        }
+      }
+    },
+    "annotationTokenMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["property", "mappings"],
+      "properties": {
+        "property": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Annotation property containing whitespace-separated tokens."
+        },
+        "mappings": {
+          "type": "object",
+          "description": "Maps token values to CSS classes.",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -74,7 +89,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "title": { 
+        "title": {
           "type": "string",
           "description": "Static title shown in the annotation popover."
         },
@@ -82,12 +97,12 @@
           "type": "array",
           "description": "Description values shown in the popover. Each binding is resolved by the backend view endpoint relative to the annotation node.",
           "items": {
-            "$ref": "#/$defs/binding"
+            "$ref": "#/$defs/annotationValue"
           },
           "default": []
         },
         "externalLink": {
-          "$ref": "#/$defs/binding",
+          "$ref": "#/$defs/annotationValue",
           "description": "Binding resolving to an external URL."
         },
         "references": {
@@ -100,26 +115,7 @@
         }
       }
     },
-    "annotationReference": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["label", "uuid"],
-      "properties": {
-        "label": {
-          "$ref": "#/$defs/binding",
-          "description": "Binding resolving to the reference display label."
-        },
-        "uuid": {
-          "$ref": "#/$defs/binding",
-          "description": "Binding resolving to the referenced node UUID."
-        },
-        "icon": {
-          "type": "string",
-          "description": "Optional icon class, for example a PrimeIcons class."
-        }
-      }
-    },
-    "binding": {
+    "annotationValue": {
       "type": "object",
       "additionalProperties": false,
       "required": ["path"],
@@ -128,6 +124,33 @@
           "type": "string",
           "minLength": 1,
           "description": "RAMEN access path resolved by the backend view endpoint relative to the annotation node."
+        },
+        "display": {
+          "type": "string",
+          "description": "Optional display template. The placeholder {{ value }} is replaced with the resolved value."
+        },
+        "translationKey": {
+          "type": "string",
+          "description": "Optional translation key used to render the resolved value."
+        }
+      }
+    },
+    "annotationReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "uuid"],
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/annotationValue",
+          "description": "Binding resolving to the reference display label."
+        },
+        "uuid": {
+          "$ref": "#/$defs/annotationValue",
+          "description": "Binding resolving to the referenced node UUID."
+        },
+        "icon": {
+          "type": "string",
+          "description": "Optional icon class, for example a PrimeIcons class."
         }
       }
     },

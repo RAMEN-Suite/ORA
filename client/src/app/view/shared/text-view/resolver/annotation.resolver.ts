@@ -3,9 +3,10 @@ import {
   AnnotationDefinition,
   AnnotationLayer,
   Annotations,
+  AnnotationTokenMapping,
   UnknownAnnotationStrategy,
 } from '../models/Annotations';
-import { NormalizedAnnotation, ResolvedAnnotation, ResolvedAnnotationDefinition } from '../models/TextAnnotation';
+import { NormalizedAnnotation, ResolvedAnnotation, ResolvedDefinition } from '../models/TextAnnotation';
 
 export class AnnotationResolver {
   public constructor(
@@ -28,7 +29,7 @@ export class AnnotationResolver {
     const definition: AnnotationDefinition | undefined = this.config.definitions[annotation.type];
     if (!definition) return this.resolveUnknownAnnotation(annotation);
 
-    const resolvedDefinition: ResolvedAnnotationDefinition = this.resolveDefinition(definition);
+    const resolvedDefinition: ResolvedDefinition = this.resolveDefinition(definition);
     const classes: string[] = this.resolveClasses(annotation, resolvedDefinition);
 
     return { ...annotation, definition: resolvedDefinition, classes };
@@ -36,11 +37,11 @@ export class AnnotationResolver {
 
   private resolveUnknownAnnotation(annotation: NormalizedAnnotation): ResolvedAnnotation | undefined {
     if (this.unknownStrategy() === 'ignore') return undefined;
-    const definition: ResolvedAnnotationDefinition = { layer: 'inline', behavior: 'mark', priority: 999, classes: [] };
+    const definition: ResolvedDefinition = { layer: 'inline', behavior: 'mark', priority: 999, classes: [] };
     return { ...annotation, definition, classes: [] };
   }
 
-  private resolveDefinition(definition: AnnotationDefinition): ResolvedAnnotationDefinition {
+  private resolveDefinition(definition: AnnotationDefinition): ResolvedDefinition {
     return {
       ...definition,
       behavior: definition.behavior ?? this.defaultBehavior(definition.layer),
@@ -69,25 +70,20 @@ export class AnnotationResolver {
     }
   }
 
-  private resolveClasses(annotation: NormalizedAnnotation, definition: ResolvedAnnotationDefinition): string[] {
+  private resolveClasses(annotation: NormalizedAnnotation, definition: ResolvedDefinition): string[] {
     const definitionClasses: string[] = definition.classes ?? [];
-    const propertyClasses: string[] = this.resolvePropertyClasses(annotation, definition);
-    return Array.from(new Set<string>([...definitionClasses, ...propertyClasses]));
+    const tokenClasses: string[] = this.resolveTokenClasses(annotation, definition);
+    return Array.from(new Set<string>([...definitionClasses, ...tokenClasses]));
   }
 
-  private resolvePropertyClasses(annotation: NormalizedAnnotation, definition: ResolvedAnnotationDefinition): string[] {
-    if (!definition.classProperty) return [];
+  private resolveTokenClasses(annotation: NormalizedAnnotation, definition: ResolvedDefinition): string[] {
+    return (definition.tokens ?? []).flatMap((tokens: AnnotationTokenMapping): string[] => {
+      const value: unknown = annotation.source[tokens.property];
+      if (typeof value !== 'string') return [];
 
-    const value: unknown = annotation.source[definition.classProperty];
-    if (typeof value !== 'string') return [];
-
-    const classes: string[] = [];
-    for (const token of value.split(/\s+/).filter(Boolean)) {
-      const mapped: string[] | undefined = this.config.classMappings?.[token];
-      if (mapped) classes.push(...mapped);
-    }
-
-    return classes;
+      const filtered: string[] = value.split(/\s+/).filter(Boolean);
+      return filtered.flatMap((token: string): string[] => tokens.mappings[token] ?? []);
+    });
   }
 
   private unknownStrategy(): UnknownAnnotationStrategy {
