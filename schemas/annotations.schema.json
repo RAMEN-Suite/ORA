@@ -49,6 +49,10 @@
           "type": "integer",
           "description": "Lower priority wraps outside higher priority annotations."
         },
+        "placement": {
+          "$ref": "#/$defs/annotationPlacement",
+          "description": "Controls where an annotation is rendered. Usually only relevant for zero-point annotations like page breaks."
+        },
         "classes": {
           "type": "array",
           "items": {
@@ -98,6 +102,11 @@
           "default": false
         }
       }
+    },
+    "annotationPlacement": {
+      "type": "string",
+      "enum": ["inline", "margin"],
+      "default": "inline"
     },
     "annotationLayer": {
       "type": "string",

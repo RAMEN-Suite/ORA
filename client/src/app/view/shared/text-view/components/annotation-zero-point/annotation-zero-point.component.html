@@ -1,21 +1,17 @@
-@let current = annotation();
+@let currentBehavior = behavior();
 
-@switch (current.definition.behavior) {
+@switch (currentBehavior) {
   @case ("line-break") {
     <br />
   }
 
   @case ("page-break") {
-    <span [class]="classes()">
-      [
-      @if (href(); as href) {
-        <a [href]="href" target="_blank" rel="noopener noreferrer">
-          {{ label() }}
-        </a>
-      } @else {
-        {{ label() }}
-      }
-      ]
+    @if (isMargin()) {
+      <span #anchor class="inline-block h-[1em] w-0 align-baseline"></span>
+    }
+
+    <span #marker [class]="markerClasses()" [ngStyle]="isMargin() ? position() : null">
+      <ng-container *ngTemplateOutlet="content" />
     </span>
   }
 
@@ -25,3 +21,13 @@
     </span>
   }
 }
+
+<ng-template #content>
+  @if (href(); as href) {
+    <a [href]="href" target="_blank" rel="noopener noreferrer">
+      {{ displayLabel() }}
+    </a>
+  } @else {
+    {{ displayLabel() }}
+  }
+</ng-template>

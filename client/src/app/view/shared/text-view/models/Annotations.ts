@@ -15,6 +15,7 @@ export interface AnnotationDefinition {
   classProperty?: string;
   tooltipProperty?: string;
   hrefProperty?: string;
+  placement?: AnnotationPlacement;
 
   target?: TargetDefinition;
 }
@@ -25,9 +26,8 @@ export interface TargetDefinition {
   route?: string;
   fetchOnOpen?: boolean;
 }
-
 export type AnnotationLayer = 'inline' | 'interaction' | 'zero-point' | 'structure';
-
+export type AnnotationPlacement = 'inline' | 'margin';
 export type AnnotationBehavior =
   | 'mark'
   | 'tooltip'

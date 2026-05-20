@@ -26,17 +26,27 @@ export class AnnotationInteractionComponent {
     return this.sourceString(annotation, property);
   });
 
-  protected readonly isTooltip: Signal<boolean> = computed((): boolean => this.hasBehavior('tooltip'));
-  protected readonly isLink: Signal<boolean> = computed((): boolean => this.hasBehavior('external-link'));
-
   protected readonly href: Signal<string | undefined> = computed((): string | undefined => {
     const annotation: ResolvedAnnotation | undefined = this.findBehavior('external-link');
     const property: string | undefined = annotation?.definition.hrefProperty;
     return this.sourceString(annotation, property);
   });
 
+  protected readonly isTooltip: Signal<boolean> = computed((): boolean => this.hasBehavior('tooltip'));
+  protected readonly isLink: Signal<boolean> = computed((): boolean => this.hasBehavior('external-link'));
+
+  protected readonly hasPopover: Signal<boolean> = computed((): boolean => {
+    return this.hasBehavior('popover') || this.hasBehavior('fetch-popover');
+  });
+
+  protected readonly isExternalLink: Signal<boolean> = computed((): boolean => {
+    return this.hasBehavior('external-link') && !this.hasPopover();
+  });
+
   protected togglePopover(event: Event): void {
-    if (this.isTooltip() || this.isLink()) return;
+    if (!this.hasPopover()) return;
+    event.preventDefault();
+    event.stopPropagation();
     this.popover()?.toggle(event);
   }
 

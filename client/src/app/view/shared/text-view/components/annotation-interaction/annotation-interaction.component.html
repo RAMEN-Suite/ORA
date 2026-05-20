@@ -1,17 +1,21 @@
-@if (isLink() && href(); as href) {
-  <a [href]="href" target="_blank" rel="noopener noreferrer" [class]="classes()">
-    <annotation-segments [segments]="segment().children" />
-  </a>
-} @else if (isTooltip()) {
-  <span [class]="classes()" [pTooltip]="tooltip()" tooltipPosition="top">
-    <annotation-segments [segments]="segment().children" />
-  </span>
-} @else {
-  <span tabindex="0" [class]="classes()" (click)="togglePopover($event)" (keydown.enter)="togglePopover($event)">
-    <annotation-segments [segments]="segment().children" />
-  </span>
+@if (hasPopover()) {
+  <span [class]="classes()" [pTooltip]="tooltip()" tooltipPosition="top" (click)="togglePopover($event)">
+    <annotation-segments [segments]="segment().children"
+  /></span>
 
   <p-popover>
     <annotation-popover [annotations]="segment().annotations" />
   </p-popover>
+} @else if (isExternalLink() && href(); as href) {
+  <a [href]="href" target="_blank" rel="noopener noreferrer" [class]="classes()" [pTooltip]="tooltip()" tooltipPosition="top">
+    <annotation-segments [segments]="segment().children" />
+  </a>
+} @else if (tooltip()) {
+  <span [class]="classes()" [pTooltip]="tooltip()" tooltipPosition="top">
+    <annotation-segments [segments]="segment().children" />
+  </span>
+} @else {
+  <span [class]="classes()">
+    <annotation-segments [segments]="segment().children" />
+  </span>
 }
