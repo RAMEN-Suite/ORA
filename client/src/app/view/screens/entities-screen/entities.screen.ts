@@ -89,7 +89,7 @@ export class EntitiesScreen extends AbstractListScreen<EntityListOption> {
     (): boolean => this.$list.isLoading(),
   );
 
-  constructor() {
+  public constructor() {
     super();
     this.init(this.config.list('entities'));
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(this.applyQueryParams.bind(this));

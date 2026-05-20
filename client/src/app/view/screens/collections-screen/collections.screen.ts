@@ -85,7 +85,7 @@ export class CollectionsScreen extends AbstractListScreen {
     (): boolean => this.$facets.isLoading(),
   );
 
-  constructor() {
+  public constructor() {
     super();
     this.init(this.config.list('collections'));
     this.initPageState();

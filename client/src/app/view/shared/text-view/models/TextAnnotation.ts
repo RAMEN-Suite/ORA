@@ -22,8 +22,13 @@ export interface NormalizedAnnotation {
   source: TextAnnotation;
 }
 
+export type ResolvedAnnotationDefinition = AnnotationDefinition & {
+  behavior: NonNullable<AnnotationDefinition['behavior']>;
+  priority: number;
+};
+
 export interface ResolvedAnnotation extends NormalizedAnnotation {
-  definition: AnnotationDefinition;
+  definition: ResolvedAnnotationDefinition;
   classes: string[];
 }
 

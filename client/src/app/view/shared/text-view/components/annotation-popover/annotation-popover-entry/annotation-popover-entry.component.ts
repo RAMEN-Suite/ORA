@@ -1,3 +1,4 @@
+import { Clipboard } from '@angular/cdk/clipboard';
 import {
   Component,
   computed,
@@ -11,13 +12,16 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ViewResponse, ViewService } from '../../../../../../services/view.service';
+import { AnnotationPopover, AnnotationReference } from '../../../models/Annotations';
 import { ResolvedAnnotation } from '../../../models/TextAnnotation';
-import { AnnotationPopover } from '../../../models/Annotations';
-import { BlockValueResolver } from '../../../../../../resolvers/block-value.resolver';
-import { RouterLink } from '@angular/router';
-import { BlockPathResolver } from '../../../../../../resolvers/block-path.resolver';
+import { ViewResponse, ViewService } from '../../../../../../services/view.service';
 import { Binding } from '../../../../../../models/config/Config';
+import { BlockValueResolver } from '../../../../../../resolvers/block-value.resolver';
+import { BlockPathResolver } from '../../../../../../resolvers/block-path.resolver';
+import { Utils } from '../../../../../../utils/Utils';
+import { TranslocoDirective } from '@jsverse/transloco';
+import { Button } from 'primeng/button';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
 interface AnnotationReferenceView {
   label: string;
@@ -27,12 +31,13 @@ interface AnnotationReferenceView {
 
 @Component({
   selector: 'annotation-popover-entry',
-  imports: [RouterLink],
+  imports: [TranslocoDirective, Button, ProgressSpinner],
   templateUrl: './annotation-popover-entry.component.html',
 })
 export class AnnotationPopoverEntryComponent {
-  private readonly viewService: ViewService = inject(ViewService);
+  private readonly clipboard: Clipboard = inject(Clipboard);
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly viewService: ViewService = inject(ViewService);
 
   public readonly annotation: InputSignal<ResolvedAnnotation> = input.required<ResolvedAnnotation>();
   public readonly isOpen: InputSignal<boolean> = input<boolean>(false);
@@ -40,60 +45,55 @@ export class AnnotationPopoverEntryComponent {
   protected readonly response: WritableSignal<ViewResponse | undefined> = signal<ViewResponse | undefined>(undefined);
   protected readonly isLoading: WritableSignal<boolean> = signal(false);
   protected readonly hasLoaded: WritableSignal<boolean> = signal(false);
+  protected readonly hasCopied: WritableSignal<boolean> = signal(false);
 
-  protected readonly popover: Signal<AnnotationPopover | undefined> = computed(() => {
+  protected readonly popover: Signal<AnnotationPopover | undefined> = computed((): AnnotationPopover | undefined => {
     return this.annotation().definition.popover;
   });
 
   protected readonly paths: Signal<string[]> = computed((): string[] => {
-    return BlockPathResolver.resolvePaths(this.annotation().definition.popover);
+    return BlockPathResolver.resolvePaths(this.popover());
   });
 
-  protected readonly values: Signal<Record<string, unknown>> = computed(() => {
+  protected readonly values: Signal<Record<string, unknown>> = computed((): Record<string, unknown> => {
     return this.response()?.values ?? {};
   });
 
-  protected readonly title: Signal<string> = computed(() => {
+  protected readonly title: Signal<string> = computed((): string => {
     return this.popover()?.title ?? this.annotation().type;
   });
 
   protected readonly descriptions: Signal<string[]> = computed((): string[] => {
-    const popover = this.popover();
+    const popover: AnnotationPopover | undefined = this.popover();
     if (!popover) return [];
 
     return (popover.description ?? [])
-      .map((value: Binding): string => BlockValueResolver.resolveString(value, this.values()))
+      .map((binding: Binding): string => BlockValueResolver.resolveString(binding, this.values()))
       .filter((value: string): boolean => value.trim().length > 0);
   });
 
   protected readonly externalLink: Signal<string> = computed((): string => {
-    const externalLink = this.popover()?.externalLink;
+    const externalLink: Binding | undefined = this.popover()?.externalLink;
     return externalLink ? BlockValueResolver.resolveString(externalLink, this.values()) : '';
+  });
+
+  protected readonly references: Signal<AnnotationReferenceView[]> = computed((): AnnotationReferenceView[] => {
+    return (this.popover()?.references ?? []).flatMap((reference: AnnotationReference): AnnotationReferenceView[] => {
+      return this.resolveReference(reference);
+    });
   });
 
   public constructor() {
     effect((): void => {
-      if (!this.isOpen()) return;
-      this.loadOnce();
+      if (this.isOpen()) this.loadOnce();
     });
   }
 
-  protected readonly references: Signal<AnnotationReferenceView[]> = computed((): AnnotationReferenceView[] => {
-    const references = this.popover()?.references ?? [];
-    const values = this.values();
-
-    return references
-      .map(
-        (reference): AnnotationReferenceView => ({
-          label: BlockValueResolver.resolveString(reference.label, values),
-          uuid: BlockValueResolver.resolveString(reference.uuid, values),
-          icon: reference.icon,
-        }),
-      )
-      .filter((reference: AnnotationReferenceView): boolean => {
-        return reference.label.trim().length > 0 && reference.uuid.trim().length > 0;
-      });
-  });
+  protected handleCopyUuid(): void {
+    this.clipboard.copy(this.annotation().uuid);
+    this.hasCopied.set(true);
+    window.setTimeout((): void => this.hasCopied.set(false), 1200);
+  }
 
   private loadOnce(): void {
     if (this.hasLoaded()) return;
@@ -120,5 +120,34 @@ export class AnnotationPopoverEntryComponent {
           this.isLoading.set(false);
         },
       });
+  }
+
+  private resolveReference(reference: AnnotationReference): AnnotationReferenceView[] {
+    const labels: string[] = this.resolveBindingValues(reference.label);
+    const uuids: string[] = this.resolveBindingValues(reference.uuid);
+    const length: number = Math.max(labels.length, uuids.length);
+
+    const result: AnnotationReferenceView[] = [];
+
+    for (let index: number = 0; index < length; index++) {
+      const label: string = labels[index] ?? '';
+      const uuid: string = uuids[index] ?? '';
+
+      if (!label.trim() || !uuid.trim()) continue;
+      result.push({ label, uuid, icon: reference.icon });
+    }
+
+    return result;
+  }
+
+  private resolveBindingValues(binding: Binding): string[] {
+    const value: unknown = this.values()[binding.path];
+
+    if (Array.isArray(value)) {
+      return value.map((item: unknown): string => Utils.stringify(item) ?? '').filter(Boolean);
+    }
+
+    const resolved: string = BlockValueResolver.resolveString(binding, this.values());
+    return resolved ? [resolved] : [];
   }
 }

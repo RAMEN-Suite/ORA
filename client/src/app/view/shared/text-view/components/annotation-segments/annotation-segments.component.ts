@@ -6,6 +6,7 @@ import { AnnotationSegmentComponent } from '../annotation-segment/annotation-seg
   selector: 'annotation-segments',
   imports: [AnnotationSegmentComponent],
   templateUrl: './annotation-segments.component.html',
+  host: { class: 'contents' },
 })
 export class AnnotationSegmentsComponent {
   public readonly segments: InputSignal<AnnotationSegment[]> = input<AnnotationSegment[]>([]);

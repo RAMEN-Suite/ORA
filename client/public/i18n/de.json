@@ -24,6 +24,14 @@
       "searchableList": {
         "search": "Liste durchsuchen:",
         "empty": "Keine Einträge vorhanden."
+      },
+      "textView": {
+        "annotations": {
+          "references": "Referenzen",
+          "empty": "Keine weiteren Informationen.",
+          "externalLink": "Externen Link öffnen",
+          "uuid": "UUID"
+        }
       }
     },
     "blocks": {

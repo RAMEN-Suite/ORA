@@ -9,7 +9,7 @@ import { deepmerge } from 'deepmerge-ts';
 export class TranslocoHttpLoader implements TranslocoLoader {
   private readonly http: HttpClient = inject(HttpClient);
 
-  getTranslation(lang: string): Observable<Translation> {
+  public getTranslation(lang: string): Observable<Translation> {
     return forkJoin({
       app: this.loadAppTranslations(lang),
       custom: this.loadCustomTranslations(lang),

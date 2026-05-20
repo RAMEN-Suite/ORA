@@ -29,6 +29,15 @@ export default defineConfig(
       "@typescript-eslint/no-extraneous-class": "off",
       "@typescript-eslint/no-confusing-void-expression": "off",
       "@typescript-eslint/unbound-method": "off",
+      "@typescript-eslint/explicit-member-accessibility": [
+        "error",
+        {
+          accessibility: "explicit",
+          overrides: {
+            constructors: "explicit",
+          },
+        },
+      ],
 
       "@typescript-eslint/no-unused-vars": [
         "error",

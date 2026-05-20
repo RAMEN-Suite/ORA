@@ -7,6 +7,7 @@ import { AnnotationSpanComponent } from '../annotation-span/annotation-span.comp
   selector: 'annotation-segment',
   imports: [AnnotationZeroPointComponent, AnnotationSpanComponent],
   templateUrl: './annotation-segment.component.html',
+  host: { class: 'contents' },
 })
 export class AnnotationSegmentComponent {
   public readonly segment: InputSignal<AnnotationSegment> = input.required<AnnotationSegment>();

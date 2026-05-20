@@ -46,9 +46,7 @@ export class AnnotationParser {
       const start: number | undefined = boundaries[index];
       const end: number | undefined = boundaries[index + 1];
 
-      if (start === undefined || end === undefined) continue;
-      if (start === end) continue;
-
+      if (start === undefined || end === undefined || start === end) continue;
       intervals.push({ start, end });
     }
 
@@ -82,35 +80,28 @@ export class AnnotationParser {
     if (text === '') return undefined;
 
     const annotations: ResolvedAnnotation[] = this.activeAnnotations(interval);
-    return this.createSegment(text, annotations);
+    const textSegment: TextSegment = { kind: 'text', text };
+
+    if (annotations.length === 0) return textSegment;
+    return this.createSpan(textSegment, annotations);
   }
 
   private activeAnnotations(interval: TextInterval): ResolvedAnnotation[] {
     return this.ranges
       .filter((annotation: ResolvedAnnotation): boolean => annotation.definition.layer === 'inline')
       .filter((annotation: ResolvedAnnotation): boolean => this.isIntervalContaining(annotation, interval))
-      .sort((a: ResolvedAnnotation, b: ResolvedAnnotation): number => this.sortPriority(a, b));
-  }
-
-  private createSegment(text: string, annotations: ResolvedAnnotation[]): AnnotationSegment {
-    const textSegment: TextSegment = { kind: 'text', text };
-    if (annotations.length === 0) return textSegment;
-    return this.createSpan(textSegment, annotations);
+      .sort(this.sortPriority);
   }
 
   private createSpan(child: AnnotationSegment, annotations: ResolvedAnnotation[]): AnnotationSpanSegment {
-    return { kind: 'span', annotations: this.sortPriorityAscending(annotations), children: [child] };
+    return { kind: 'span', annotations: [...annotations].sort(this.sortPriority), children: [child] };
   }
 
   private isIntervalContaining(annotation: ResolvedAnnotation, interval: TextInterval): boolean {
     return annotation.start <= interval.start && annotation.end >= interval.end;
   }
 
-  private sortPriorityAscending(annotations: ResolvedAnnotation[]): ResolvedAnnotation[] {
-    return [...annotations].sort((a: ResolvedAnnotation, b: ResolvedAnnotation): number => this.sortPriority(a, b));
-  }
-
   private sortPriority(a: ResolvedAnnotation, b: ResolvedAnnotation): number {
-    return (a.definition.priority ?? 0) - (b.definition.priority ?? 0);
+    return a.definition.priority - b.definition.priority;
   }
 }

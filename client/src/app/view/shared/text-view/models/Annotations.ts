@@ -22,21 +22,18 @@ export interface AnnotationDefinition {
 
 export interface AnnotationPopover {
   title?: string;
-  description?: AnnotationDisplayDefinition[];
-  externalLink?: AnnotationDisplayDefinition;
+  description?: AnnotationValue[];
+  externalLink?: AnnotationValue;
   references?: AnnotationReference[];
 }
 
-export type AnnotationDisplayValue = Binding | AnnotationDisplayDefinition;
-
-export interface AnnotationDisplayDefinition {
-  path: string;
+export interface AnnotationValue extends Binding {
   display?: string;
   translationKey?: string;
 }
 
 export interface AnnotationReference {
-  label: Binding;
+  label: AnnotationValue;
   uuid: Binding;
   icon?: string;
 }

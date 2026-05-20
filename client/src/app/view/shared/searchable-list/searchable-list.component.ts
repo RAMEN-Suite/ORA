@@ -42,7 +42,7 @@ export class SearchableListComponent {
   protected readonly search: WritableSignal<string> = signal('');
   protected readonly filteredOptions: Signal<SearchableOption[]> = computed(this.filterOptions.bind(this));
 
-  constructor() {
+  public constructor() {
     effect((): void => {
       const disabled: boolean = this.isDisabled();
       const options: SearchableOption[] = this.options();

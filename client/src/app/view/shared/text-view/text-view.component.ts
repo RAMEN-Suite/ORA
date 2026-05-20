@@ -1,9 +1,9 @@
-import { Component, computed, input, InputSignal, Signal } from '@angular/core';
+import { Component, computed, effect, input, InputSignal, Signal } from '@angular/core';
 import { Annotations } from './models/Annotations';
 import { AnnotationSegment, ResolvedAnnotation, TextAnnotation } from './models/TextAnnotation';
-import { AnnotationNormalizer, NormalizationResult } from './resolver/AnnotationNormalizer';
-import { AnnotationResolver } from './resolver/AnnotationResolver';
-import { AnnotationParser } from './resolver/AnnotationParser';
+import { AnnotationNormalizer, NormalizationIssue, NormalizationResult } from './parser/AnnotationNormalizer';
+import { AnnotationResolver } from './resolver/annotation.resolver';
+import { AnnotationParser } from './parser/AnnotationParser';
 import { AnnotationSegmentsComponent } from './components/annotation-segments/annotation-segments.component';
 
 @Component({
@@ -25,4 +25,12 @@ export class TextViewComponent {
     const resolved: ResolvedAnnotation[] = new AnnotationResolver(normalized.annotations, this.config()).resolve();
     return new AnnotationParser(this.text(), resolved).parse();
   });
+
+  public constructor() {
+    effect((): void => {
+      const issues: NormalizationIssue[] = this.normalizedAnnotations().issues;
+      if (issues.length === 0) return;
+      console.warn('[TextView] Annotation normalization issues', issues);
+    });
+  }
 }

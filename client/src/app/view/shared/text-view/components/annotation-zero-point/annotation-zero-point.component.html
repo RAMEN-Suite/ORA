@@ -1,5 +1,5 @@
-@let currentBehavior = behavior();
-@switch (currentBehavior) {
+@let current = annotation();
+@switch (current.definition.behavior) {
   @case ("line-break") {
     <br />
   }

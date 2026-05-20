@@ -5,7 +5,7 @@ import { ListViews } from './config/ListViews';
 import { Annotations } from '../view/shared/text-view/models/Annotations';
 
 export class Registry {
-  constructor(private readonly config: Config) {}
+  public constructor(private readonly config: Config) {}
 
   public list<K extends keyof ListViews>(key: K): ListViews[K] {
     return this.config.lists[key];

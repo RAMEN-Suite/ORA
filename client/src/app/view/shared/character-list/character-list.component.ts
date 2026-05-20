@@ -14,7 +14,7 @@ export class CharacterListComponent {
 
   protected readonly characters: WritableSignal<string[]> = signal([]);
 
-  constructor() {
+  public constructor() {
     effect((): void => {
       const characters: string[] = this.generateCharacterList();
       if (characters.length === 0) return;

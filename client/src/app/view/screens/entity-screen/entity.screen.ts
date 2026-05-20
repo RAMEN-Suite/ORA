@@ -12,7 +12,7 @@ export class EntityScreen extends AbstractDetailScreen<Entity> {
   protected readonly entity: Signal<Entity | null> = this.node;
   protected readonly entityView: Signal<DetailView | null> = this.detailView;
 
-  constructor() {
+  public constructor() {
     super();
     this.init('entity');
   }

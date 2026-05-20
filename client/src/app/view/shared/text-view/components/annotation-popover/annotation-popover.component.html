@@ -1,5 +1,6 @@
-<div class="flex max-w-96 flex-col gap-4 text-sm">
-  @for (annotation of popoverAnnotations(); track annotation.uuid) {
+<div class="flex max-w-96 flex-col text-sm">
+  @for (annotation of popoverAnnotations(); track annotation.uuid; let last = $last) {
     <annotation-popover-entry [annotation]="annotation" [isOpen]="isOpen()" />
+    <p-divider [hidden]="last" />
   }
 </div>

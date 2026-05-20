@@ -7,60 +7,42 @@ import {
   inject,
   input,
   InputSignal,
-  Signal,
   signal,
+  Signal,
   viewChild,
   WritableSignal,
 } from '@angular/core';
 import { NgStyle } from '@angular/common';
-import { AnnotationBehavior } from '../../models/Annotations';
 import { ResolvedAnnotation, ZeroPointAnnotationSegment } from '../../models/TextAnnotation';
-import { MarginPositionHelper } from './annotation-zero-point.helper';
+import { MarginPositionStyle, MarginPositionUtils } from '../../utils/MarginPositionUtils';
 
 @Component({
   selector: 'annotation-zero-point',
   imports: [NgStyle],
   templateUrl: './annotation-zero-point.component.html',
-  host: {
-    class: 'contents',
-  },
+  host: { class: 'contents' },
 })
 export class AnnotationZeroPointComponent {
+  private static readonly markerWidth: number = 70;
+  private static readonly markerGap: number = 22;
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
-  private readonly markerWidth: number = 70;
-  private readonly markerGap: number = 22;
 
   public readonly segment: InputSignal<ZeroPointAnnotationSegment> = input.required<ZeroPointAnnotationSegment>();
 
   private readonly anchor: Signal<ElementRef<HTMLElement> | undefined> = viewChild('anchor');
   private readonly marker: Signal<ElementRef<HTMLElement> | undefined> = viewChild('marker');
 
-  protected readonly position: WritableSignal<Record<string, string>> = signal<Record<string, string>>({});
-
+  protected readonly position: WritableSignal<MarginPositionStyle> = signal<MarginPositionStyle>({});
   protected readonly annotation: Signal<ResolvedAnnotation> = computed((): ResolvedAnnotation => this.segment().annotation);
-
-  protected readonly behavior: Signal<AnnotationBehavior> = computed((): AnnotationBehavior => {
-    return this.annotation().definition.behavior ?? 'hidden';
-  });
-
-  protected readonly isMargin: Signal<boolean> = computed((): boolean => {
-    return this.annotation().definition.placement === 'margin';
-  });
-
+  protected readonly isMargin: Signal<boolean> = computed((): boolean => this.annotation().definition.placement === 'margin');
   protected readonly classes: Signal<string> = computed((): string => this.annotation().classes.join(' '));
 
   protected readonly markerClasses: Signal<string> = computed((): string => {
-    if (!this.isMargin()) return this.classes();
-    return ['inline', 'md:absolute', 'md:text-right', this.classes()].join(' ');
-  });
-
-  protected readonly displayLabel: Signal<string> = computed((): string => {
-    const label: string = this.label();
-    return label ? `[${label}]` : '';
+    return this.isMargin() ? ['inline', 'md:absolute', 'md:text-right', this.classes()].join(' ') : this.classes();
   });
 
   protected readonly label: Signal<string> = computed((): string => {
-    switch (this.behavior()) {
+    switch (this.annotation().definition.behavior) {
       case 'page-break':
         return this.sourceString('n');
       case 'gap':
@@ -68,6 +50,11 @@ export class AnnotationZeroPointComponent {
       default:
         return '';
     }
+  });
+
+  protected readonly displayLabel: Signal<string> = computed((): string => {
+    const label: string = this.label();
+    return label ? `[${label}]` : '';
   });
 
   public constructor() {
@@ -78,9 +65,7 @@ export class AnnotationZeroPointComponent {
     this.updatePosition();
 
     const anchor: HTMLElement | undefined = this.anchor()?.nativeElement;
-    if (!anchor) return;
-
-    const root: HTMLElement | undefined = MarginPositionHelper.root(anchor);
+    const root: HTMLElement | undefined = anchor ? MarginPositionUtils.root(anchor) : undefined;
     if (!root) return;
 
     const observer: ResizeObserver = new ResizeObserver((): void => {
@@ -96,12 +81,11 @@ export class AnnotationZeroPointComponent {
 
     const anchor: HTMLElement | undefined = this.anchor()?.nativeElement;
     const marker: HTMLElement | undefined = this.marker()?.nativeElement;
-
     if (!anchor || !marker) return;
 
-    const position: Record<string, string> | undefined = MarginPositionHelper.resolve(anchor, marker, {
-      markerWidth: this.markerWidth,
-      markerGap: this.markerGap,
+    const position: MarginPositionStyle | undefined = MarginPositionUtils.resolve(anchor, marker, {
+      markerWidth: AnnotationZeroPointComponent.markerWidth,
+      markerGap: AnnotationZeroPointComponent.markerGap,
     });
 
     if (position) this.position.set(position);
@@ -110,13 +94,13 @@ export class AnnotationZeroPointComponent {
   private gapLabel(): string {
     const parts: string[] = ['quantity', 'unit', 'reason']
       .map((property: string): string => this.sourceString(property))
-      .filter((value: string): boolean => value.trim().length > 0);
+      .filter(Boolean);
 
     return parts.length > 0 ? `[${parts.join(' ')}]` : '[…]';
   }
 
   private sourceString(property: string): string {
     const value: unknown = this.annotation().source[property];
-    return typeof value === 'string' ? value : '';
+    return typeof value === 'string' ? value.trim() : '';
   }
 }
