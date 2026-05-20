@@ -1,18 +1,18 @@
 import { Component, computed, forwardRef, input, InputSignal, signal, Signal, viewChild, WritableSignal } from '@angular/core';
 import { Popover } from 'primeng/popover';
 import { InlineRangeSegment, ResolvedInlineAnnotation } from '../../models/TextAnnotation';
-import { AnnotationPopoverComponent } from '../annotation-popover/annotation-popover.component';
 import { AnnotationSegmentsComponent } from '../annotation-segments/annotation-segments.component';
 import { ActivateDirective } from '../../../../../directives/activate.directive';
+import { AnnotationPopoverComponent } from '../annotation-popover/annotation-popover.component';
 
 @Component({
   selector: 'annotation-inline-range',
   imports: [
     Popover,
     ActivateDirective,
-    AnnotationPopoverComponent,
     forwardRef(() => AnnotationSegmentsComponent),
     ActivateDirective,
+    AnnotationPopoverComponent,
   ],
   templateUrl: './annotation-inline-range.component.html',
   host: { class: 'contents' },

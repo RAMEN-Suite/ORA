@@ -24,24 +24,27 @@
   },
   "$defs": {
     "annotationDefinition": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/inlineDefinition"
+        },
+        {
+          "$ref": "#/$defs/structureDefinition"
+        },
+        {
+          "$ref": "#/$defs/layoutDefinition"
+        },
+        {
+          "$ref": "#/$defs/zeroPointDefinition"
+        }
+      ]
+    },
+    "definitionBase": {
       "type": "object",
-      "additionalProperties": false,
-      "required": ["layer"],
       "properties": {
-        "layer": {
-          "$ref": "#/$defs/annotationLayer"
-        },
-        "behavior": {
-          "$ref": "#/$defs/annotationBehavior",
-          "description": "Render behavior. If omitted, the renderer applies a layer-specific default."
-        },
         "priority": {
           "type": "integer",
           "description": "Optional ordering hint. Lower priority wraps outside higher priority annotations."
-        },
-        "placement": {
-          "$ref": "#/$defs/annotationPlacement",
-          "description": "Controls where a zero-point annotation is rendered. Usually only relevant for page breaks."
         },
         "classes": {
           "type": "array",
@@ -57,11 +60,180 @@
             "$ref": "#/$defs/annotationTokenMapping"
           },
           "default": []
-        },
-        "popover": {
-          "$ref": "#/$defs/annotationPopover"
         }
       }
+    },
+    "inlineDefinition": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/definitionBase"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["layer"],
+          "properties": {
+            "layer": {
+              "const": "inline"
+            },
+            "behavior": {
+              "$ref": "#/$defs/inlineBehavior",
+              "default": "mark"
+            },
+            "renderAs": {
+              "$ref": "#/$defs/inlineRenderElement",
+              "default": "span"
+            },
+            "priority": {
+              "type": "integer"
+            },
+            "classes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            },
+            "tokens": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/annotationTokenMapping"
+              },
+              "default": []
+            },
+            "popover": {
+              "$ref": "#/$defs/annotationPopover"
+            }
+          }
+        }
+      ]
+    },
+    "structureDefinition": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/definitionBase"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["layer"],
+          "properties": {
+            "layer": {
+              "const": "structure"
+            },
+            "behavior": {
+              "$ref": "#/$defs/structureBehavior",
+              "default": "mark"
+            },
+            "renderAs": {
+              "$ref": "#/$defs/structureRenderElement",
+              "default": "div"
+            },
+            "priority": {
+              "type": "integer"
+            },
+            "classes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            },
+            "tokens": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/annotationTokenMapping"
+              },
+              "default": []
+            }
+          }
+        }
+      ]
+    },
+    "layoutDefinition": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/definitionBase"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["layer", "layoutRole", "renderAs"],
+          "properties": {
+            "layer": {
+              "const": "layout"
+            },
+            "behavior": {
+              "$ref": "#/$defs/layoutBehavior",
+              "default": "mark"
+            },
+            "layoutRole": {
+              "$ref": "#/$defs/layoutRole"
+            },
+            "renderAs": {
+              "$ref": "#/$defs/layoutRenderElement"
+            },
+            "priority": {
+              "type": "integer"
+            },
+            "classes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            },
+            "tokens": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/annotationTokenMapping"
+              },
+              "default": []
+            }
+          }
+        }
+      ]
+    },
+    "zeroPointDefinition": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/definitionBase"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["layer", "behavior"],
+          "properties": {
+            "layer": {
+              "const": "zero-point"
+            },
+            "behavior": {
+              "$ref": "#/$defs/zeroPointBehavior"
+            },
+            "placement": {
+              "$ref": "#/$defs/annotationPlacement",
+              "default": "inline"
+            },
+            "priority": {
+              "type": "integer"
+            },
+            "classes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": []
+            },
+            "tokens": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/annotationTokenMapping"
+              },
+              "default": []
+            }
+          }
+        }
+      ]
     },
     "annotationTokenMapping": {
       "type": "object",
@@ -159,13 +331,37 @@
       "enum": ["inline", "margin"],
       "default": "inline"
     },
-    "annotationLayer": {
+    "inlineBehavior": {
       "type": "string",
-      "enum": ["inline", "structure", "zero-point"]
+      "enum": ["mark", "popover", "hidden"]
     },
-    "annotationBehavior": {
+    "structureBehavior": {
       "type": "string",
-      "enum": ["mark", "popover", "line-break", "page-break", "gap", "hidden"]
+      "enum": ["mark", "hidden"]
+    },
+    "layoutBehavior": {
+      "type": "string",
+      "enum": ["mark", "hidden"]
+    },
+    "zeroPointBehavior": {
+      "type": "string",
+      "enum": ["line-break", "page-break", "gap", "hidden"]
+    },
+    "inlineRenderElement": {
+      "type": "string",
+      "enum": ["span", "abbr", "cite", "code", "em", "mark", "strong", "sub", "sup"]
+    },
+    "structureRenderElement": {
+      "type": "string",
+      "enum": ["div", "p", "section", "article", "header", "footer", "address", "blockquote", "h1", "h2", "h3", "h4", "h5", "h6"]
+    },
+    "layoutRenderElement": {
+      "type": "string",
+      "enum": ["ul", "ol", "li", "table", "thead", "tbody", "tr", "th", "td"]
+    },
+    "layoutRole": {
+      "type": "string",
+      "enum": ["list", "list-item", "table", "table-section", "table-row", "table-cell"]
     },
     "unknownAnnotationStrategy": {
       "type": "string",

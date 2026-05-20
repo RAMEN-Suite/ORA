@@ -5,7 +5,7 @@ import { AnnotationPopoverEntryComponent } from './annotation-popover-entry/anno
 
 @Component({
   selector: 'annotation-popover',
-  imports: [AnnotationPopoverEntryComponent, Divider],
+  imports: [Divider, AnnotationPopoverEntryComponent],
   templateUrl: './annotation-popover.component.html',
 })
 export class AnnotationPopoverComponent {

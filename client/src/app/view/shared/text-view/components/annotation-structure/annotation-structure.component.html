@@ -1,0 +1,85 @@
+@switch (renderAs()) {
+  @case ("p") {
+    <p [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </p>
+  }
+
+  @case ("section") {
+    <section [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </section>
+  }
+
+  @case ("article") {
+    <article [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </article>
+  }
+
+  @case ("header") {
+    <header [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </header>
+  }
+
+  @case ("footer") {
+    <footer [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </footer>
+  }
+
+  @case ("address") {
+    <address [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </address>
+  }
+
+  @case ("blockquote") {
+    <blockquote [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </blockquote>
+  }
+
+  @case ("h1") {
+    <h1 [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </h1>
+  }
+
+  @case ("h2") {
+    <h2 [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </h2>
+  }
+
+  @case ("h3") {
+    <h3 [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </h3>
+  }
+
+  @case ("h4") {
+    <h4 [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </h4>
+  }
+
+  @case ("h5") {
+    <h5 [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </h5>
+  }
+
+  @case ("h6") {
+    <h6 [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </h6>
+  }
+
+  @default {
+    <div [class]="classes()">
+      <annotation-segments [segments]="segment().children" />
+    </div>
+  }
+}
