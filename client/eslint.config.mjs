@@ -25,6 +25,14 @@ export default defineConfig(
       },
     },
     rules: {
+      "@typescript-eslint/restrict-template-expressions": [
+        "error",
+        {
+          allowBoolean: true,
+          allowNullish: true,
+          allowNumber: true,
+        },
+      ],
       "@angular-eslint/no-output-on-prefix": "off",
       "@typescript-eslint/no-inferrable-types": "off",
       "@typescript-eslint/no-extraneous-class": "off",

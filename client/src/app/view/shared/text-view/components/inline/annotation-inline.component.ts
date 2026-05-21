@@ -12,7 +12,8 @@ export class AnnotationInlineComponent {
   public readonly segment: InputSignal<InlineRangeSegment> = input.required<InlineRangeSegment>();
 
   protected readonly classes: Signal<string> = computed((): string => {
-    const classes: string[] = this.segment().annotations.flatMap((a: InlineAnnotation): string[] => a.classes);
-    return Array.from(new Set(classes)).join(' ');
+    const annotations: InlineAnnotation[] = this.segment().annotations;
+    const styleClasses: string[] = annotations.flatMap((a: InlineAnnotation): string[] => a.classes);
+    return Array.from(new Set(styleClasses)).join(' ');
   });
 }
