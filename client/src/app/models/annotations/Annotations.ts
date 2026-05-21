@@ -19,7 +19,7 @@ export interface InlineDefinition extends DefinitionBase {
   layer: 'inline';
   behavior?: InlineBehavior;
   renderAs?: InlineRenderElement;
-  popover?: AnnotationPopover;
+  dialog?: AnnotationDialog;
 }
 
 export interface StructureDefinition extends DefinitionBase {
@@ -47,7 +47,7 @@ export interface TokenMapping {
   mappings: Record<string, string[]>;
 }
 
-export interface AnnotationPopover {
+export interface AnnotationDialog {
   title?: string;
   description?: AnnotationValue[];
   externalLink?: AnnotationValue;
@@ -68,7 +68,7 @@ export interface AnnotationReference {
 
 export type AnnotationLayer = AnnotationDefinition['layer'];
 
-export type InlineBehavior = 'mark' | 'popover' | 'hidden';
+export type InlineBehavior = 'mark' | 'dialog' | 'hidden';
 export type StructureBehavior = 'mark' | 'hidden';
 export type LayoutBehavior = 'mark' | 'hidden';
 export type ZeroPointBehavior = 'line-break' | 'marker' | 'hidden';

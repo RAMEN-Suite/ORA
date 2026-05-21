@@ -22,6 +22,12 @@ export interface NormalizedAnnotation {
   source: TextAnnotation;
 }
 
+export type ResolvedDefinition =
+  | ResolvedInlineDefinition
+  | ResolvedStructureDefinition
+  | ResolvedLayoutDefinition
+  | ResolvedZeroPointDefinition;
+
 export type ResolvedInlineDefinition = Omit<InlineDefinition, 'behavior' | 'priority' | 'renderAs'> & {
   behavior: NonNullable<InlineDefinition['behavior']>;
   priority: number;
@@ -43,6 +49,8 @@ export type ResolvedZeroPointDefinition = Omit<ZeroPointDefinition, 'priority'> 
   priority: number;
 };
 
+export type ResolvedAnnotation = InlineAnnotation | StructuredAnnotation | LayoutAnnotation | ZeroPointAnnotation;
+
 export interface InlineAnnotation extends NormalizedAnnotation {
   definition: ResolvedInlineDefinition;
   classes: string[];
@@ -62,8 +70,6 @@ export interface ZeroPointAnnotation extends NormalizedAnnotation {
   definition: ResolvedZeroPointDefinition;
   classes: string[];
 }
-
-export type ResolvedAnnotation = InlineAnnotation | StructuredAnnotation | LayoutAnnotation | ZeroPointAnnotation;
 
 export type AnnotationSegment = TextSegment | InlineRangeSegment | ZeroPointSegment;
 

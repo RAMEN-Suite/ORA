@@ -4,24 +4,34 @@ import { Binding } from '../models/config/Config';
 
 export class BlockValueResolver {
   public static resolveString(value: Binding | undefined, values: Record<string, unknown>): string {
-    return Utils.stringify(this.resolve(value, values)) ?? '';
+    return Utils.stringify(this.resolveRaw(value, values)) ?? '';
+  }
+
+  public static resolveStrings(value: Binding | undefined, values: Record<string, unknown>): string[] {
+    const resolved: unknown = this.resolveRaw(value, values);
+
+    if (Array.isArray(resolved)) {
+      return resolved.map((item: unknown): string => Utils.stringify(item) ?? '').filter(Boolean);
+    }
+
+    const stringValue: string = Utils.stringify(resolved) ?? '';
+    return stringValue ? [stringValue] : [];
   }
 
   public static resolveNode(value: Binding | undefined, values: Record<string, unknown>): Node | undefined {
-    const resolved: unknown = this.resolve(value, values);
+    const resolved: unknown = this.resolveRaw(value, values);
     return this.isNode(resolved) ? resolved : undefined;
   }
 
   public static resolveNodes(value: Binding | undefined, values: Record<string, unknown>): Node[] {
-    const resolved: unknown = this.resolve(value, values);
+    const resolved: unknown = this.resolveRaw(value, values);
     if (Array.isArray(resolved)) return resolved.filter((item: unknown): item is Node => this.isNode(item));
     return this.isNode(resolved) ? [resolved] : [];
   }
 
-  private static resolve(value: Binding | undefined, values: Record<string, unknown>): unknown {
+  public static resolveRaw(value: Binding | undefined, values: Record<string, unknown>): unknown {
     if (value === undefined) return undefined;
-    if (this.isBinding(value)) return values[value.path];
-    return value;
+    return values[value.path];
   }
 
   private static isNode(value: unknown): value is Node {
@@ -30,9 +40,5 @@ export class BlockValueResolver {
 
     const candidate: { _labels?: unknown } = value;
     return Array.isArray(candidate._labels);
-  }
-
-  private static isBinding(value: Binding): value is Binding {
-    return typeof value === 'object' && 'path' in value && typeof value.path === 'string';
   }
 }

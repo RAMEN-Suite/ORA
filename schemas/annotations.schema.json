@@ -101,8 +101,8 @@
               },
               "default": []
             },
-            "popover": {
-              "$ref": "#/$defs/annotationPopover"
+            "dialog": {
+              "$ref": "#/$defs/annotationDialog"
             }
           }
         }
@@ -265,17 +265,17 @@
         }
       }
     },
-    "annotationPopover": {
+    "annotationDialog": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "title": {
           "type": "string",
-          "description": "Static title shown in the annotation popover."
+          "description": "Static title shown in the annotation dialog."
         },
         "description": {
           "type": "array",
-          "description": "Description values shown in the popover. Each binding is resolved by the backend view endpoint relative to the annotation node.",
+          "description": "Description values shown in the dialog. Each binding is resolved by the backend view endpoint relative to the annotation node.",
           "items": {
             "$ref": "#/$defs/annotationValue"
           },
@@ -287,7 +287,7 @@
         },
         "references": {
           "type": "array",
-          "description": "Referenced nodes shown in the popover.",
+          "description": "Referenced nodes shown in the dialog.",
           "items": {
             "$ref": "#/$defs/annotationReference"
           },
@@ -357,7 +357,7 @@
     },
     "inlineBehavior": {
       "type": "string",
-      "enum": ["mark", "popover", "hidden"]
+      "enum": ["mark", "dialog", "hidden"]
     },
     "structureBehavior": {
       "type": "string",

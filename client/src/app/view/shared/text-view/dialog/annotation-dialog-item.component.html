@@ -12,15 +12,15 @@
 
     <p-button
       size="small"
-      (click)="handleCopyUuid()"
-      (keyup.enter)="handleCopyUuid()"
-      [icon]="hasCopied() ? 'pi pi-check' : 'pi pi-hashtag'"
+      [icon]="hasCopiedIdentifier() ? 'pi pi-check' : 'pi pi-hashtag'"
       [pTooltip]="t('app.shared.textView.copyUuid')"
       tooltipPosition="bottom"
       positionTop="5"
       showDelay="500"
       outlined
       text
+      (click)="handleCopyUuid()"
+      (keyup.enter)="handleCopyUuid()"
     />
   </header>
 
@@ -29,11 +29,9 @@
       @for (description of descriptions(); track description.text) {
         <div class="text-surface-700 leading-relaxed">
           @if (description.annotations.length > 0) {
-            <shared-text-view [config]="config()" [text]="description.text" [annotations]="description.annotations" />
+            <shared-text-view [config]="config" [text]="description.text" [annotations]="description.annotations" />
           } @else {
-            <p>
-              {{ description.text }}
-            </p>
+            <p>{{ description.text }}</p>
           }
         </div>
       }
@@ -57,8 +55,8 @@
       icon="pi pi-external-link"
       size="small"
       [label]="t('app.shared.textView.externalLink')"
-      (onClick)="handleOpenExternal(externalLink())"
       outlined
+      (onClick)="handleOpenExternal(externalLink())"
     />
   }
 

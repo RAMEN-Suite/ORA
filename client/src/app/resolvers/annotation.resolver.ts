@@ -14,6 +14,7 @@ import {
   LayoutAnnotation,
   NormalizedAnnotation,
   ResolvedAnnotation,
+  ResolvedDefinition,
   ResolvedInlineDefinition,
   ResolvedLayoutDefinition,
   ResolvedStructureDefinition,
@@ -47,6 +48,8 @@ export class AnnotationResolver {
         return this.resolveLayout(annotation, definition);
       case 'zero-point':
         return this.resolveZeroPoint(annotation, definition);
+      default:
+        throw Error('Missing Annotation Definition Layer');
     }
   }
 
@@ -58,7 +61,7 @@ export class AnnotationResolver {
       renderAs: definition.renderAs ?? 'span',
     };
 
-    return { ...annotation, definition: resolvedDefinition, classes: this.resolveClasses(annotation, resolvedDefinition) };
+    return this.withStyleClasses(annotation, resolvedDefinition);
   }
 
   private resolveStructure(annotation: NormalizedAnnotation, definition: StructureDefinition): StructuredAnnotation {
@@ -69,7 +72,7 @@ export class AnnotationResolver {
       renderAs: definition.renderAs ?? 'div',
     };
 
-    return { ...annotation, definition: resolvedDefinition, classes: this.resolveClasses(annotation, resolvedDefinition) };
+    return this.withStyleClasses(annotation, resolvedDefinition);
   }
 
   private resolveLayout(annotation: NormalizedAnnotation, definition: LayoutDefinition): LayoutAnnotation {
@@ -79,7 +82,7 @@ export class AnnotationResolver {
       priority: definition.priority ?? this.defaultPriority(definition.layer),
     };
 
-    return { ...annotation, definition: resolvedDefinition, classes: this.resolveClasses(annotation, resolvedDefinition) };
+    return this.withStyleClasses(annotation, resolvedDefinition);
   }
 
   private resolveZeroPoint(annotation: NormalizedAnnotation, definition: ZeroPointDefinition): ZeroPointAnnotation {
@@ -88,10 +91,10 @@ export class AnnotationResolver {
       priority: definition.priority ?? this.defaultPriority(definition.layer),
     };
 
-    return { ...annotation, definition: resolvedDefinition, classes: this.resolveClasses(annotation, resolvedDefinition) };
+    return this.withStyleClasses(annotation, resolvedDefinition);
   }
 
-  private resolveUnknownAnnotation(annotation: NormalizedAnnotation): ResolvedAnnotation | undefined {
+  private resolveUnknownAnnotation(annotation: NormalizedAnnotation): InlineAnnotation | undefined {
     if (this.unknownStrategy() === 'ignore') return undefined;
 
     const definition: ResolvedInlineDefinition = {
@@ -105,6 +108,28 @@ export class AnnotationResolver {
     return { ...annotation, definition, classes: [] };
   }
 
+  private withStyleClasses<T extends ResolvedDefinition>(
+    annotation: NormalizedAnnotation,
+    definition: T,
+  ): NormalizedAnnotation & { definition: T; classes: string[] } {
+    return { ...annotation, definition, classes: this.resolveStyleClasses(annotation, definition) };
+  }
+
+  private resolveStyleClasses(annotation: NormalizedAnnotation, definition: ResolvedDefinition): string[] {
+    const tokenClasses: string[] = this.resolveTokenClasses(annotation, definition.tokens ?? []);
+    return [...new Set([...(definition.classes ?? []), ...tokenClasses])];
+  }
+
+  private resolveTokenClasses(annotation: NormalizedAnnotation, tokenMappings: TokenMapping[]): string[] {
+    return tokenMappings.flatMap((mapping: TokenMapping): string[] => {
+      const value: unknown = annotation.source[mapping.property];
+      if (typeof value !== 'string') return [];
+
+      const split: string[] = value.split(/\s+/).filter(Boolean);
+      return split.flatMap((token: string): string[] => mapping.mappings[token] ?? []);
+    });
+  }
+
   private defaultPriority(layer: AnnotationLayer): number {
     switch (layer) {
       case 'zero-point':
@@ -116,24 +141,6 @@ export class AnnotationResolver {
       case 'inline':
         return 50;
     }
-  }
-
-  private resolveClasses(
-    annotation: NormalizedAnnotation,
-    definition: ResolvedInlineDefinition | ResolvedStructureDefinition | ResolvedLayoutDefinition | ResolvedZeroPointDefinition,
-  ): string[] {
-    const resolvedTokens: string[] = this.resolveTokenClasses(annotation, definition.tokens ?? []);
-    return [...new Set<string>([...(definition.classes ?? []), ...resolvedTokens])];
-  }
-
-  private resolveTokenClasses(annotation: NormalizedAnnotation, tokenMappings: TokenMapping[]): string[] {
-    return tokenMappings.flatMap((tokenMapping: TokenMapping): string[] => {
-      const value: unknown = annotation.source[tokenMapping.property];
-      if (typeof value !== 'string') return [];
-
-      const filtered: string[] = value.split(/\s+/).filter(Boolean);
-      return filtered.flatMap((token: string): string[] => tokenMapping.mappings[token] ?? []);
-    });
   }
 
   private unknownStrategy(): UnknownAnnotationStrategy {

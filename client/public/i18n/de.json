@@ -30,6 +30,7 @@
         "copyUuid": "UUID kopieren",
         "references": "Referenziert:",
         "empty": "Keine weiteren Informationen.",
+        "error": "Die Annotation konnte nicht geladen werden.",
         "externalLink": "Externen Link öffnen"
       }
     },
