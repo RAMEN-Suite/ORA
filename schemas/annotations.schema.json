@@ -312,6 +312,22 @@
         "translationKey": {
           "type": "string",
           "description": "Optional translation key used to render the resolved value."
+        },
+        "annotations": {
+          "$ref": "#/$defs/binding",
+          "description": "Optional binding resolving to annotations for this description value."
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "RAMEN access path resolved by the backend view endpoint."
         }
       }
     },
@@ -325,7 +341,7 @@
           "description": "Binding resolving to the reference display label."
         },
         "uuid": {
-          "$ref": "#/$defs/annotationValue",
+          "$ref": "#/$defs/binding",
           "description": "Binding resolving to the referenced node UUID."
         },
         "icon": {

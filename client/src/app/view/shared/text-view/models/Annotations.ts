@@ -57,6 +57,7 @@ export interface AnnotationPopover {
 export interface AnnotationValue extends Binding {
   display?: string;
   translationKey?: string;
+  annotations?: Binding;
 }
 
 export interface AnnotationReference {

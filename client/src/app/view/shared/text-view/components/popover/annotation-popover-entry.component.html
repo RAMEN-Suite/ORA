@@ -26,10 +26,16 @@
 
   @if (descriptions().length > 0) {
     <div class="flex flex-col gap-2">
-      @for (description of descriptions(); track description) {
-        <p class="text-surface-700 leading-relaxed">
-          {{ description }}
-        </p>
+      @for (description of descriptions(); track description.text) {
+        <div class="text-surface-700 leading-relaxed">
+          @if (description.annotations.length > 0) {
+            <shared-text-view [config]="config()" [text]="description.text" [annotations]="description.annotations" />
+          } @else {
+            <p>
+              {{ description.text }}
+            </p>
+          }
+        </div>
       }
     </div>
   }
