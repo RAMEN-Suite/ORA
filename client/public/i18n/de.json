@@ -26,12 +26,11 @@
         "empty": "Keine Einträge vorhanden."
       },
       "textView": {
-        "annotations": {
-          "copyUuid": "UUID kopieren",
-          "references": "Referenziert:",
-          "empty": "Keine weiteren Informationen.",
-          "externalLink": "Externen Link öffnen"
-        }
+        "popoverTitle": "Annotationen",
+        "copyUuid": "UUID kopieren",
+        "references": "Referenziert:",
+        "empty": "Keine weiteren Informationen.",
+        "externalLink": "Externen Link öffnen"
       }
     },
     "blocks": {

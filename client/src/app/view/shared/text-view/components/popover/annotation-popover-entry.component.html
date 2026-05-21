@@ -15,7 +15,7 @@
       (click)="handleCopyUuid()"
       (keyup.enter)="handleCopyUuid()"
       [icon]="hasCopied() ? 'pi pi-check' : 'pi pi-hashtag'"
-      [pTooltip]="t('app.shared.textView.annotations.copyUuid')"
+      [pTooltip]="t('app.shared.textView.copyUuid')"
       tooltipPosition="bottom"
       positionTop="5"
       showDelay="500"
@@ -43,7 +43,7 @@
   @if (references().length > 0) {
     <div class="flex flex-col gap-2">
       <div class="text-surface-500 text-xs font-semibold tracking-wide uppercase">
-        {{ t("app.shared.textView.annotations.references") }}
+        {{ t("app.shared.textView.references") }}
       </div>
 
       @for (reference of references(); track reference.uuid) {
@@ -56,7 +56,7 @@
     <p-button
       icon="pi pi-external-link"
       size="small"
-      [label]="t('app.shared.textView.annotations.externalLink')"
+      [label]="t('app.shared.textView.externalLink')"
       (onClick)="handleOpenExternal(externalLink())"
       outlined
     />
@@ -64,7 +64,7 @@
 
   @if (descriptions().length === 0 && references().length === 0 && !externalLink()) {
     <div class="text-surface-500">
-      {{ t("app.shared.textView.annotations.empty") }}
+      {{ t("app.shared.textView.empty") }}
     </div>
   }
 </section>

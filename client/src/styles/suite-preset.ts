@@ -1,21 +1,21 @@
-import { Preset } from '@primeuix/themes/types';
 import { definePreset } from '@primeuix/themes';
+import type { Preset } from '@primeuix/themes/types';
 import Aura from '@primeuix/themes/aura';
 
 export const SuitePreset: Preset = definePreset(Aura, {
   semantic: {
     primary: {
-      50: '#f2f4f8',
-      100: '#d6dce8',
-      200: '#b3bfd4',
-      300: '#8f9fc1',
-      400: '#6b7fad',
-      500: '#4a5f8f',
-      600: '#37486e',
-      700: '#25314d',
-      800: '#1b2438',
-      900: '#161b2c',
-      950: '#0f121d',
+      50: '#fbf3f5',
+      100: '#f4dce2',
+      200: '#e9b8c4',
+      300: '#d98aa0',
+      400: '#c55a76',
+      500: '#a93c58',
+      600: '#8b3044',
+      700: '#712639',
+      800: '#5f2233',
+      900: '#511f2d',
+      950: '#2f0d18',
     },
     colorScheme: {
       light: {
@@ -45,9 +45,6 @@ export const SuitePreset: Preset = definePreset(Aura, {
           color: '#ffffff',
           focusColor: '#ffffff',
         },
-        ground: {
-          background: '{surface.50}',
-        },
       },
       dark: {
         surface: {
@@ -75,9 +72,6 @@ export const SuitePreset: Preset = definePreset(Aura, {
           focusBackground: '{primary.700}',
           color: '#ffffff',
           focusColor: '#ffffff',
-        },
-        ground: {
-          background: '{surface.950}',
         },
       },
     },

@@ -1,6 +1,7 @@
 <span
   class="relative inline"
   [class]="hostClasses()"
+  [class.annotation-popover-anchor-active]="isDialogOpen()"
   [attr.role]="hasPopover() ? 'button' : null"
   [attr.tabindex]="hasPopover() ? 0 : null"
   [attr.aria-busy]="isLoading() ? 'true' : null"
@@ -9,12 +10,32 @@
   <ng-content />
 </span>
 
-<p-popover styleClass="annotation-popover-overlay" appendTo="body" (onHide)="handleHide()">
+<p-popover appendTo="body" (onHide)="handlePopoverHide()" [focusOnShow]="false">
+  <div class="absolute -top-3 -right-3 hidden md:block">
+    <p-button icon="pi pi-window-maximize" rounded size="small" severity="primary" (onClick)="handlePopOut($event)" />
+  </div>
+
   @for (annotation of activeAnnotations(); track annotation.uuid) {
-    <annotation-popover-entry [annotation]="annotation" [view]="getView(annotation)" [isOpen]="isOpen()" />
+    <annotation-popover-entry [annotation]="annotation" [view]="getView(annotation)" [isOpen]="isPopoverOpen()" />
+    <p-divider [hidden]="$last" />
+  }
+</p-popover>
+
+<p-dialog
+  [visible]="isDialogOpen()"
+  (visibleChange)="isDialogOpen.set($event)"
+  appendTo="body"
+  [draggable]="true"
+  [modal]="false"
+  [resizable]="false"
+  [closable]="true"
+  [dismissableMask]="false"
+>
+  @for (annotation of activeAnnotations(); track annotation.uuid) {
+    <annotation-popover-entry [annotation]="annotation" [view]="getView(annotation)" [isOpen]="isDialogOpen()" />
 
     @if (!$last) {
       <p-divider />
     }
   }
-</p-popover>
+</p-dialog>

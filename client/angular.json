@@ -31,12 +31,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles/tailwind.css",
-              "src/styles/annotations.css",
-              "src/styles/customs.css",
-              "node_modules/animate.css/animate.css"
-            ]
+            "styles": ["src/styles/tailwind.css", "node_modules/animate.css/animate.css"]
           },
           "configurations": {
             "production": {
@@ -94,12 +89,7 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles/tailwind.css",
-              "src/styles/annotations.css",
-              "src/styles/customs.css",
-              "node_modules/animate.css/animate.css"
-            ]
+            "styles": ["src/styles/tailwind.css", "node_modules/animate.css/animate.css"]
           }
         },
         "lint": {

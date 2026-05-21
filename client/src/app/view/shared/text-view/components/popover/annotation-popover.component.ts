@@ -14,18 +14,20 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { Divider } from 'primeng/divider';
 import { Popover } from 'primeng/popover';
-import { ActivateDirective } from '../../../../../directives/activate.directive';
 import { BlockPathResolver } from '../../../../../resolvers/block-path.resolver';
 import { ViewResponse, ViewService } from '../../../../../services/view.service';
 import { AnnotationValue } from '../../models/Annotations';
 import { InlineAnnotation } from '../../models/TextAnnotation';
 import { AnnotationPopoverEntryComponent } from './annotation-popover-entry.component';
+import { ActivateDirective } from '../../../../../directives/activate.directive';
+import { Button } from 'primeng/button';
+import { Dialog } from 'primeng/dialog';
 
 type AnnotationViewMap = Record<string, ViewResponse | undefined>;
 
 @Component({
   selector: 'annotation-popover',
-  imports: [Popover, Divider, ActivateDirective, AnnotationPopoverEntryComponent],
+  imports: [Divider, AnnotationPopoverEntryComponent, ActivateDirective, Popover, Button, Dialog],
   templateUrl: './annotation-popover.component.html',
   host: { class: 'contents' },
 })
@@ -37,8 +39,10 @@ export class AnnotationPopoverComponent {
   public readonly classes: InputSignal<string> = input<string>('');
   public readonly annotations: InputSignal<InlineAnnotation[]> = input<InlineAnnotation[]>([]);
 
-  protected readonly isOpen: WritableSignal<boolean> = signal(false);
   protected readonly isLoading: WritableSignal<boolean> = signal(false);
+  protected readonly isPopoverOpen: WritableSignal<boolean> = signal(false);
+  protected readonly isDialogOpen: WritableSignal<boolean> = signal(false);
+
   protected readonly activeAnnotations: WritableSignal<InlineAnnotation[]> = signal<InlineAnnotation[]>([]);
   protected readonly views: WritableSignal<AnnotationViewMap> = signal<AnnotationViewMap>({});
 
@@ -66,6 +70,7 @@ export class AnnotationPopoverComponent {
     event.preventDefault();
     event.stopPropagation();
 
+    const target: EventTarget | null = event.currentTarget;
     const annotations: InlineAnnotation[] = this.popoverAnnotations();
 
     this.activeAnnotations.set(annotations);
@@ -73,14 +78,38 @@ export class AnnotationPopoverComponent {
 
     try {
       this.views.set(await this.loadViews(annotations));
-      this.show(event);
+      this.showPopover(event, target);
     } finally {
       this.isLoading.set(false);
     }
   }
 
-  protected handleHide(): void {
-    this.isOpen.set(false);
+  private showPopover(event: Event, target: EventTarget | null): void {
+    this.isPopoverOpen.set(true);
+
+    if (target instanceof HTMLElement) {
+      this.popoverComponent()?.show(event, target);
+      return;
+    }
+
+    this.popoverComponent()?.show(event);
+  }
+
+  protected handlePopoverHide(): void {
+    this.isPopoverOpen.set(false);
+  }
+
+  protected handlePopOut(event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+
+    this.popoverComponent()?.hide();
+    this.isPopoverOpen.set(false);
+    this.isDialogOpen.set(true);
+  }
+
+  protected handleDialogVisibleChange(visible: boolean): void {
+    this.isDialogOpen.set(visible);
   }
 
   private async loadViews(annotations: InlineAnnotation[]): Promise<AnnotationViewMap> {
@@ -121,10 +150,5 @@ export class AnnotationPopoverComponent {
   private annotationPath(description: AnnotationValue): string | undefined {
     const path: string | undefined = description.annotations?.path;
     return path && path.trim().length > 0 ? path : undefined;
-  }
-
-  private show(event: Event): void {
-    this.isOpen.set(true);
-    this.popoverComponent()?.show(event);
   }
 }
