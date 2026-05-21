@@ -22,14 +22,20 @@
 </p-popover>
 
 <p-dialog
+  #dialog
   [visible]="isDialogOpen()"
   (visibleChange)="isDialogOpen.set($event)"
   appendTo="body"
   [draggable]="true"
   [modal]="false"
-  [resizable]="false"
-  [closable]="true"
   [dismissableMask]="false"
+  [pt]="{
+    header: {
+      onPointerdown: dialog.moveOnTop.bind(dialog),
+    },
+  }"
+  closable
+  resizable
 >
   @for (annotation of activeAnnotations(); track annotation.uuid) {
     <annotation-popover-entry [annotation]="annotation" [view]="getView(annotation)" [isOpen]="isDialogOpen()" />
