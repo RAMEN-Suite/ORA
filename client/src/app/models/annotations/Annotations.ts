@@ -56,7 +56,6 @@ export interface AnnotationDialog {
 
 export interface AnnotationValue extends Binding {
   display?: string;
-  translationKey?: string;
   annotations?: Binding;
 }
 
