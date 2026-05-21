@@ -18,9 +18,4 @@ export class AnnotationListComponent {
   protected itemClasses(item: ListItemSegment): string {
     return item.annotation.classes.join(' ');
   }
-
-  protected itemLabel(index: number): string {
-    const indexStr: string = String(index + 1);
-    return this.isOrdered() ? `${indexStr}.` : '•';
-  }
 }
