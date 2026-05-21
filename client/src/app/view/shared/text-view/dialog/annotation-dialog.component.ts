@@ -2,6 +2,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  ElementRef,
   inject,
   input,
   InputSignal,
@@ -48,10 +49,12 @@ export class AnnotationDialogComponent {
   private readonly viewService: ViewService = inject(ViewService);
 
   private readonly popoverComponent: Signal<Popover | undefined> = viewChild(Popover);
+  private readonly annotationAnchor: Signal<ElementRef<HTMLElement> | undefined> = viewChild('anchor');
 
   public readonly classes: InputSignal<string> = input<string>('');
   public readonly annotations: InputSignal<InlineAnnotation[]> = input<InlineAnnotation[]>([]);
 
+  protected readonly isScrollHighlighted: WritableSignal<boolean> = signal(false);
   protected readonly isLoading: WritableSignal<boolean> = signal(false);
   protected readonly isPopoverOpen: WritableSignal<boolean> = signal(false);
   protected readonly isDialogOpen: WritableSignal<boolean> = signal(false);
@@ -65,6 +68,23 @@ export class AnnotationDialogComponent {
 
   protected readonly loadingClasses: Signal<string> = computed((): string => LOADING_STYLE_CLASSES.join(' '));
   protected readonly defaultClasses: Signal<string> = computed((): string => DEFAULT_STYLE_CLASSES.join(' '));
+
+  public handleScrollToAnnotation(uuid?: string): void {
+    if (uuid && !this.hasAnnotation(uuid)) return;
+
+    const element: HTMLElement | undefined = this.annotationAnchor()?.nativeElement;
+    if (!element) return;
+
+    element.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest',
+    });
+
+    element.focus({ preventScroll: true });
+    this.isScrollHighlighted.set(true);
+    window.setTimeout((): void => this.isScrollHighlighted.set(false), 1600);
+  }
 
   protected async handleOpenPopover(event: Event): Promise<void> {
     if (!this.hasRelevant() || this.isLoading()) return;
@@ -116,6 +136,10 @@ export class AnnotationDialogComponent {
 
     if (!isHTMLElement) return this.popoverComponent()?.show(event);
     this.popoverComponent()?.show(event, target);
+  }
+
+  private hasAnnotation(uuid: string): boolean {
+    return this.annotations().some((annotation: InlineAnnotation): boolean => annotation.uuid === uuid);
   }
 
   private filterAnnotations(): InlineAnnotation[] {

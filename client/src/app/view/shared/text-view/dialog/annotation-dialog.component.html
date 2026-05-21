@@ -2,9 +2,10 @@
 @let triggerClasses = classes() + " " + (isInteractive ? defaultClasses() : "") + " " + (isLoading() ? loadingClasses() : "");
 
 <span
+  #anchor
   class="relative inline"
   [class]="triggerClasses"
-  [class.annotation-popover-anchor-active]="isDialogOpen()"
+  [class.annotation-popover-anchor-active]="isDialogOpen() || isScrollHighlighted()"
   [attr.role]="isInteractive ? 'button' : null"
   [attr.tabindex]="isInteractive ? 0 : null"
   [attr.aria-busy]="isLoading() ? 'true' : null"
@@ -47,5 +48,11 @@
   closable
   resizable
 >
+  <ng-template #header>
+    <div class="px-2" *transloco="let t">
+      <p-button icon="pi pi-eye" [label]="t('app.shared.textView.jumpTo')" size="small" rounded (onClick)="handleScrollToAnnotation()" />
+    </div>
+  </ng-template>
+
   <ng-container *ngTemplateOutlet="annotation; context: { open: isDialogOpen() }" />
 </p-dialog>
