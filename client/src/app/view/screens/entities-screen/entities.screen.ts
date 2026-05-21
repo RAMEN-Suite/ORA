@@ -20,6 +20,7 @@ import { Entity } from '../../../models/Node';
 import { EntityIndex, EntityListOption, Property } from '../../../models/config/ListViews';
 import { BibleBook } from '../../../models/config/Features';
 import { AbstractListScreen } from '../abstract-list.screen';
+import { ParseUtils } from '../../../utils/ParseUtils';
 
 const DEFAULT_OPTION: EntityListOption = {
   icon: 'pi pi-folder-open',
@@ -153,9 +154,9 @@ export class EntitiesScreen extends AbstractListScreen<EntityListOption> {
   }
 
   private applyQueryParams(params: Params): void {
-    const index: string | undefined = Utils.parseString(params['index']);
-    const searchPhrase: string | undefined = Utils.parseString(params['search']);
-    const label: string | undefined = Utils.parseString(params['label']);
+    const index: string | undefined = ParseUtils.parseString(params['index']);
+    const searchPhrase: string | undefined = ParseUtils.parseString(params['search']);
+    const label: string | undefined = ParseUtils.parseString(params['label']);
 
     const option: EntityListOption | undefined = this.findOption(label, this.listOptions());
     if (option) this.activeOption.set(option);

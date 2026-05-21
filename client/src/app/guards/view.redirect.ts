@@ -4,14 +4,14 @@ import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
 import { PARAMS, REASONS, ROUTES } from '../constants/ROUTES';
 import { Node } from '../models/Node';
 import { ViewService } from '../services/view.service';
-import { Utils } from '../utils/Utils';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ParseUtils } from '../utils/ParseUtils';
 
 export const viewRedirect: RedirectFunction = async (route: PartialMatchRouteSnapshot): Promise<UrlTree> => {
   const viewService: ViewService = inject(ViewService);
   const router: Router = inject(Router);
 
-  const uuid: string | undefined = Utils.parseString(route.params[PARAMS.UUID]);
+  const uuid: string | undefined = ParseUtils.parseString(route.params[PARAMS.UUID]);
   if (!uuid) return router.createUrlTree(['/', ROUTES.NOT_FOUND]);
 
   return firstValueFrom(

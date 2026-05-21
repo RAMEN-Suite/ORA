@@ -1,12 +1,12 @@
 import { Component, computed, Signal } from '@angular/core';
 import { Fieldset } from 'primeng/fieldset';
 import { Node } from '../../../models/Node';
-import { Utils } from '../../../utils/Utils';
 import { ROUTES } from '../../../constants/ROUTES';
 import { RouterLink } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { AbstractBlock } from '../abstract.block';
 import { AttributesItem, AttributesNodeItem, AttributesProps, AttributesValueItem } from '../../../models/config/DetailViews';
+import { ParseUtils } from '../../../utils/ParseUtils';
 
 interface Attribute {
   label: string;
@@ -69,7 +69,7 @@ export class AttributesBlock extends AbstractBlock<AttributesProps> {
   }
 
   private resolveNodeValue(node: Node, item: AttributesNodeItem): AttributeValue {
-    const value: string = Utils.parseString(node[item.property]) ?? '';
+    const value: string = ParseUtils.parseString(node[item.property]) ?? '';
     const href: string[] | undefined = item.isLinked ? this.resolveHref(node) : undefined;
     return { value, href };
   }
@@ -79,7 +79,7 @@ export class AttributesBlock extends AbstractBlock<AttributesProps> {
   }
 
   private resolveHref(node: Node): string[] {
-    const uuid: string | undefined = Utils.parseString(node['uuid']);
+    const uuid: string | undefined = ParseUtils.parseString(node['uuid']);
     if (!uuid) return [];
 
     if (node._labels.includes('Collection')) return ['/', ROUTES.COLLECTION, uuid];

@@ -12,7 +12,6 @@ import { FormsModule } from '@angular/forms';
 import { IftaLabel } from 'primeng/iftalabel';
 import { InputText } from 'primeng/inputtext';
 import { Button } from 'primeng/button';
-import { Utils } from '../../../utils/Utils';
 import { Tooltip } from 'primeng/tooltip';
 import { ActiveFilter, FacetGroup, FacetOptions } from '../../../models/Facet';
 import { FacetListComponent } from '../../shared/facet-list/facet-list.component';
@@ -22,6 +21,7 @@ import { FilterOption, ListOption, Option, Property } from '../../../models/conf
 import { AbstractListScreen } from '../abstract-list.screen';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { ROUTES } from '../../../constants/ROUTES';
+import { ParseUtils } from '../../../utils/ParseUtils';
 
 @Component({
   selector: 'screen-collections',
@@ -161,7 +161,7 @@ export class CollectionsScreen extends AbstractListScreen {
     this.applyActiveOptionParam(params);
     this.applyFilterParams(params);
 
-    const search: string | undefined = Utils.parseString(params['search']);
+    const search: string | undefined = ParseUtils.parseString(params['search']);
     const sort: Pick<QueryOptions, 'orderBy' | 'asc'> = this.applySortParams(params);
 
     this.queryOptions.update(
@@ -186,14 +186,14 @@ export class CollectionsScreen extends AbstractListScreen {
   }
 
   private applyActiveOptionParam(params: Params): void {
-    const label: string | undefined = Utils.parseString(params['label']);
+    const label: string | undefined = ParseUtils.parseString(params['label']);
     const option: ListOption | undefined = this.findOption(label, this.listOptions());
     if (option) this.activeOption.set(option);
   }
 
   private applyFilterParams(params: Params): void {
-    const filterArray: unknown[] = Utils.parseArray(params['filters']);
-    const filters: ActiveFilter[] = Utils.parseStringArray(filterArray).map(FilterUtils.parseFilter);
+    const filterArray: unknown[] = ParseUtils.parseArray(params['filters']);
+    const filters: ActiveFilter[] = ParseUtils.parseStringArray(filterArray).map(FilterUtils.parseFilter);
     this.activeFilters.set(filters);
   }
 
@@ -201,7 +201,7 @@ export class CollectionsScreen extends AbstractListScreen {
     const option: ListOption | undefined = this.activeOption();
     const sortOptions: Option[] = option?.sort?.options ?? [];
 
-    const rawOrderBy: string | undefined = Utils.parseString(params['orderBy']);
+    const rawOrderBy: string | undefined = ParseUtils.parseString(params['orderBy']);
     const existing: Option | undefined = this.findOption(rawOrderBy, sortOptions);
     const initial: Option | undefined = this.getInitialGroupOption(option?.sort);
     const activeSort: Option | undefined = existing ?? initial;
@@ -209,7 +209,7 @@ export class CollectionsScreen extends AbstractListScreen {
     this.activeSort.set(activeSort);
 
     const order: string = activeSort?.value ?? 'label';
-    const isAscending: boolean = Utils.parseBoolean(params['asc']) ?? option?.sort?.direction === 'asc';
+    const isAscending: boolean = ParseUtils.parseBoolean(params['asc']) ?? option?.sort?.direction === 'asc';
     return { orderBy: order, asc: isAscending };
   }
 

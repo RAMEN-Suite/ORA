@@ -4,7 +4,7 @@ import { ActiveFilter, FacetGroup } from '../../../models/Facet';
 import { FormsModule } from '@angular/forms';
 import { FacetListItemComponent } from './facet-list-item/facet-list-item.component';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { Utils } from '../../../utils/Utils';
+import { ParseUtils } from '../../../utils/ParseUtils';
 
 export interface FacetFilter {
   icon?: string;
@@ -49,8 +49,8 @@ export class FacetListComponent {
   }
 
   protected handleAccordionChange(value: unknown): void {
-    value = Utils.parseArray(value);
-    this.expandedFacets.set(Utils.parseStringArray(value));
+    value = ParseUtils.parseArray(value);
+    this.expandedFacets.set(ParseUtils.parseStringArray(value));
   }
 
   protected getFilter(field: string): FacetFilter | undefined {
