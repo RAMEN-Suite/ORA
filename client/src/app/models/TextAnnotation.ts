@@ -1,5 +1,5 @@
-import { Annotation } from '../Node';
-import { InlineDefinition, LayoutDefinition, StructureDefinition, ZeroPointDefinition } from './Annotations';
+import { Annotation } from './Node';
+import { InlineDefinition, LayoutDefinition, StructureDefinition, ZeroPointDefinition } from './config/Annotations';
 
 export interface TextAnnotation extends Annotation {
   startIndex?: number;

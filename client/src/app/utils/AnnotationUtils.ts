@@ -1,4 +1,4 @@
-import { TextAnnotation } from '../models/annotations/TextAnnotation';
+import { TextAnnotation } from '../models/TextAnnotation';
 
 export class AnnotationUtils {
   public static isTextAnnotation(value: unknown): value is TextAnnotation {

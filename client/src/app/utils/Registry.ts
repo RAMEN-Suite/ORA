@@ -2,7 +2,7 @@ import { Config } from '../models/config/Config';
 import { Features } from '../models/config/Features';
 import { DetailView, DetailViews } from '../models/config/DetailViews';
 import { ListViews } from '../models/config/ListViews';
-import { Annotations } from '../models/annotations/Annotations';
+import { Annotations } from '../models/config/Annotations';
 
 export class Registry {
   public constructor(private readonly config: Config) {}

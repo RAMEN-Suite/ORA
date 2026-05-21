@@ -1,5 +1,5 @@
 import { Component, computed, forwardRef, input, InputSignal, Signal } from '@angular/core';
-import { StructureSegment } from '../../../../models/annotations/TextViewSegments';
+import { StructureSegment } from '../../../../models/TextViewSegments';
 import { TextViewSegmentsComponent } from '../segments/text-view-segments.component';
 
 @Component({

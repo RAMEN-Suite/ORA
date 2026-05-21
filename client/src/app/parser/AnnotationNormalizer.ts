@@ -1,5 +1,5 @@
-import { Annotations, InvalidRangeStrategy, UnknownAnnotationStrategy } from '../models/annotations/Annotations';
-import { NormalizedAnnotation, TextAnnotation } from '../models/annotations/TextAnnotation';
+import { Annotations, InvalidRangeStrategy, UnknownAnnotationStrategy } from '../models/config/Annotations';
+import { NormalizedAnnotation, TextAnnotation } from '../models/TextAnnotation';
 
 export interface NormalizationResult {
   annotations: NormalizedAnnotation[];

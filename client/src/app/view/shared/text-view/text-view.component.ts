@@ -1,10 +1,10 @@
 import { Component, computed, effect, input, InputSignal, Signal } from '@angular/core';
-import { Annotations } from '../../../models/annotations/Annotations';
-import { ResolvedAnnotation, TextAnnotation } from '../../../models/annotations/TextAnnotation';
+import { Annotations } from '../../../models/config/Annotations';
+import { ResolvedAnnotation, TextAnnotation } from '../../../models/TextAnnotation';
 import { AnnotationNormalizer, NormalizationIssue, NormalizationResult } from '../../../parser/AnnotationNormalizer';
 import { TextViewParser } from '../../../parser/TextViewParser';
 import { AnnotationResolver } from '../../../resolvers/annotation.resolver';
-import { TextViewSegment } from '../../../models/annotations/TextViewSegments';
+import { TextViewSegment } from '../../../models/TextViewSegments';
 import { TextViewSegmentsComponent } from './segments/text-view-segments.component';
 
 @Component({

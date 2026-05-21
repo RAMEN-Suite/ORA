@@ -8,7 +8,7 @@ import {
   TokenMapping,
   UnknownAnnotationStrategy,
   ZeroPointDefinition,
-} from '../models/annotations/Annotations';
+} from '../models/config/Annotations';
 import {
   InlineAnnotation,
   LayoutAnnotation,
@@ -21,7 +21,7 @@ import {
   ResolvedZeroPointDefinition,
   StructuredAnnotation,
   ZeroPointAnnotation,
-} from '../models/annotations/TextAnnotation';
+} from '../models/TextAnnotation';
 
 export class AnnotationResolver {
   public constructor(

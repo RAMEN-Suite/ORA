@@ -6,7 +6,7 @@ import {
   TextSegment,
   ZeroPointAnnotation,
   ZeroPointSegment,
-} from '../models/annotations/TextAnnotation';
+} from '../models/TextAnnotation';
 
 interface TextInterval {
   start: number;

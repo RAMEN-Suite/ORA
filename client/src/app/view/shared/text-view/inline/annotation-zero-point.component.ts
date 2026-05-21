@@ -14,8 +14,8 @@ import {
 } from '@angular/core';
 import { NgStyle } from '@angular/common';
 import { BlockValueResolver } from '../../../../resolvers/block-value.resolver';
-import { AnnotationValue, ZeroPointDefinition } from '../../../../models/annotations/Annotations';
-import { TextAnnotation, ZeroPointAnnotation, ZeroPointSegment } from '../../../../models/annotations/TextAnnotation';
+import { AnnotationValue, ZeroPointDefinition } from '../../../../models/config/Annotations';
+import { TextAnnotation, ZeroPointAnnotation, ZeroPointSegment } from '../../../../models/TextAnnotation';
 import { MarginPositionOptions, MarginPositionStyle, MarginPositionUtils } from '../../../../utils/MarginPositionUtils';
 
 const TEXT_VIEW_ROOT = '[data-text-view-root]';

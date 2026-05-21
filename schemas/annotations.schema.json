@@ -2,28 +2,32 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ramen-schema.org/ora/2026.1/annotations.schema.json",
   "title": "ORA Annotations",
+  "description": "Configuration for resolving and rendering text annotations in ORA text views.",
   "type": "object",
   "additionalProperties": false,
   "required": ["definitions"],
   "properties": {
     "definitions": {
       "type": "object",
-      "description": "Maps annotation type names to render definitions.",
+      "description": "Maps annotation type names, for example TEI element names or derived annotation keys, to render definitions.",
       "additionalProperties": {
         "$ref": "#/$defs/annotationDefinition"
       }
     },
     "unknownAnnotation": {
       "$ref": "#/$defs/unknownAnnotationStrategy",
+      "description": "Strategy used when an annotation type has no matching definition.",
       "default": "warn"
     },
     "invalidRange": {
       "$ref": "#/$defs/invalidRangeStrategy",
+      "description": "Strategy used when an annotation range is invalid or outside the rendered text.",
       "default": "warn"
     }
   },
   "$defs": {
     "annotationDefinition": {
+      "description": "Render definition for one annotation type.",
       "oneOf": [
         {
           "$ref": "#/$defs/inlineDefinition"
@@ -41,13 +45,15 @@
     },
     "definitionBase": {
       "type": "object",
+      "description": "Common styling and ordering options shared by all annotation definitions.",
       "properties": {
         "priority": {
           "type": "integer",
-          "description": "Optional ordering hint. Lower priority wraps outside higher priority annotations."
+          "description": "Ordering hint for nested annotations. Lower values are rendered further outside than higher values."
         },
         "classes": {
           "type": "array",
+          "description": "CSS utility classes added to the rendered annotation element.",
           "items": {
             "type": "string"
           },
@@ -55,7 +61,7 @@
         },
         "tokens": {
           "type": "array",
-          "description": "Maps whitespace-separated tokens from annotation properties to CSS classes.",
+          "description": "Rules that map whitespace-separated annotation property values to CSS classes.",
           "items": {
             "$ref": "#/$defs/annotationTokenMapping"
           },
@@ -64,6 +70,7 @@
       }
     },
     "inlineDefinition": {
+      "description": "Definition for annotations rendered inside the text flow.",
       "allOf": [
         {
           "$ref": "#/$defs/definitionBase"
@@ -74,21 +81,26 @@
           "required": ["layer"],
           "properties": {
             "layer": {
-              "const": "inline"
+              "const": "inline",
+              "description": "Declares this definition as an inline annotation."
             },
             "behavior": {
               "$ref": "#/$defs/inlineBehavior",
+              "description": "Rendering behavior for this inline annotation.",
               "default": "mark"
             },
             "renderAs": {
               "$ref": "#/$defs/inlineRenderElement",
+              "description": "HTML element used to render the inline annotation.",
               "default": "span"
             },
             "priority": {
-              "type": "integer"
+              "type": "integer",
+              "description": "Ordering hint for nested inline annotations. Lower values wrap outside higher values."
             },
             "classes": {
               "type": "array",
+              "description": "CSS utility classes added to the inline annotation element.",
               "items": {
                 "type": "string"
               },
@@ -96,19 +108,22 @@
             },
             "tokens": {
               "type": "array",
+              "description": "Rules that map annotation property tokens to CSS classes.",
               "items": {
                 "$ref": "#/$defs/annotationTokenMapping"
               },
               "default": []
             },
             "dialog": {
-              "$ref": "#/$defs/annotationDialog"
+              "$ref": "#/$defs/annotationDialog",
+              "description": "Dialog content configuration used when behavior is set to dialog."
             }
           }
         }
       ]
     },
     "structureDefinition": {
+      "description": "Definition for annotations rendered as structural block elements.",
       "allOf": [
         {
           "$ref": "#/$defs/definitionBase"
@@ -119,21 +134,26 @@
           "required": ["layer"],
           "properties": {
             "layer": {
-              "const": "structure"
+              "const": "structure",
+              "description": "Declares this definition as a structural annotation."
             },
             "behavior": {
               "$ref": "#/$defs/structureBehavior",
+              "description": "Rendering behavior for this structural annotation.",
               "default": "mark"
             },
             "renderAs": {
               "$ref": "#/$defs/structureRenderElement",
+              "description": "HTML element used to render the structural annotation.",
               "default": "div"
             },
             "priority": {
-              "type": "integer"
+              "type": "integer",
+              "description": "Ordering hint for nested structural annotations. Lower values wrap outside higher values."
             },
             "classes": {
               "type": "array",
+              "description": "CSS utility classes added to the structural annotation element.",
               "items": {
                 "type": "string"
               },
@@ -141,6 +161,7 @@
             },
             "tokens": {
               "type": "array",
+              "description": "Rules that map annotation property tokens to CSS classes.",
               "items": {
                 "$ref": "#/$defs/annotationTokenMapping"
               },
@@ -151,6 +172,7 @@
       ]
     },
     "layoutDefinition": {
+      "description": "Definition for layout annotations such as lists, list items, tables, rows, and cells.",
       "allOf": [
         {
           "$ref": "#/$defs/definitionBase"
@@ -161,23 +183,29 @@
           "required": ["layer", "layoutRole", "renderAs"],
           "properties": {
             "layer": {
-              "const": "layout"
+              "const": "layout",
+              "description": "Declares this definition as a layout annotation."
             },
             "behavior": {
               "$ref": "#/$defs/layoutBehavior",
+              "description": "Rendering behavior for this layout annotation.",
               "default": "mark"
             },
             "layoutRole": {
-              "$ref": "#/$defs/layoutRole"
+              "$ref": "#/$defs/layoutRole",
+              "description": "Semantic layout role used by the text view renderer."
             },
             "renderAs": {
-              "$ref": "#/$defs/layoutRenderElement"
+              "$ref": "#/$defs/layoutRenderElement",
+              "description": "HTML element used to render the layout annotation."
             },
             "priority": {
-              "type": "integer"
+              "type": "integer",
+              "description": "Ordering hint for nested layout annotations. Lower values wrap outside higher values."
             },
             "classes": {
               "type": "array",
+              "description": "CSS utility classes added to the layout annotation element.",
               "items": {
                 "type": "string"
               },
@@ -185,6 +213,7 @@
             },
             "tokens": {
               "type": "array",
+              "description": "Rules that map annotation property tokens to CSS classes.",
               "items": {
                 "$ref": "#/$defs/annotationTokenMapping"
               },
@@ -195,6 +224,7 @@
       ]
     },
     "zeroPointDefinition": {
+      "description": "Definition for zero-width annotations inserted at a single text position, such as line breaks, page markers, or gaps.",
       "allOf": [
         {
           "$ref": "#/$defs/definitionBase"
@@ -205,20 +235,25 @@
           "required": ["layer", "behavior"],
           "properties": {
             "layer": {
-              "const": "zero-point"
+              "const": "zero-point",
+              "description": "Declares this definition as a zero-point annotation."
             },
             "behavior": {
-              "$ref": "#/$defs/zeroPointBehavior"
+              "$ref": "#/$defs/zeroPointBehavior",
+              "description": "Rendering behavior for this zero-point annotation."
             },
             "placement": {
               "$ref": "#/$defs/annotationPlacement",
+              "description": "Placement of the visible marker, either in the text flow or in the margin.",
               "default": "inline"
             },
             "priority": {
-              "type": "integer"
+              "type": "integer",
+              "description": "Ordering hint for zero-point annotations."
             },
             "classes": {
               "type": "array",
+              "description": "CSS utility classes added to the rendered zero-point marker.",
               "items": {
                 "type": "string"
               },
@@ -226,6 +261,7 @@
             },
             "tokens": {
               "type": "array",
+              "description": "Rules that map annotation property tokens to CSS classes.",
               "items": {
                 "$ref": "#/$defs/annotationTokenMapping"
               },
@@ -233,7 +269,7 @@
             },
             "label": {
               "type": "array",
-              "description": "Values used to render the visible zero-point marker label.",
+              "description": "Bindings whose resolved values are joined to form the visible zero-point marker label.",
               "items": {
                 "$ref": "#/$defs/annotationValue"
               },
@@ -245,17 +281,18 @@
     },
     "annotationTokenMapping": {
       "type": "object",
+      "description": "Maps tokens from one annotation property to CSS classes.",
       "additionalProperties": false,
       "required": ["property", "mappings"],
       "properties": {
         "property": {
           "type": "string",
           "minLength": 1,
-          "description": "Annotation property containing whitespace-separated tokens."
+          "description": "Annotation source property containing whitespace-separated tokens."
         },
         "mappings": {
           "type": "object",
-          "description": "Maps token values to CSS classes.",
+          "description": "Maps token values to CSS utility classes.",
           "additionalProperties": {
             "type": "array",
             "items": {
@@ -267,15 +304,16 @@
     },
     "annotationDialog": {
       "type": "object",
+      "description": "Configuration for information shown when an inline annotation is opened.",
       "additionalProperties": false,
       "properties": {
         "title": {
           "type": "string",
-          "description": "Static title shown in the annotation dialog."
+          "description": "Static title or translation key shown as the dialog title."
         },
         "description": {
           "type": "array",
-          "description": "Description values shown in the dialog. Each binding is resolved by the backend view endpoint relative to the annotation node.",
+          "description": "Values shown as dialog description text. Each value is resolved by the backend view endpoint relative to the annotation node.",
           "items": {
             "$ref": "#/$defs/annotationValue"
           },
@@ -283,11 +321,11 @@
         },
         "externalLink": {
           "$ref": "#/$defs/annotationValue",
-          "description": "Binding resolving to an external URL."
+          "description": "Binding resolving to an external URL shown as an action."
         },
         "references": {
           "type": "array",
-          "description": "Referenced nodes shown in the dialog.",
+          "description": "Referenced nodes shown as navigation actions in the dialog.",
           "items": {
             "$ref": "#/$defs/annotationReference"
           },
@@ -297,6 +335,7 @@
     },
     "annotationValue": {
       "type": "object",
+      "description": "Binding for a display value used by annotation labels or dialogs.",
       "additionalProperties": false,
       "required": ["path"],
       "properties": {
@@ -309,18 +348,20 @@
           "type": "string",
           "description": "Optional display template. The placeholder {{ value }} is replaced with the resolved value."
         },
-        "translationKey": {
-          "type": "string",
-          "description": "Optional translation key used to render the resolved value."
+        "valueMap": {
+          "type": "object",
+          "description": "Optional map replacing resolved raw values with display values before rendering.",
+          "additionalProperties": true
         },
         "annotations": {
           "$ref": "#/$defs/binding",
-          "description": "Optional binding resolving to annotations for this description value."
+          "description": "Optional binding resolving to annotations applied to this description value."
         }
       }
     },
     "binding": {
       "type": "object",
+      "description": "Binding resolved by the backend view endpoint.",
       "additionalProperties": false,
       "required": ["path"],
       "properties": {
@@ -328,17 +369,23 @@
           "type": "string",
           "minLength": 1,
           "description": "RAMEN access path resolved by the backend view endpoint."
+        },
+        "valueMap": {
+          "type": "object",
+          "description": "Optional map replacing resolved raw values with display values before rendering.",
+          "additionalProperties": true
         }
       }
     },
     "annotationReference": {
       "type": "object",
+      "description": "Reference action shown in an annotation dialog.",
       "additionalProperties": false,
       "required": ["label", "uuid"],
       "properties": {
         "label": {
           "$ref": "#/$defs/annotationValue",
-          "description": "Binding resolving to the reference display label."
+          "description": "Binding resolving to the visible reference label."
         },
         "uuid": {
           "$ref": "#/$defs/binding",
@@ -346,53 +393,64 @@
         },
         "icon": {
           "type": "string",
-          "description": "Optional icon class, for example a PrimeIcons class."
+          "description": "Optional icon class shown with the reference action, for example a PrimeIcons class."
         }
       }
     },
     "annotationPlacement": {
       "type": "string",
+      "description": "Placement of a zero-point marker.",
       "enum": ["inline", "margin"],
       "default": "inline"
     },
     "inlineBehavior": {
       "type": "string",
+      "description": "Inline annotation behavior. mark renders the annotation in-place; dialog opens annotation details; hidden suppresses rendering.",
       "enum": ["mark", "dialog", "hidden"]
     },
     "structureBehavior": {
       "type": "string",
+      "description": "Structural annotation behavior. mark renders the structure; hidden suppresses rendering.",
       "enum": ["mark", "hidden"]
     },
     "layoutBehavior": {
       "type": "string",
+      "description": "Layout annotation behavior. mark renders the layout element; hidden suppresses rendering.",
       "enum": ["mark", "hidden"]
     },
     "zeroPointBehavior": {
       "type": "string",
+      "description": "Zero-point annotation behavior. line-break inserts a line break; marker renders a visible marker; hidden suppresses rendering.",
       "enum": ["line-break", "marker", "hidden"]
     },
     "inlineRenderElement": {
       "type": "string",
+      "description": "Allowed HTML elements for inline annotations.",
       "enum": ["span", "abbr", "cite", "code", "em", "mark", "strong", "sub", "sup"]
     },
     "structureRenderElement": {
       "type": "string",
+      "description": "Allowed HTML elements for structural annotations.",
       "enum": ["div", "p", "section", "article", "header", "footer", "address", "blockquote", "h1", "h2", "h3", "h4", "h5", "h6"]
     },
     "layoutRenderElement": {
       "type": "string",
+      "description": "Allowed HTML elements for layout annotations.",
       "enum": ["ul", "ol", "li", "table", "thead", "tbody", "tr", "th", "td"]
     },
     "layoutRole": {
       "type": "string",
+      "description": "Semantic layout role used to group and render layout annotations.",
       "enum": ["list", "list-item", "table", "table-section", "table-row", "table-cell"]
     },
     "unknownAnnotationStrategy": {
       "type": "string",
+      "description": "Strategy for annotation types without a matching definition. ignore drops them; plain renders unstyled text; warn renders with warning semantics.",
       "enum": ["ignore", "plain", "warn"]
     },
     "invalidRangeStrategy": {
       "type": "string",
+      "description": "Strategy for invalid annotation ranges. ignore drops them; clamp adjusts them to valid bounds; warn keeps warning semantics.",
       "enum": ["ignore", "clamp", "warn"]
     }
   }

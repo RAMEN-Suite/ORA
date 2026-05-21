@@ -1,5 +1,5 @@
 import { Component, computed, forwardRef, input, InputSignal, Signal } from '@angular/core';
-import { InlineAnnotation, InlineRangeSegment } from '../../../../models/annotations/TextAnnotation';
+import { InlineAnnotation, InlineRangeSegment } from '../../../../models/TextAnnotation';
 import { AnnotationSegmentsComponent } from '../segments/annotation-segments.component';
 import { AnnotationDialogComponent } from '../dialog/annotation-dialog.component';
 

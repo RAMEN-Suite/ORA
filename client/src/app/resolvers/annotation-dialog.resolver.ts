@@ -1,6 +1,6 @@
 import { BlockValueResolver } from './block-value.resolver';
-import { AnnotationDialog, AnnotationReference, AnnotationValue } from '../models/annotations/Annotations';
-import { TextAnnotation } from '../models/annotations/TextAnnotation';
+import { AnnotationDialog, AnnotationReference, AnnotationValue } from '../models/config/Annotations';
+import { TextAnnotation } from '../models/TextAnnotation';
 import { AnnotationUtils } from '../utils/AnnotationUtils';
 
 export interface DialogReference {

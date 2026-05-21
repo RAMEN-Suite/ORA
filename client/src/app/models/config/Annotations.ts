@@ -1,4 +1,4 @@
-import { Binding } from '../config/Config';
+import { Binding } from './Config';
 
 export interface Annotations {
   definitions: Record<string, AnnotationDefinition>;

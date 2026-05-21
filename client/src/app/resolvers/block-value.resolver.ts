@@ -31,7 +31,24 @@ export class BlockValueResolver {
 
   public static resolveRaw(value: Binding | undefined, values: Record<string, unknown>): unknown {
     if (value === undefined) return undefined;
-    return values[value.path];
+    const resolved: unknown = values[value.path];
+    return this.resolveMappedValue(value, resolved);
+  }
+
+  private static resolveMappedValue(binding: Binding, value: unknown): unknown {
+    if (!binding.valueMap) return value;
+
+    if (Array.isArray(value)) {
+      return value.map((item: unknown): unknown => this.resolveMappedItem(binding, item));
+    }
+
+    return this.resolveMappedItem(binding, value);
+  }
+
+  private static resolveMappedItem(binding: Binding, value: unknown): unknown {
+    const key: string = Utils.stringify(value) ?? '';
+    if (!key || !binding.valueMap) return value;
+    return key in binding.valueMap ? binding.valueMap[key] : value;
   }
 
   private static isNode(value: unknown): value is Node {

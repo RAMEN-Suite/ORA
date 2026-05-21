@@ -1,9 +1,4 @@
-import {
-  AnnotationSegment,
-  LayoutAnnotation,
-  ResolvedAnnotation,
-  StructuredAnnotation,
-} from '../models/annotations/TextAnnotation';
+import { AnnotationSegment, LayoutAnnotation, ResolvedAnnotation, StructuredAnnotation } from '../models/TextAnnotation';
 import { AnnotationParser } from './AnnotationParser';
 import {
   ListItemSegment,
@@ -13,7 +8,7 @@ import {
   TableRowSegment,
   TableSegment,
   TextViewSegment,
-} from '../models/annotations/TextViewSegments';
+} from '../models/TextViewSegments';
 
 interface TextRange {
   start: number;

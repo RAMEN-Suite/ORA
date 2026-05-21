@@ -2,23 +2,33 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ramen-schema.org/ora/2026.1/details.schema.json",
   "title": "ORA Details",
+  "description": "Configuration for rendering entity and collection detail views.",
   "$ref": "#/$defs/detailViews",
   "$defs": {
     "bindingPath": {
       "type": "string",
+      "description": "RAMEN access path resolved relative to the current detail node.",
       "pattern": "^[A-Za-z0-9_.:\\[\\]*-]+$"
     },
     "binding": {
       "type": "object",
+      "description": "Binding resolved by the backend view endpoint relative to the current detail node.",
       "additionalProperties": false,
       "required": ["path"],
       "properties": {
         "path": {
-          "$ref": "#/$defs/bindingPath"
+          "$ref": "#/$defs/bindingPath",
+          "description": "RAMEN access path resolved by the backend view endpoint."
+        },
+        "valueMap": {
+          "type": "object",
+          "description": "Optional map replacing resolved raw values with display values before rendering.",
+          "additionalProperties": true
         }
       }
     },
     "bindingOrString": {
+      "description": "Either a backend-resolved binding or a static string.",
       "oneOf": [
         {
           "$ref": "#/$defs/binding"
@@ -30,83 +40,104 @@
     },
     "headlineProps": {
       "type": "object",
+      "description": "Properties for a headline block.",
       "additionalProperties": false,
       "required": ["title"],
       "properties": {
         "title": {
-          "$ref": "#/$defs/binding"
+          "$ref": "#/$defs/binding",
+          "description": "Binding resolving to the headline text."
         }
       }
     },
     "textProps": {
       "type": "object",
+      "description": "Properties for a text block.",
       "additionalProperties": false,
       "required": ["text"],
       "properties": {
         "title": {
-          "$ref": "#/$defs/bindingOrString"
+          "$ref": "#/$defs/bindingOrString",
+          "description": "Optional block title, either static or resolved from the backend."
         },
         "text": {
-          "$ref": "#/$defs/binding"
+          "$ref": "#/$defs/binding",
+          "description": "Binding resolving to the text content."
         },
         "annotations": {
-          "$ref": "#/$defs/binding"
+          "$ref": "#/$defs/binding",
+          "description": "Optional binding resolving to annotations applied to the text content."
         }
       }
     },
     "attributesValueItem": {
       "type": "object",
+      "description": "Attribute item rendering a scalar value.",
       "additionalProperties": false,
       "required": ["label", "value"],
       "properties": {
         "label": {
-          "type": "string"
+          "type": "string",
+          "description": "Static label or translation key shown for this attribute."
         },
         "isEmptyVisible": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether the attribute should be rendered when the resolved value is empty."
         },
         "emptyLabel": {
-          "type": "string"
+          "type": "string",
+          "description": "Fallback text or translation key shown when the resolved value is empty."
         },
         "kind": {
           "type": "string",
-          "const": "value"
+          "const": "value",
+          "description": "Declares this attribute item as a scalar value item."
         },
         "value": {
-          "$ref": "#/$defs/binding"
+          "$ref": "#/$defs/binding",
+          "description": "Binding resolving to the scalar attribute value."
         }
       }
     },
     "attributesNodeItem": {
       "type": "object",
+      "description": "Attribute item rendering one or more referenced nodes.",
       "additionalProperties": false,
       "required": ["label", "kind", "value", "property"],
       "properties": {
         "label": {
-          "type": "string"
+          "type": "string",
+          "description": "Static label or translation key shown for this attribute."
         },
         "isEmptyVisible": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether the attribute should be rendered when no referenced node is resolved."
         },
         "emptyLabel": {
-          "type": "string"
+          "type": "string",
+          "description": "Fallback text or translation key shown when no referenced node is resolved."
         },
         "kind": {
           "type": "string",
-          "const": "node"
+          "const": "node",
+          "description": "Declares this attribute item as a referenced-node item."
         },
         "value": {
-          "$ref": "#/$defs/binding"
+          "$ref": "#/$defs/binding",
+          "description": "Binding resolving to one or more referenced nodes."
         },
         "property": {
-          "type": "string"
+          "type": "string",
+          "description": "Node property used as the display value."
         },
         "isLinked": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether rendered node values should link to their detail pages."
         }
       }
     },
     "attributesItem": {
+      "description": "One attribute row in an attributes block.",
       "oneOf": [
         {
           "$ref": "#/$defs/attributesNodeItem"
@@ -118,14 +149,17 @@
     },
     "attributesProps": {
       "type": "object",
+      "description": "Properties for an attributes block.",
       "additionalProperties": false,
       "required": ["items", "title"],
       "properties": {
         "title": {
-          "type": "string"
+          "type": "string",
+          "description": "Static title or translation key shown above the attributes block."
         },
         "items": {
           "type": "array",
+          "description": "Attribute rows rendered by this block.",
           "items": {
             "$ref": "#/$defs/attributesItem"
           }
@@ -134,12 +168,14 @@
     },
     "headlineBlock": {
       "type": "object",
+      "description": "Block rendering a headline.",
       "additionalProperties": false,
       "required": ["type", "properties"],
       "properties": {
         "type": {
           "type": "string",
-          "const": "headline"
+          "const": "headline",
+          "description": "Declares this block as a headline block."
         },
         "properties": {
           "$ref": "#/$defs/headlineProps"
@@ -148,12 +184,14 @@
     },
     "attributesBlock": {
       "type": "object",
+      "description": "Block rendering labeled attributes.",
       "additionalProperties": false,
       "required": ["type", "properties"],
       "properties": {
         "type": {
           "type": "string",
-          "const": "attributes"
+          "const": "attributes",
+          "description": "Declares this block as an attributes block."
         },
         "properties": {
           "$ref": "#/$defs/attributesProps"
@@ -162,12 +200,14 @@
     },
     "textBlock": {
       "type": "object",
+      "description": "Block rendering text content, optionally with annotations.",
       "additionalProperties": false,
       "required": ["type", "properties"],
       "properties": {
         "type": {
           "type": "string",
-          "const": "text"
+          "const": "text",
+          "description": "Declares this block as a text block."
         },
         "properties": {
           "$ref": "#/$defs/textProps"
@@ -175,6 +215,7 @@
       }
     },
     "block": {
+      "description": "A block rendered in a detail view.",
       "oneOf": [
         {
           "$ref": "#/$defs/headlineBlock"
@@ -189,17 +230,20 @@
     },
     "detailView": {
       "type": "object",
+      "description": "Detail view definition for nodes matching one of the configured labels or types.",
       "additionalProperties": false,
       "required": ["match", "blocks"],
       "properties": {
         "match": {
           "type": "array",
+          "description": "Node labels or type keys this detail view applies to.",
           "items": {
             "type": "string"
           }
         },
         "blocks": {
           "type": "array",
+          "description": "Blocks rendered in this detail view.",
           "items": {
             "$ref": "#/$defs/block"
           }
@@ -208,17 +252,20 @@
     },
     "detailViews": {
       "type": "object",
+      "description": "Configured detail views for entities and collections.",
       "additionalProperties": false,
       "required": ["entity", "collection"],
       "properties": {
         "entity": {
           "type": "array",
+          "description": "Detail views for entity nodes.",
           "items": {
             "$ref": "#/$defs/detailView"
           }
         },
         "collection": {
           "type": "array",
+          "description": "Detail views for collection nodes.",
           "items": {
             "$ref": "#/$defs/detailView"
           }

@@ -2,125 +2,155 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ramen-schema.org/ora/2026.1/lists.schema.json",
   "title": "ORA Lists",
+  "description": "Configuration for entity and collection list views, including list options, visible properties, sorting, filtering, and optional client-side value maps.",
   "$ref": "#/$defs/listViews",
   "$defs": {
     "bindingPath": {
       "type": "string",
+      "description": "RAMEN path used for list display, sorting, or filtering. This is intentionally a path string rather than a full binding object to avoid expensive server-side value expansion for list queries.",
       "pattern": "^[A-Za-z0-9_.:\\[\\]*-]+$"
     },
     "sortDirection": {
       "type": "string",
+      "description": "Default direction used by a sort option group.",
       "enum": ["asc", "desc"]
     },
     "entityIndex": {
       "type": "string",
+      "description": "Optional index mode used for grouping or navigating entity lists.",
       "enum": ["character", "bible"]
     },
     "stringMap": {
       "type": "object",
+      "description": "Client-side map replacing raw list values with display labels.",
       "additionalProperties": {
         "type": "string"
       }
     },
     "property": {
       "type": "object",
+      "description": "Property displayed for each list result.",
       "additionalProperties": false,
       "required": ["name"],
       "properties": {
         "name": {
-          "$ref": "#/$defs/bindingPath"
+          "$ref": "#/$defs/bindingPath",
+          "description": "Path of the property to display for each result item."
         },
         "display": {
-          "type": "string"
+          "type": "string",
+          "description": "Optional display template. The placeholder {{ value }} is replaced with the raw or mapped value."
         },
         "valueMap": {
-          "$ref": "#/$defs/stringMap"
+          "$ref": "#/$defs/stringMap",
+          "description": "Optional client-side map replacing raw property values with display labels."
         }
       }
     },
     "filterOption": {
       "type": "object",
+      "description": "Filter available for a list option.",
       "additionalProperties": false,
       "required": ["label", "value"],
       "properties": {
         "icon": {
-          "type": "string"
+          "type": "string",
+          "description": "Optional icon class shown with the filter."
         },
         "label": {
-          "type": "string"
+          "type": "string",
+          "description": "Static label or translation key shown for the filter."
         },
         "display": {
           "type": "string",
+          "description": "Filter UI display mode.",
           "enum": ["list", "range"]
         },
         "value": {
-          "$ref": "#/$defs/bindingPath"
+          "$ref": "#/$defs/bindingPath",
+          "description": "Path used as the filter field."
         },
         "valueMap": {
-          "$ref": "#/$defs/stringMap"
+          "$ref": "#/$defs/stringMap",
+          "description": "Optional client-side map replacing raw filter values with display labels."
         }
       }
     },
     "sortOption": {
       "type": "object",
+      "description": "Sort option available for a list option.",
       "additionalProperties": false,
       "required": ["label", "value"],
       "properties": {
         "icon": {
-          "type": "string"
+          "type": "string",
+          "description": "Optional icon class shown with the sort option."
         },
         "label": {
-          "type": "string"
+          "type": "string",
+          "description": "Static label or translation key shown for the sort option."
         },
         "value": {
-          "$ref": "#/$defs/bindingPath"
+          "$ref": "#/$defs/bindingPath",
+          "description": "Path used as the sort field."
         }
       }
     },
     "sortOptionGroup": {
       "type": "object",
+      "description": "Configured sort options and their default direction.",
       "additionalProperties": false,
       "required": ["initial", "options", "direction"],
       "properties": {
         "initial": {
-          "type": "string"
+          "type": "string",
+          "description": "Value of the sort option selected by default."
         },
         "options": {
           "type": "array",
+          "description": "Available sort options.",
           "items": {
             "$ref": "#/$defs/sortOption"
           }
         },
         "direction": {
-          "$ref": "#/$defs/sortDirection"
+          "$ref": "#/$defs/sortDirection",
+          "description": "Default direction applied to the selected sort option."
         }
       }
     },
     "listOption": {
       "type": "object",
+      "description": "Selectable collection list option.",
       "additionalProperties": false,
       "required": ["label", "value"],
       "properties": {
         "icon": {
-          "type": "string"
+          "type": "string",
+          "description": "Optional icon class shown with the list option."
         },
         "label": {
-          "type": "string"
+          "type": "string",
+          "description": "Static label or translation key shown for the list option."
         },
         "value": {
-          "type": "string"
+          "type": "string",
+          "description": "Internal value identifying this list option."
         },
         "properties": {
           "type": "array",
+          "description": "Properties displayed for results in this list option.",
           "items": {
             "$ref": "#/$defs/property"
           }
         },
         "sort": {
-          "$ref": "#/$defs/sortOptionGroup"
+          "$ref": "#/$defs/sortOptionGroup",
+          "description": "Sort options available for this list option."
         },
         "filters": {
           "type": "array",
+          "description": "Filters available for this list option.",
           "items": {
             "$ref": "#/$defs/filterOption"
           }
@@ -129,45 +159,55 @@
     },
     "entityOption": {
       "type": "object",
+      "description": "Selectable entity list option.",
       "additionalProperties": false,
       "required": ["label", "value"],
       "properties": {
         "icon": {
-          "type": "string"
+          "type": "string",
+          "description": "Optional icon class shown with the entity option."
         },
         "label": {
-          "type": "string"
+          "type": "string",
+          "description": "Static label or translation key shown for the entity option."
         },
         "value": {
-          "type": "string"
+          "type": "string",
+          "description": "Internal value identifying this entity option."
         },
         "properties": {
           "type": "array",
+          "description": "Properties displayed for results in this entity option.",
           "items": {
             "$ref": "#/$defs/property"
           }
         },
         "index": {
-          "$ref": "#/$defs/entityIndex"
+          "$ref": "#/$defs/entityIndex",
+          "description": "Optional index mode used for this entity option."
         }
       }
     },
     "entityListView": {
       "type": "object",
+      "description": "Configuration for entity list navigation.",
       "additionalProperties": false,
       "required": ["initial", "options"],
       "properties": {
         "initial": {
-          "type": "string"
+          "type": "string",
+          "description": "Value of the entity option selected by default."
         },
         "options": {
           "type": "array",
+          "description": "Available entity list options.",
           "items": {
             "$ref": "#/$defs/entityOption"
           }
         },
         "properties": {
           "type": "array",
+          "description": "Default properties displayed for entity results unless overridden by an option.",
           "items": {
             "$ref": "#/$defs/property"
           }
@@ -176,20 +216,24 @@
     },
     "collectionListView": {
       "type": "object",
+      "description": "Configuration for collection list navigation.",
       "additionalProperties": false,
       "required": ["initial", "options"],
       "properties": {
         "initial": {
-          "type": "string"
+          "type": "string",
+          "description": "Value of the collection option selected by default."
         },
         "options": {
           "type": "array",
+          "description": "Available collection list options.",
           "items": {
             "$ref": "#/$defs/listOption"
           }
         },
         "properties": {
           "type": "array",
+          "description": "Default properties displayed for collection results unless overridden by an option.",
           "items": {
             "$ref": "#/$defs/property"
           }
@@ -198,14 +242,17 @@
     },
     "listViews": {
       "type": "object",
+      "description": "Top-level list view configuration.",
       "additionalProperties": false,
       "required": ["entities", "collections"],
       "properties": {
         "entities": {
-          "$ref": "#/$defs/entityListView"
+          "$ref": "#/$defs/entityListView",
+          "description": "Entity list view configuration."
         },
         "collections": {
-          "$ref": "#/$defs/collectionListView"
+          "$ref": "#/$defs/collectionListView",
+          "description": "Collection list view configuration."
         }
       }
     }

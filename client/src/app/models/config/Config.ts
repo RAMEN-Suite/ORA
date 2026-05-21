@@ -1,7 +1,7 @@
 import { ListViews } from './ListViews';
 import { DetailViews } from './DetailViews';
 import { Features } from './Features';
-import { Annotations } from '../annotations/Annotations';
+import { Annotations } from './Annotations';
 
 export type BindingPath = string;
 
@@ -14,4 +14,5 @@ export interface Config {
 
 export interface Binding {
   path: BindingPath;
+  valueMap?: Record<string, unknown>;
 }
