@@ -14,12 +14,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { Divider } from 'primeng/divider';
 import { Popover } from 'primeng/popover';
-import { BlockPathResolver } from '../../../../../resolvers/block-path.resolver';
-import { ViewResponse, ViewService } from '../../../../../services/view.service';
-import { AnnotationValue } from '../../models/Annotations';
-import { InlineAnnotation } from '../../models/TextAnnotation';
+import { BlockPathResolver } from '../../../../resolvers/block-path.resolver';
+import { ViewResponse, ViewService } from '../../../../services/view.service';
+import { AnnotationValue } from '../../../../models/annotations/Annotations';
+import { InlineAnnotation } from '../../../../models/annotations/TextAnnotation';
 import { AnnotationPopoverEntryComponent } from './annotation-popover-entry.component';
-import { ActivateDirective } from '../../../../../directives/activate.directive';
+import { ActivateDirective } from '../../../../directives/activate.directive';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 

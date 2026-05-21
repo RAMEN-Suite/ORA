@@ -4,7 +4,7 @@ import { Config } from '../models/config/Config';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { withCache } from '@ngneat/cashew';
 import { firstValueFrom } from 'rxjs';
-import { Registry } from '../models/Registry';
+import { Registry } from '../utils/Registry';
 
 @Injectable({
   providedIn: 'root',

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Binding } from '../../../../models/config/Config';
-import { BlockValueResolver } from '../../../../resolvers/block-value.resolver';
-import { Utils } from '../../../../utils/Utils';
-import { AnnotationPopover, AnnotationReference, AnnotationValue } from '../models/Annotations';
-import { TextAnnotation } from '../models/TextAnnotation';
+import { Binding } from '../models/config/Config';
+import { BlockValueResolver } from './block-value.resolver';
+import { Utils } from '../utils/Utils';
+import { AnnotationPopover, AnnotationReference, AnnotationValue } from '../models/annotations/Annotations';
+import { TextAnnotation } from '../models/annotations/TextAnnotation';
 import { AnnotationUtils } from '../utils/AnnotationUtils';
 
 export interface AnnotationReferenceView {

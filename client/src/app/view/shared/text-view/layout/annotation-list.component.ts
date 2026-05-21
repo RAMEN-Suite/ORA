@@ -1,6 +1,6 @@
 import { Component, computed, forwardRef, input, InputSignal, Signal } from '@angular/core';
 import { Panel } from 'primeng/panel';
-import { ListItemSegment, ListSegment } from '../../models/TextViewSegments';
+import { ListItemSegment, ListSegment } from '../../../../models/annotations/TextViewSegments';
 import { TextViewSegmentsComponent } from '../segments/text-view-segments.component';
 
 @Component({

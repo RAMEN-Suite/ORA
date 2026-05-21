@@ -1,7 +1,7 @@
 import { ListViews } from './ListViews';
 import { DetailViews } from './DetailViews';
 import { Features } from './Features';
-import { Annotations } from '../../view/shared/text-view/models/Annotations';
+import { Annotations } from '../annotations/Annotations';
 
 export type BindingPath = string;
 

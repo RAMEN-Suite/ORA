@@ -1,5 +1,5 @@
 import { Component, input, InputSignal } from '@angular/core';
-import { AnnotationSegment } from '../../models/TextAnnotation';
+import { AnnotationSegment } from '../../../../models/annotations/TextAnnotation';
 import { AnnotationInlineComponent } from '../inline/annotation-inline.component';
 import { AnnotationZeroPointComponent } from '../inline/annotation-zero-point.component';
 

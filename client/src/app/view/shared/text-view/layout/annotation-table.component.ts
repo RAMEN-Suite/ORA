@@ -1,5 +1,5 @@
 import { Component, computed, forwardRef, input, InputSignal, Signal } from '@angular/core';
-import { TableCellSegment, TableRowSegment, TableSegment } from '../../models/TextViewSegments';
+import { TableCellSegment, TableRowSegment, TableSegment } from '../../../../models/annotations/TextViewSegments';
 import { TextViewSegmentsComponent } from '../segments/text-view-segments.component';
 import { TableModule } from 'primeng/table';
 

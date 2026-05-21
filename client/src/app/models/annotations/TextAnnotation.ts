@@ -1,4 +1,4 @@
-import { Annotation } from '../../../../models/Node';
+import { Annotation } from '../Node';
 import { InlineDefinition, LayoutDefinition, StructureDefinition, ZeroPointDefinition } from './Annotations';
 
 export interface TextAnnotation extends Annotation {

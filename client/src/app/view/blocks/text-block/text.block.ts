@@ -4,10 +4,10 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { AbstractBlock } from '../abstract.block';
 import { TextProps } from '../../../models/config/DetailViews';
 import { TextViewComponent } from '../../shared/text-view/text-view.component';
-import { TextAnnotation } from '../../shared/text-view/models/TextAnnotation';
-import { AnnotationUtils } from '../../shared/text-view/utils/AnnotationUtils';
+import { TextAnnotation } from '../../../models/annotations/TextAnnotation';
+import { AnnotationUtils } from '../../../utils/AnnotationUtils';
 import { ConfigService } from '../../../services/config.service';
-import { Annotations } from '../../shared/text-view/models/Annotations';
+import { Annotations } from '../../../models/annotations/Annotations';
 
 @Component({
   selector: 'block-text',

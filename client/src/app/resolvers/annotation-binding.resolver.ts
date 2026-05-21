@@ -1,6 +1,6 @@
-import { Binding } from '../../../../models/config/Config';
-import { BlockValueResolver } from '../../../../resolvers/block-value.resolver';
-import { Utils } from '../../../../utils/Utils';
+import { Binding } from '../models/config/Config';
+import { BlockValueResolver } from './block-value.resolver';
+import { Utils } from '../utils/Utils';
 
 export class AnnotationBindingResolver {
   public static resolveValues(binding: Binding | undefined, values: Record<string, unknown>): string[] {

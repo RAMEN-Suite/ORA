@@ -1,5 +1,5 @@
 import { Component, input, InputSignal } from '@angular/core';
-import { ListSegment, StructureSegment, TableSegment, TextViewSegment } from '../../models/TextViewSegments';
+import { ListSegment, StructureSegment, TableSegment, TextViewSegment } from '../../../../models/annotations/TextViewSegments';
 import { AnnotationListComponent } from '../layout/annotation-list.component';
 import { AnnotationStructureComponent } from '../structure/annotation-structure.component';
 import { AnnotationTableComponent } from '../layout/annotation-table.component';

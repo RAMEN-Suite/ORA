@@ -1,8 +1,8 @@
-import { Config } from './config/Config';
-import { Features } from './config/Features';
-import { DetailView, DetailViews } from './config/DetailViews';
-import { ListViews } from './config/ListViews';
-import { Annotations } from '../view/shared/text-view/models/Annotations';
+import { Config } from '../models/config/Config';
+import { Features } from '../models/config/Features';
+import { DetailView, DetailViews } from '../models/config/DetailViews';
+import { ListViews } from '../models/config/ListViews';
+import { Annotations } from '../models/annotations/Annotations';
 
 export class Registry {
   public constructor(private readonly config: Config) {}

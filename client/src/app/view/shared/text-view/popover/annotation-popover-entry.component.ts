@@ -3,13 +3,17 @@ import { Component, computed, forwardRef, inject, input, InputSignal, Signal, si
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Button } from 'primeng/button';
 import { Tooltip } from 'primeng/tooltip';
-import { NavigationService } from '../../../../../services/navigation.service';
-import { ViewResponse } from '../../../../../services/view.service';
-import { ConfigService } from '../../../../../services/config.service';
-import { AnnotationPopover, Annotations } from '../../models/Annotations';
-import { InlineAnnotation } from '../../models/TextAnnotation';
-import { TextViewComponent } from '../../text-view.component';
-import { AnnotationPopoverResolver, AnnotationReferenceView, DescriptionView } from '../../resolver/annotation-popover.resolver';
+import { NavigationService } from '../../../../services/navigation.service';
+import { ViewResponse } from '../../../../services/view.service';
+import { ConfigService } from '../../../../services/config.service';
+import { AnnotationPopover, Annotations } from '../../../../models/annotations/Annotations';
+import { InlineAnnotation } from '../../../../models/annotations/TextAnnotation';
+import { TextViewComponent } from '../text-view.component';
+import {
+  AnnotationPopoverResolver,
+  AnnotationReferenceView,
+  DescriptionView,
+} from '../../../../resolvers/annotation-popover.resolver';
 
 @Component({
   selector: 'annotation-popover-entry',
