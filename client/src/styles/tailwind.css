@@ -38,7 +38,6 @@
   }
 }
 
-
 html,
 body {
   @apply text-primary;
@@ -48,15 +47,19 @@ body {
   @apply m-0 bg-surface-50!;
 }
 
+/**** Pagination Definitions **/
+
 .p-paginator .p-paginator-page {
   @apply transition-none!;
 }
 
-.spinner-base {
-  @apply h-16.25! w-16.25!;
+/**** Menubar Definitions **/
+
+.p-menuitem-link-active {
+  @apply bg-(--p-menubar-item-focus-background)! text-(--p-menubar-item-focus-color)! rounded-md!;
 }
 
-/** Dialog Definitions **/
+/**** General Dialog Definitions **/
 
 .p-dialog {
   @apply overflow-hidden rounded-2xl border-surface-300!;
@@ -75,8 +78,14 @@ body {
   @apply text-primary-50! text-sm! hover:bg-primary-800!;
 }
 
-/** Annotation Popover Definitions **/
+/**** Annotation Popover Definitions **/
 
 .annotation-popover-anchor-active {
   @apply rounded-sm bg-yellow-50 ring-2 ring-surface-900 ring-offset-6 z-50;
+}
+
+/** Spinner Definitions **/
+
+.spinner-base {
+  @apply h-16.25! w-16.25!;
 }

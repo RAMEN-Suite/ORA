@@ -1,0 +1,23 @@
+<p-menubar [model]="items" class="text min-h-16">
+  <ng-template #start>
+    <a routerLink="/" class="flex items-center">
+      <!-- configurable image -->
+    </a>
+  </ng-template>
+
+  <ng-template #item let-item>
+    <div class="flex items-center">
+      <a
+        routerLinkActive="p-menuitem-link-active"
+        [routerLinkActiveOptions]="item.routerLinkActiveOptions ?? { exact: false }"
+        [routerLink]="item.routerLink"
+        [ngClass]="item.linkClass"
+        class="cursor-pointer rounded-md font-medium tracking-wide transition-colors duration-200 ease-out select-none"
+      >
+        <div class="mx-4 flex items-center gap-3 rounded-sm px-2.5 py-2">
+          <span [ngClass]="item.textClass">{{ item.label }}</span>
+        </div>
+      </a>
+    </div>
+  </ng-template>
+</p-menubar>
