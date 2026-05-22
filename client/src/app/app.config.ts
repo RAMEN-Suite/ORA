@@ -7,7 +7,6 @@ import {
   provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
-
 import { routes } from './app.routes';
 import { providePrimeNG } from 'primeng/config';
 import { SuitePreset } from '../styles/suite-preset.js';
