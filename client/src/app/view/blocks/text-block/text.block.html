@@ -1,5 +1,7 @@
 @if (text(); as text) {
-  <p-fieldset styleClass="print:pb-5! border-surface-300! bg-surface-100/25! border-l-0! border-r-0! rounded-none! px-10! pb-10! pt-5!">
+  <p-fieldset
+    styleClass="print:pb-5! border-surface-300! bg-surface-100/25! border-l-0! border-r-0! rounded-none! px-3! md:px-10! pb-10! pt-5!"
+  >
     <ng-template #header>
       @if (title(); as title) {
         <span class="font-bold font-stretch-semi-condensed select-none" *transloco="let t">
