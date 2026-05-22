@@ -32,6 +32,13 @@
         "error": "Die Annotation konnte nicht geladen werden.",
         "externalLink": "Externen Link öffnen",
         "jumpTo": "Zur Annotation springen"
+      },
+      "citation": {
+        "currentVersion": "Link zur aktuellen Version:",
+        "copyLink": "Link kopieren",
+        "print": "PDF speichern",
+        "usage": "Nutzungshinweis",
+        "usageSoftware": "Die Darstellung erfolgt mit *[ORA](https://ramen-schema.org)*, einer unter Apache 2.0 lizenzierten Editionssoftware."
       }
     },
     "blocks": {

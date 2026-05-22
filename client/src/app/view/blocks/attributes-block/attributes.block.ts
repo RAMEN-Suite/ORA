@@ -25,7 +25,7 @@ interface AttributeValue {
   templateUrl: './attributes.block.html',
 })
 export class AttributesBlock extends AbstractBlock<AttributesProps> {
-  protected readonly title: Signal<string> = computed((): string => this.resolveRequiredString('title'));
+  protected readonly title: Signal<string> = computed((): string => this.properties()?.title ?? '');
 
   protected readonly attributes: Signal<Attribute[]> = computed((): Attribute[] => {
     const items: AttributesItem[] = this.properties()?.items ?? [];
@@ -45,7 +45,7 @@ export class AttributesBlock extends AbstractBlock<AttributesProps> {
   }
 
   private resolveValueItem(item: AttributesValueItem): Attribute {
-    const value: string = this.resolveString(item.value);
+    const value: string = this.resolveText(item.value);
     if (value.trim()) return { label: item.label, values: [{ value }] };
 
     const values: AttributeValue[] = item.isEmptyVisible ? [this.resolveEmptyValue(item)] : [];

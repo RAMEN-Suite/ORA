@@ -25,7 +25,7 @@
   }
 </ng-template>
 
-<p-popover appendTo="body" (onHide)="handlePopoverHide()" [focusOnShow]="false">
+<p-popover appendTo="body" styleClass="print:hidden" (onHide)="handlePopoverHide()" [focusOnShow]="false">
   <div class="max-w-96">
     <div class="absolute -top-3 -right-3 hidden md:block">
       <p-button icon="pi pi-window-maximize" rounded size="small" severity="primary" (onClick)="handleOpenDialog($event)" />
@@ -41,7 +41,7 @@
   [dismissableMask]="false"
   [visible]="isDialogOpen()"
   (visibleChange)="handleDialogChange($event)"
-  styleClass="w-100"
+  styleClass="w-100 print:hidden!"
   [pt]="{
     header: {
       onPointerdown: dialog.moveOnTop.bind(dialog),

@@ -1,14 +1,16 @@
 import { Component, Signal } from '@angular/core';
 import { ProgressSpinner } from 'primeng/progressspinner';
-import { BlockRendererComponent } from '../../shared/block-renderer/block-renderer.component';
-
 import { Collection } from '../../../models/Node';
 import { AbstractDetailScreen } from '../abstract-detail.screen';
 import { DetailView } from '../../../models/config/DetailViews';
+import { AttributesBlock } from '../../blocks/attributes-block/attributes.block';
+import { CitationBlockComponent } from '../../blocks/citation-block/citation-block.component';
+import { HeadlineBlock } from '../../blocks/headline-block/headline.block';
+import { TextBlock } from '../../blocks/text-block/text.block';
 
 @Component({
   selector: 'screen-collection',
-  imports: [ProgressSpinner, BlockRendererComponent],
+  imports: [ProgressSpinner, AttributesBlock, CitationBlockComponent, HeadlineBlock, TextBlock],
   templateUrl: './collection.screen.html',
 })
 export class CollectionScreen extends AbstractDetailScreen<Collection> {

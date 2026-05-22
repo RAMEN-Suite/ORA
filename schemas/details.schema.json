@@ -38,6 +38,73 @@
         }
       ]
     },
+    "citationTemplate": {
+      "type": "object",
+      "description": "Translation-backed template configuration used to render a citation text. The template is usually a translation key; values are resolved and passed as translation parameters.",
+      "additionalProperties": false,
+      "required": ["template"],
+      "properties": {
+        "template": {
+          "type": "string",
+          "description": "Translation key for the citation text, for example app.shared.citation.antjeBrons.default."
+        },
+        "values": {
+          "type": "object",
+          "description": "Values passed to the citation translation template. Each value is either a static translation key/string or a backend-resolved binding.",
+          "additionalProperties": {
+            "$ref": "#/$defs/bindingOrString"
+          }
+        }
+      }
+    },
+    "citationLink": {
+      "type": "object",
+      "description": "Additional external link shown with the citation actions.",
+      "additionalProperties": false,
+      "required": ["label", "href"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Static label or translation key shown for the link."
+        },
+        "href": {
+          "$ref": "#/$defs/bindingOrString",
+          "description": "External URL, either static or resolved from the backend."
+        },
+        "icon": {
+          "type": "string",
+          "description": "Optional icon class, for example a PrimeIcons class."
+        }
+      }
+    },
+    "citationProps": {
+      "type": "object",
+      "description": "Properties for a citation block.",
+      "additionalProperties": false,
+      "required": ["citation"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Static title or translation key shown above the citation block."
+        },
+        "citation": {
+          "$ref": "#/$defs/citationTemplate",
+          "description": "Template configuration used to render the citation text."
+        },
+        "license": {
+          "$ref": "#/$defs/bindingOrString",
+          "description": "Optional license key or binding resolving to a license key, for example cc-by-4.0 or app.shared.citation.license.ccBy40."
+        },
+        "links": {
+          "type": "array",
+          "description": "Additional external links shown next to the citation actions.",
+          "items": {
+            "$ref": "#/$defs/citationLink"
+          },
+          "default": []
+        }
+      }
+    },
     "headlineProps": {
       "type": "object",
       "description": "Properties for a headline block.",
@@ -214,6 +281,22 @@
         }
       }
     },
+    "citationBlock": {
+      "type": "object",
+      "description": "Block rendering a citation notice with citation text, optional license notice, and optional external links.",
+      "additionalProperties": false,
+      "required": ["type", "properties"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "citation",
+          "description": "Declares this block as a citation block."
+        },
+        "properties": {
+          "$ref": "#/$defs/citationProps"
+        }
+      }
+    },
     "block": {
       "description": "A block rendered in a detail view.",
       "oneOf": [
@@ -225,6 +308,9 @@
         },
         {
           "$ref": "#/$defs/textBlock"
+        },
+        {
+          "$ref": "#/$defs/citationBlock"
         }
       ]
     },

@@ -18,9 +18,9 @@ export class TextBlock extends AbstractBlock<TextProps> {
   private readonly configService: ConfigService = inject(ConfigService);
   protected readonly config: Annotations = this.configService.config().annotations();
 
-  protected readonly title: Signal<string> = computed((): string => this.resolveOptionalString('title'));
-  protected readonly text: Signal<string> = computed((): string => this.resolveRequiredString('text'));
+  protected readonly title: Signal<string> = computed((): string => this.resolveText(this.properties()?.title));
+  protected readonly text: Signal<string> = computed((): string => this.resolveText(this.properties()?.text));
   protected readonly annotations: Signal<TextAnnotation[]> = computed((): TextAnnotation[] =>
-    AnnotationUtils.toTextAnnotations(this.resolveOptionalNodes('annotations')),
+    AnnotationUtils.toTextAnnotations(this.resolveNodes(this.properties()?.annotations)),
   );
 }

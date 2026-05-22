@@ -14,9 +14,10 @@ import { SuitePreset } from '../styles/suite-preset.js';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideHttpCache, withHttpCacheInterceptor, withLocalStorage } from '@ngneat/cashew';
 import { ConfigService } from './services/config.service';
-import { provideMarkdown } from 'ngx-markdown';
+import { MARKED_OPTIONS, provideMarkdown } from 'ngx-markdown';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@jsverse/transloco';
+import { markedOptionsFactory } from './utils/Markdown';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,7 +28,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })),
     provideHttpClient(withInterceptors([withHttpCacheInterceptor()])),
     provideHttpCache(withLocalStorage()),
-    provideMarkdown(),
+    provideMarkdown({ markedOptions: { provide: MARKED_OPTIONS, useFactory: markedOptionsFactory } }),
     provideTransloco({
       config: {
         availableLangs: ['de', 'en', 'fr', 'it', 'es'],

@@ -3,62 +3,41 @@ import { BlockValueResolver } from '../../resolvers/block-value.resolver';
 import { Binding } from '../../models/config/Config';
 import { Node } from '../../models/Node';
 
-@Component({ template: '' })
+@Component({ template: '', host: { class: 'contents' } })
 export abstract class AbstractBlock<TProps extends object = object> {
   public readonly properties: InputSignal<TProps | undefined> = input<TProps>();
   public readonly values: InputSignal<Record<string, unknown>> = input<Record<string, unknown>>({});
 
-  protected resolveString(binding: Binding | undefined): string {
-    return BlockValueResolver.resolveString(binding, this.values());
-  }
-
-  protected resolveOptionalString(key: keyof TProps): string {
-    return this.resolveText(this.optionalProperty(key));
-  }
-
-  protected resolveRequiredString(key: keyof TProps): string {
-    return this.resolveText(this.requiredProperty(key));
-  }
-
-  protected resolveNodes(binding: Binding | undefined): Node[] {
-    return BlockValueResolver.resolveNodes(binding, this.values());
-  }
-
-  protected resolveOptionalNodes(key: keyof TProps): Node[] {
-    return this.resolveNodeList(this.optionalProperty(key));
-  }
-
-  protected resolveRequiredNodes(key: keyof TProps): Node[] {
-    return this.resolveNodeList(this.requiredProperty(key));
-  }
-
-  private resolveText(value: unknown): string {
+  protected resolveText(value: Binding | string | undefined): string {
     if (typeof value === 'string') return value;
-    if (this.isBinding(value)) return this.resolveString(value);
+    if (this.isBinding(value)) return BlockValueResolver.resolveString(value, this.values());
     return '';
   }
 
-  private resolveNodeList(value: unknown): Node[] {
-    if (this.isBinding(value)) return this.resolveNodes(value);
+  protected resolveTexts(value: Binding | string | undefined): string[] {
+    if (typeof value === 'string') return value ? [value] : [];
+    if (this.isBinding(value)) return BlockValueResolver.resolveStrings(value, this.values());
     return [];
   }
 
-  private optionalProperty(key: keyof TProps): unknown {
-    return this.properties()?.[key];
+  protected resolveNode(value: Binding | undefined): Node | undefined {
+    if (!this.isBinding(value)) return undefined;
+    return BlockValueResolver.resolveNode(value, this.values());
   }
 
-  private requiredProperty(key: keyof TProps): unknown {
-    const value: unknown = this.optionalProperty(key);
+  protected resolveNodes(value: Binding | undefined): Node[] {
+    if (!this.isBinding(value)) return [];
+    return BlockValueResolver.resolveNodes(value, this.values());
+  }
 
-    if (value === undefined || value === null) {
-      console.warn(`Missing ${this.constructor.name} Property: ${String(key)}`);
-      return undefined;
-    }
+  protected requireValue<T>(value: T | undefined | null, name: string): T | undefined {
+    if (value !== undefined && value !== null) return value;
 
-    return value;
+    console.warn(`Missing ${this.constructor.name} property: ${name}`);
+    return undefined;
   }
 
   private isBinding(value: unknown): value is Binding {
-    return typeof value === 'object' && value !== null && 'path' in value;
+    return typeof value === 'object' && value !== null && 'path' in value && typeof value.path === 'string';
   }
 }

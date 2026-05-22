@@ -8,5 +8,5 @@ import { AbstractBlock } from '../abstract.block';
   templateUrl: './headline.block.html',
 })
 export class HeadlineBlock extends AbstractBlock<HeadlineProps> {
-  protected readonly title: Signal<string> = computed((): string => this.resolveRequiredString('title'));
+  protected readonly title: Signal<string> = computed((): string => this.resolveText(this.properties()?.title));
 }

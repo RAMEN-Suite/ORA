@@ -10,7 +10,7 @@ export interface DetailView {
   blocks: Block[];
 }
 
-export type Block = Headline | Attributes | Text;
+export type Block = Headline | Attributes | Text | Citation;
 
 export interface BlockOf<TType extends string, TProps> {
   type: TType;
@@ -20,6 +20,7 @@ export interface BlockOf<TType extends string, TProps> {
 export type Headline = BlockOf<'headline', HeadlineProps>;
 export type Attributes = BlockOf<'attributes', AttributesProps>;
 export type Text = BlockOf<'text', TextProps>;
+export type Citation = BlockOf<'citation', CitationProps>;
 
 export interface HeadlineProps {
   title: Binding;
@@ -54,4 +55,22 @@ export interface AttributesNodeItem extends AttributesBaseItem {
   value: Binding;
   property: string;
   isLinked?: boolean;
+}
+
+export interface CitationProps {
+  title?: string;
+  citation: CitationTemplate;
+  license?: Binding | string;
+  links?: CitationLink[];
+}
+
+export interface CitationTemplate {
+  template: string;
+  values?: Record<string, Binding | string>;
+}
+
+export interface CitationLink {
+  label: string;
+  href: Binding | string;
+  icon?: string;
 }
