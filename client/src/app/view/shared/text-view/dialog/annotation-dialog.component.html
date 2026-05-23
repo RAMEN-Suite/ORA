@@ -43,8 +43,8 @@
   (visibleChange)="handleDialogChange($event)"
   styleClass="w-100 print:hidden!"
   [pt]="{
-    header: {
-      onPointerdown: dialog.moveOnTop.bind(dialog),
+    root: {
+      onPointerDown: dialog.moveOnTop.bind(dialog),
     },
   }"
   draggable
