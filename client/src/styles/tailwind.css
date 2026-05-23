@@ -40,7 +40,7 @@
 
 html,
 body {
-  @apply text-primary;
+  @apply text-primary overscroll-y-none;
 }
 
 body {

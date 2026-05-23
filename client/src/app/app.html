@@ -1,3 +1,11 @@
-<shared-navbar />
-<router-outlet />
-<p-scroll-top threshold="100" />
+<div class="flex min-h-dvh flex-col">
+  <div class="sticky top-0 z-50">
+    <shared-navbar />
+  </div>
+
+  <main class="min-h-dvh flex-1">
+    <router-outlet />
+  </main>
+
+  <shared-footer />
+</div>

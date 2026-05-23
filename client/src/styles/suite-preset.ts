@@ -86,7 +86,7 @@ export const SuitePreset: Preset = definePreset(Aura, {
     menubar: {
       root: {
         background: '{primary.900}',
-        borderColor: '{primary.700}',
+        borderColor: '{primary.950}',
         color: '{primary.50}',
         borderRadius: '0',
         gap: '0.5rem',
