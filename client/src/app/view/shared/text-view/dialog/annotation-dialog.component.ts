@@ -48,7 +48,12 @@ export class AnnotationDialogComponent {
   private readonly destroyRef: DestroyRef = inject(DestroyRef);
   private readonly viewService: ViewService = inject(ViewService);
 
-  private readonly popoverComponent: Signal<Popover | undefined> = viewChild(Popover);
+  private readonly parentDialog: AnnotationDialogComponent | null = inject(AnnotationDialogComponent, {
+    optional: true,
+    skipSelf: true,
+  });
+
+  private readonly popoverRef: Signal<Popover | undefined> = viewChild(Popover);
   private readonly annotationAnchor: Signal<ElementRef<HTMLElement> | undefined> = viewChild('anchor');
 
   public readonly classes: InputSignal<string> = input<string>('');
@@ -71,6 +76,7 @@ export class AnnotationDialogComponent {
 
   public handleScrollToAnnotation(uuid?: string): void {
     if (uuid && !this.hasAnnotation(uuid)) return;
+    this.parentDialog?.ensureDialogOpen();
 
     const element: HTMLElement | undefined = this.annotationAnchor()?.nativeElement;
     if (!element) return;
@@ -84,6 +90,14 @@ export class AnnotationDialogComponent {
     element.focus({ preventScroll: true });
     this.isScrollHighlighted.set(true);
     window.setTimeout((): void => this.isScrollHighlighted.set(false), 1600);
+  }
+
+  public ensureDialogOpen(): void {
+    this.parentDialog?.ensureDialogOpen();
+
+    this.popoverRef()?.hide();
+    this.isPopoverOpen.set(false);
+    this.isDialogOpen.set(true);
   }
 
   protected async handleOpenPopover(event: Event): Promise<void> {
@@ -117,7 +131,7 @@ export class AnnotationDialogComponent {
     event?.preventDefault();
     event?.stopPropagation();
 
-    this.popoverComponent()?.hide();
+    this.popoverRef()?.hide();
     this.isPopoverOpen.set(false);
     this.isDialogOpen.set(true);
   }
@@ -134,8 +148,8 @@ export class AnnotationDialogComponent {
     this.isPopoverOpen.set(true);
     const isHTMLElement: boolean = target instanceof HTMLElement;
 
-    if (!isHTMLElement) return this.popoverComponent()?.show(event);
-    this.popoverComponent()?.show(event, target);
+    if (!isHTMLElement) return this.popoverRef()?.show(event);
+    this.popoverRef()?.show(event, target);
   }
 
   private hasAnnotation(uuid: string): boolean {
