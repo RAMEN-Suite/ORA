@@ -5,9 +5,22 @@ import path from "node:path";
 import fs from "fs/promises";
 import { ValidationError, Validator, ValidatorResult } from "jsonschema";
 
+import listsSchema from "../../../schema/lists.schema.json";
+import detailsSchema from "../../../schema/details.schema.json";
+import featuresSchema from "../../../schema/features.schema.json";
+import annotationsSchema from "../../../schema/annotations.schema.json";
+import siteSchema from "../../../schema/site.schema.json";
+
 export type JSON = Record<string, unknown>;
 
-const SCHEMA_DIR: string = path.resolve(process.cwd(), "../schema");
+const SCHEMAS: Record<string, JSON> = {
+  lists: listsSchema,
+  details: detailsSchema,
+  features: featuresSchema,
+  annotations: annotationsSchema,
+  site: siteSchema,
+};
+
 const CONFIG_FILES: string[] = [
   "lists.config.json",
   "details.config.json",
@@ -36,7 +49,7 @@ export class ConfigService {
     const config: JSON = {};
 
     for (const file of CONFIG_FILES) {
-      const key: string = file.replace(".config.json", "");
+      const key: string = this.configKey(file);
       config[key] = await this.accessJSON(path.join(this.overridesPath, file));
     }
 
@@ -47,22 +60,26 @@ export class ConfigService {
     if (!this.overridesPath) throw new ServiceError(ERROR_CODE.NOT_INITIALIZED, "ConfigService not initialized");
 
     for (const file of CONFIG_FILES) {
-      const key: string = file.replace(".config.json", "");
+      const key: string = this.configKey(file);
       const configPath: string = path.join(this.overridesPath, file);
-      const schemaPath: string = path.join(SCHEMA_DIR, `${key}.schema.json`);
-
       const config: JSON = await this.accessJSON(configPath);
-      const schema: JSON = await this.readJSON(schemaPath);
+      const schema: JSON | undefined = SCHEMAS[key];
+
+      if (!schema) throw new ServiceError(ERROR_CODE.INVALID_CONFIG, `Missing schema for config key "${key}"`);
       const result: ValidatorResult = this.validator.validate(config, schema);
 
       if (!result.valid) {
         const message: string = result.errors.map((error: ValidationError): string => error.stack).join("; ");
-        logger.error({ file: configPath, schema: schemaPath, errors: result.errors }, "ConfigService: Invalid configuration.");
+        logger.error({ file: configPath, schema: `${key}.schema.json`, errors: result.errors }, "ConfigService: Error.");
         throw new ServiceError(ERROR_CODE.INVALID_CONFIG, `Invalid config against "${key}.schema.json": ${message}`);
       }
 
-      logger.debug({ file: configPath, schema: schemaPath }, "ConfigService: Configuration file validated.");
+      logger.debug({ file: configPath, schema: `${key}.schema.json` }, "ConfigService: Configuration file validated.");
     }
+  }
+
+  private static configKey(file: string): string {
+    return file.replace(".config.json", "");
   }
 
   private static async readJSON(filePath: string): Promise<JSON> {
@@ -80,7 +97,7 @@ export class ConfigService {
       await fs.access(filePath);
       return true;
     } catch (error: unknown) {
-      logger.debug(error, "ConfigService: Failed to access.");
+      logger.debug({ error, path: filePath }, "ConfigService: Failed to access.");
       return false;
     }
   }
