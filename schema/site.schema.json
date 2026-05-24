@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ramen-schema.org/ora/2026.1/site.schema.json",
+  "title": "ORA Site",
+  "description": "Configuration for site-level options such as language and navbar.",
+  "$ref": "#/$defs/siteOptions",
+  "$defs": {
+    "languageKey": {
+      "type": "string",
+      "description": "Supported application language key.",
+      "enum": ["de", "en", "fr", "es", "it"]
+    },
+    "languageOptions": {
+      "type": "object",
+      "description": "Language configuration for the application.",
+      "additionalProperties": false,
+      "required": ["initial", "available"],
+      "properties": {
+        "initial": {
+          "$ref": "#/$defs/languageKey",
+          "description": "Initial application language."
+        },
+        "available": {
+          "type": "array",
+          "description": "Languages available for selection in the application.",
+          "items": {
+            "$ref": "#/$defs/languageKey"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "navItem": {
+      "type": "object",
+      "description": "Single item in the navbar.",
+      "additionalProperties": false,
+      "required": ["label", "href"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Static label or translation key shown for the navbar item."
+        },
+        "href": {
+          "type": "string",
+          "description": "Link target for the navbar item."
+        },
+        "target": {
+          "type": "string",
+          "description": "Browsing context used when opening the navbar item.",
+          "enum": ["_blank", "_self", "_parent", "_top"]
+        },
+        "isExactMatch": {
+          "type": "boolean",
+          "description": "Whether active matching should require an exact href match.",
+          "default": false
+        }
+      }
+    },
+    "navbarOptions": {
+      "type": "object",
+      "description": "Navbar configuration.",
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "type": "string",
+          "description": "Optional image source used in the navbar."
+        },
+        "items": {
+          "type": "array",
+          "description": "Items rendered in the navbar.",
+          "items": {
+            "$ref": "#/$defs/navItem"
+          },
+          "default": []
+        }
+      }
+    },
+    "siteOptions": {
+      "type": "object",
+      "description": "Site-level configuration.",
+      "additionalProperties": false,
+      "required": ["language", "navbar"],
+      "properties": {
+        "language": {
+          "$ref": "#/$defs/languageOptions",
+          "description": "Language options for the application."
+        },
+        "navbar": {
+          "$ref": "#/$defs/navbarOptions",
+          "description": "Navbar options for the application."
+        }
+      }
+    }
+  }
+}

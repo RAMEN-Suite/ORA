@@ -1,15 +1,17 @@
 import { ListViews } from './ListViews';
 import { DetailViews } from './DetailViews';
-import { Features } from './Features';
+import { FeatureOptions } from './FeatureOptions';
 import { Annotations } from './Annotations';
+import { SiteOptions } from './SiteOptions';
 
 export type BindingPath = string;
 
 export interface Config {
+  site: SiteOptions;
   lists: ListViews;
   details: DetailViews;
-  features: Features;
   annotations: Annotations;
+  features: FeatureOptions;
 }
 
 export interface Binding {

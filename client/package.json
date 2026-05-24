@@ -30,6 +30,7 @@
     "@primeuix/themes": "^2.0.3",
     "animate.css": "^4.1.1",
     "deepmerge-ts": "^7.1.5",
+    "flag-icons": "^7.5.0",
     "marked": "^17.0.6",
     "ngx-markdown": "^21.2.0",
     "primeicons": "^7.0.0",

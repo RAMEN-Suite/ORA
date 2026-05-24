@@ -47,6 +47,37 @@ body {
   @apply m-0 bg-surface-50!;
 }
 
+/**** Panel Definitions **/
+
+.ora-page {
+  @apply min-h-screen bg-surface-950 text-surface-0;
+}
+
+.ora-panel {
+  @apply rounded-md border border-surface-300 bg-surface-0 text-surface-950;
+  @apply dark:border-surface-800 dark:bg-surface-950 dark:text-surface-0;
+}
+
+.ora-panel-subtle {
+  @apply rounded-md border border-surface-300 bg-surface-0/75 text-surface-950;
+  @apply dark:border-surface-800 dark:bg-surface-950/90 dark:text-surface-0;
+}
+
+.ora-section {
+  @apply border border-surface-300 bg-surface-50 text-surface-950;
+  @apply dark:border-surface-700 dark:bg-surface-900 dark:text-surface-0;
+}
+
+.ora-section-muted {
+  @apply border border-surface-300 bg-surface-100 text-surface-950;
+  @apply dark:border-surface-700 dark:bg-surface-800 dark:text-surface-0;
+}
+
+.ora-field {
+  @apply bg-surface-0 text-surface-950;
+  @apply dark:bg-surface-950 dark:text-surface-0;
+}
+
 /**** Pagination Definitions **/
 
 .p-paginator .p-paginator-page {

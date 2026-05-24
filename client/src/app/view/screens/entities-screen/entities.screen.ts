@@ -18,7 +18,7 @@ import { BibleAlias, BibleListHelper } from '../../features/bible-list/bible-lis
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { Entity } from '../../../models/Node';
 import { EntityIndex, EntityListOption, Property } from '../../../models/config/ListViews';
-import { BibleBook } from '../../../models/config/Features';
+import { BibleBook } from '../../../models/config/FeatureOptions';
 import { AbstractListScreen } from '../abstract-list.screen';
 import { ParseUtils } from '../../../utils/ParseUtils';
 

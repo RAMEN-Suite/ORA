@@ -1,0 +1,30 @@
+.fi {
+  display: inline-block;
+  width: 1.333em;
+  height: 1em;
+  line-height: 1em;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 0.125rem;
+}
+
+.fi-de {
+  background-image: url('flag-icons/flags/4x3/de.svg');
+}
+
+.fi-en {
+  background-image: url('flag-icons/flags/4x3/gb.svg');
+}
+
+.fi-fr {
+  background-image: url('flag-icons/flags/4x3/fr.svg');
+}
+
+.fi-es {
+  background-image: url('flag-icons/flags/4x3/es.svg');
+}
+
+.fi-it {
+  background-image: url('flag-icons/flags/4x3/it.svg');
+}

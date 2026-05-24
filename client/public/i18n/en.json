@@ -1,1 +1,56 @@
-{}
+{
+  "app": {
+    "screens": {
+      "collections": {
+        "available": "{{ count }} entries available in total",
+        "select": "Select collection:",
+        "search": "Search collection:",
+        "sort": "Sort by:",
+        "tooltips": {
+          "reset": "reset",
+          "ascending": "ascending",
+          "descending": "descending"
+        }
+      },
+      "entities": {
+        "select": "Select register:",
+        "search": "Search register:",
+        "entries": "Entries for: {{ value }}",
+        "empty": "No entries could be found.",
+        "default": "All registers"
+      }
+    },
+    "shared": {
+      "searchableList": {
+        "search": "Search list:",
+        "empty": "No entries available."
+      },
+      "textView": {
+        "copyUuid": "Copy UUID",
+        "references": "Referenced by:",
+        "empty": "No further information.",
+        "error": "The annotation could not be loaded.",
+        "externalLink": "Open external link",
+        "jumpTo": "Jump to annotation"
+      },
+      "citation": {
+        "currentVersion": "Link to the current version:",
+        "copyLink": "Copy link",
+        "print": "Save PDF",
+        "usage": "Usage note",
+        "usageSoftware": "The display is provided by *[ORA](https://ramen-schema.org)*, an edition software licensed under Apache 2.0."
+      }
+    },
+    "blocks": {
+      "attributes": {
+        "missing": "–"
+      }
+    },
+    "features": {
+      "bibleList": {
+        "search": "Search by book:",
+        "unknown": "No classification"
+      }
+    }
+  }
+}

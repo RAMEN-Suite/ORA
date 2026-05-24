@@ -15,12 +15,13 @@ import { provideHttpCache, withHttpCacheInterceptor, withLocalStorage } from '@n
 import { ConfigService } from './services/config.service';
 import { MARKED_OPTIONS, provideMarkdown } from 'ngx-markdown';
 import { TranslocoHttpLoader } from './transloco-loader';
-import { provideTransloco } from '@jsverse/transloco';
+import { provideTransloco, TranslocoService } from '@jsverse/transloco';
 import { markedOptionsFactory } from './utils/Markdown';
+import { LanguageOptions } from './models/config/SiteOptions';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideAppInitializer((): Promise<void> => inject(ConfigService).init()),
+    provideAppInitializer(initApplication),
     providePrimeNG({ theme: { preset: SuitePreset, options: { darkModeSelector: '.dark' } } }),
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
@@ -28,14 +29,17 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([withHttpCacheInterceptor()])),
     provideHttpCache(withLocalStorage()),
     provideMarkdown({ markedOptions: { provide: MARKED_OPTIONS, useFactory: markedOptionsFactory } }),
-    provideTransloco({
-      config: {
-        availableLangs: ['de', 'en', 'fr', 'it', 'es'],
-        defaultLang: 'de',
-        reRenderOnLangChange: true,
-        prodMode: !isDevMode(),
-      },
-      loader: TranslocoHttpLoader,
-    }),
+    provideTransloco({ config: { reRenderOnLangChange: true, prodMode: !isDevMode() }, loader: TranslocoHttpLoader }),
   ],
 };
+
+async function initApplication(): Promise<void> {
+  const configService: ConfigService = inject(ConfigService);
+  const translocoService: TranslocoService = inject(TranslocoService);
+  await inject(ConfigService).init();
+
+  const options: LanguageOptions = configService.config().language();
+  translocoService.setDefaultLang(options.initial);
+  translocoService.setActiveLang(options.initial);
+  translocoService.setAvailableLangs(options.available);
+}
