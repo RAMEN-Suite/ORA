@@ -1,12 +1,12 @@
-import { Component, computed, Signal } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { Fieldset } from 'primeng/fieldset';
 import { Node } from '../../../models/Node';
-import { ROUTES } from '../../../constants/ROUTES';
 import { RouterLink } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { AbstractBlock } from '../abstract.block';
 import { AttributesItem, AttributesNodeItem, AttributesProps, AttributesValueItem } from '../../../models/config/DetailViews';
 import { ParseUtils } from '../../../utils/ParseUtils';
+import { NavigationService } from '../../../services/navigation.service';
 
 interface Attribute {
   label: string;
@@ -25,6 +25,7 @@ interface AttributeValue {
   templateUrl: './attributes.block.html',
 })
 export class AttributesBlock extends AbstractBlock<AttributesProps> {
+  private readonly navigationService: NavigationService = inject(NavigationService);
   protected readonly title: Signal<string> = computed((): string => this.properties()?.title ?? '');
 
   protected readonly attributes: Signal<Attribute[]> = computed((): Attribute[] => {
@@ -82,9 +83,9 @@ export class AttributesBlock extends AbstractBlock<AttributesProps> {
     const uuid: string | undefined = ParseUtils.parseString(node['uuid']);
     if (!uuid) return [];
 
-    if (node._labels.includes('Collection')) return ['/', ROUTES.COLLECTION, uuid];
-    if (node._labels.includes('Entity')) return ['/', ROUTES.ENTITY, uuid];
-    return ['/', ROUTES.IDENTIFIER, uuid];
+    if (node._labels.includes('Collection')) return this.navigationService.collectionLink(uuid);
+    if (node._labels.includes('Entity')) return this.navigationService.entityLink(uuid);
+    return this.navigationService.nodeLink(uuid);
   }
 
   private readonly EMPTY_LABEL: string = 'app.blocks.attributes.missing';

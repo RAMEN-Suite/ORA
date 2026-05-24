@@ -20,7 +20,7 @@
             [totalRecords]="list.pagination.total"
             [rows]="list.pagination.limit"
             [skip]="list.pagination.skip"
-            [routeTarget]="['/', ROUTES.COLLECTION]"
+            [routeTarget]="['/', ROUTES.COLLECTIONS]"
             [isLoading]="$list.isLoading()"
             (pageChange)="handlePaginationChange($event)"
           />

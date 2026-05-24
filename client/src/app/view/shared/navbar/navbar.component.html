@@ -9,8 +9,8 @@
     <div class="flex items-center">
       <a
         routerLinkActive="p-menuitem-link-active"
-        [routerLinkActiveOptions]="item.routerLinkActiveOptions ?? { exact: false }"
-        [routerLink]="item.routerLink"
+        [routerLinkActiveOptions]="{ exact: item.isExactMatch }"
+        [routerLink]="item.href"
         [ngClass]="item.linkClass"
         class="cursor-pointer rounded-md font-medium tracking-wide transition-colors duration-200 ease-out select-none"
       >

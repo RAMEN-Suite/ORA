@@ -1,12 +1,13 @@
-import { CanActivateFn, Router, UrlTree } from '@angular/router';
+import { CanActivateFn, UrlTree } from '@angular/router';
 import { ConfigService } from '../services/config.service';
 import { inject } from '@angular/core';
-import { REASONS, ROUTES } from '../constants/ROUTES';
+import { REASONS } from '../constants/ROUTES';
+import { NavigationService } from '../services/navigation.service';
 
 export const configGuard: CanActivateFn = (): true | UrlTree => {
-  const config: ConfigService = inject(ConfigService);
-  const router: Router = inject(Router);
+  const navigationService: NavigationService = inject(NavigationService);
+  const configService: ConfigService = inject(ConfigService);
 
-  if (config.hasConfig()) return true;
-  return router.createUrlTree(['/', ROUTES.ERROR], { queryParams: { reason: REASONS.CONFIG } });
+  if (configService.hasConfig()) return true;
+  return navigationService.errorTree(REASONS.CONFIG);
 };

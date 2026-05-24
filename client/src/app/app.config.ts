@@ -28,10 +28,8 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })),
     provideMarkdown({ markedOptions: { provide: MARKED_OPTIONS, useFactory: markedOptionsFactory } }),
-
     provideHttpClient(withInterceptors([withHttpCacheInterceptor()])),
     provideHttpCache(withLocalStorage()),
-
     provideTransloco({ config: { reRenderOnLangChange: true, prodMode: !isDevMode() }, loader: TranslocoHttpLoader }),
   ],
 };
