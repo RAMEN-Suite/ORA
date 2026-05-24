@@ -15,9 +15,10 @@ import { provideHttpCache, withHttpCacheInterceptor, withLocalStorage } from '@n
 import { ConfigService } from './services/config.service';
 import { MARKED_OPTIONS, provideMarkdown } from 'ngx-markdown';
 import { TranslocoHttpLoader } from './transloco-loader';
-import { provideTransloco, TranslocoService } from '@jsverse/transloco';
+import { provideTransloco } from '@jsverse/transloco';
 import { markedOptionsFactory } from './utils/Markdown';
 import { LanguageOptions } from './models/config/SiteOptions';
+import { LanguageService } from './services/language.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -26,20 +27,20 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })),
+    provideMarkdown({ markedOptions: { provide: MARKED_OPTIONS, useFactory: markedOptionsFactory } }),
+
     provideHttpClient(withInterceptors([withHttpCacheInterceptor()])),
     provideHttpCache(withLocalStorage()),
-    provideMarkdown({ markedOptions: { provide: MARKED_OPTIONS, useFactory: markedOptionsFactory } }),
+
     provideTransloco({ config: { reRenderOnLangChange: true, prodMode: !isDevMode() }, loader: TranslocoHttpLoader }),
   ],
 };
 
 async function initApplication(): Promise<void> {
   const configService: ConfigService = inject(ConfigService);
-  const translocoService: TranslocoService = inject(TranslocoService);
-  await inject(ConfigService).init();
+  const languageService: LanguageService = inject(LanguageService);
+  await configService.init();
 
-  const options: LanguageOptions = configService.config().language();
-  translocoService.setDefaultLang(options.initial);
-  translocoService.setActiveLang(options.initial);
-  translocoService.setAvailableLangs(options.available);
+  const options: LanguageOptions = configService.config().site().language;
+  languageService.init(options);
 }

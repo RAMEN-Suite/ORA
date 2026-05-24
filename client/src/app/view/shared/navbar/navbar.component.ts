@@ -1,12 +1,13 @@
-import { Component, computed, inject, signal, Signal, WritableSignal } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { Menubar } from 'primeng/menubar';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { Button } from 'primeng/button';
 import { Popover } from 'primeng/popover';
-import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { AVAILABLE_LANGUAGES, LanguageKey, NavItem, SiteOptions } from '../../../models/config/SiteOptions';
 import { ConfigService } from '../../../services/config.service';
+import { LanguageService } from '../../../services/language.service';
 
 @Component({
   selector: 'shared-navbar',
@@ -14,11 +15,12 @@ import { ConfigService } from '../../../services/config.service';
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent {
-  private readonly translocoService: TranslocoService = inject(TranslocoService);
+  private readonly languageService: LanguageService = inject(LanguageService);
   private readonly configService: ConfigService = inject(ConfigService);
   private readonly config: SiteOptions = this.configService.config().site();
 
   protected image: Signal<string | undefined> = computed((): string | undefined => this.config.navbar.image);
+
   protected menuItems: Signal<NavItem[]> = computed((): NavItem[] => [
     {
       label: 'Startseite',
@@ -37,7 +39,7 @@ export class NavbarComponent {
     },
   ]);
 
-  protected readonly activeLanguage: WritableSignal<LanguageKey | undefined> = signal(this.initialLanguage());
+  protected readonly activeLanguage: Signal<LanguageKey | undefined> = this.languageService.activeLanguage;
 
   protected readonly languages: Signal<LanguageKey[]> = computed((): LanguageKey[] => {
     const languages: LanguageKey[] = this.config.language.available;
@@ -46,13 +48,6 @@ export class NavbarComponent {
 
   protected handleLanguageChange(language: LanguageKey, popover: Popover): void {
     popover.hide();
-    this.translocoService.setActiveLang(language);
-    this.activeLanguage.set(language);
-  }
-
-  private initialLanguage(): LanguageKey | undefined {
-    const activeLanguage: string = this.translocoService.getActiveLang();
-    const key: LanguageKey | undefined = AVAILABLE_LANGUAGES.find((key: LanguageKey): boolean => key === activeLanguage);
-    return key ?? this.languages()[0];
+    this.languageService.setActiveLanguage(language);
   }
 }
