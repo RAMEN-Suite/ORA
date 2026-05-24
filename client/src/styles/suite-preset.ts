@@ -108,7 +108,7 @@ export const SuitePreset: Preset = definePreset(Aura, {
       },
       submenu: {
         background: '{primary.900}',
-        borderColor: '{primary.700}',
+        borderColor: '{primary.950}',
         borderRadius: '{border.radius.sm}',
         padding: '0.75rem',
         gap: '0.25rem',

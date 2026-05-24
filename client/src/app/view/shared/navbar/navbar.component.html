@@ -1,4 +1,4 @@
-<p-menubar [model]="menuItems()" class="text min-h-12">
+<p-menubar [model]="navItems()" class="text min-h-12" *transloco="let t">
   <ng-template #start>
     <a routerLink="/" class="flex items-center">
       <!-- configurable image -->
@@ -6,42 +6,64 @@
   </ng-template>
 
   <ng-template #item let-item>
-    <div class="flex items-center">
-      <a
-        routerLinkActive="p-menuitem-link-active"
-        [routerLinkActiveOptions]="{ exact: item.isExactMatch }"
-        [routerLink]="item.href"
-        [ngClass]="item.linkClass"
-        class="cursor-pointer rounded-md font-medium tracking-wide transition-colors duration-200 ease-out select-none"
-      >
-        <div class="mx-4 flex items-center gap-3 rounded-sm px-2.5 py-2">
-          <span [ngClass]="item.textClass">{{ item.label }}</span>
-        </div>
-      </a>
+    <div class="flex cursor-pointer items-center tracking-wide select-none">
+      @if (item.href && isExternal(item.href)) {
+        <a
+          class="block w-full rounded-md"
+          [href]="item.href"
+          [target]="item.target ?? '_blank'"
+          rel="noopener noreferrer"
+          [ngClass]="item.linkClass"
+        >
+          <ng-container [ngTemplateOutlet]="navItem" [ngTemplateOutletContext]="{ item }" />
+        </a>
+      } @else if (item.href) {
+        <a
+          class="block w-full rounded-md"
+          [routerLink]="item.href"
+          routerLinkActive="p-menuitem-link-active"
+          [routerLinkActiveOptions]="{ exact: item.isExactMatch ?? item.href === '/' }"
+          [ngClass]="item.linkClass"
+        >
+          <ng-container [ngTemplateOutlet]="navItem" [ngTemplateOutletContext]="{ item }" />
+        </a>
+      } @else {
+        <a class="block w-full rounded-md" [ngClass]="item.linkClass">
+          <ng-container [ngTemplateOutlet]="navItem" [ngTemplateOutletContext]="{ item }" />
+        </a>
+      }
+    </div>
+  </ng-template>
+
+  <ng-template #navItem let-item="item">
+    <div class="mx-4 px-2.5 py-2">
+      <span [ngClass]="item.textClass">{{ t(item.label) }}</span>
     </div>
   </ng-template>
 
   <ng-template #end>
-    <div class="flex items-center gap-2 px-3" [hidden]="languages().length === 0">
-      <p-button icon="pi pi-language" rounded size="small" severity="primary" (onClick)="languagePopover.toggle($event)" />
+    @if (languages().length > 0) {
+      <div class="flex items-center gap-2 px-3">
+        <p-button icon="pi pi-language" rounded size="small" severity="primary" (onClick)="languagePopover.toggle($event)" />
 
-      <p-popover #languagePopover appendTo="body" styleClass="print:hidden">
-        <div class="flex min-w-44 flex-col gap-2 p-2" *transloco="let t">
-          @for (key of languages(); track key) {
-            @let isActiveLanguage = key === this.activeLanguage();
+        <p-popover #languagePopover appendTo="body" styleClass="print:hidden">
+          <div class="flex min-w-44 flex-col gap-2 p-2">
+            @for (key of languages(); track key) {
+              @let isActiveLanguage = key === activeLanguage();
 
-            <p-button
-              [label]="t('app.languages.' + key)"
-              [icon]="key === this.activeLanguage() ? 'pi pi-check' : 'fi fi-' + key"
-              [severity]="isActiveLanguage ? 'primary' : 'secondary'"
-              [outlined]="!isActiveLanguage"
-              size="small"
-              styleClass="w-full justify-start"
-              (onClick)="handleLanguageChange(key, languagePopover)"
-            />
-          }
-        </div>
-      </p-popover>
-    </div>
+              <p-button
+                [label]="t('app.languages.' + key)"
+                [icon]="isActiveLanguage ? 'pi pi-check' : 'fi fi-' + key"
+                [severity]="isActiveLanguage ? 'primary' : 'secondary'"
+                [outlined]="!isActiveLanguage"
+                size="small"
+                styleClass="w-full justify-start"
+                (onClick)="handleLanguageChange(key, languagePopover)"
+              />
+            }
+          </div>
+        </p-popover>
+      </div>
+    }
   </ng-template>
 </p-menubar>

@@ -18,7 +18,8 @@ interface NavbarOptions {
 
 export interface NavItem {
   label: string;
-  href: string;
+  href?: string;
   target?: '_blank' | '_self' | '_parent' | '_top';
   isExactMatch?: boolean;
+  items?: NavItem[];
 }

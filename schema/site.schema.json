@@ -31,29 +31,54 @@
         }
       }
     },
+    "navTarget": {
+      "type": "string",
+      "description": "Browsing context used when opening the nav item.",
+      "enum": ["_blank", "_self", "_parent", "_top"]
+    },
     "navItem": {
       "type": "object",
-      "description": "Single item in the navbar.",
+      "description": "Single navigation item. Items can either link to a target or contain nested child items.",
       "additionalProperties": false,
-      "required": ["label", "href"],
+      "required": ["label"],
+      "anyOf": [
+        {
+          "required": ["href"]
+        },
+        {
+          "required": ["items"]
+        }
+      ],
+      "dependentRequired": {
+        "target": ["href"],
+        "isExactMatch": ["href"]
+      },
       "properties": {
         "label": {
           "type": "string",
-          "description": "Static label or translation key shown for the navbar item."
+          "description": "Static label or translation key shown for the nav item.",
+          "minLength": 1
         },
         "href": {
           "type": "string",
-          "description": "Link target for the navbar item."
+          "description": "Link target for the nav item. Can be an internal application route or an external URL.",
+          "minLength": 1
         },
         "target": {
-          "type": "string",
-          "description": "Browsing context used when opening the navbar item.",
-          "enum": ["_blank", "_self", "_parent", "_top"]
+          "$ref": "#/$defs/navTarget"
         },
         "isExactMatch": {
           "type": "boolean",
           "description": "Whether active matching should require an exact href match.",
           "default": false
+        },
+        "items": {
+          "type": "array",
+          "description": "Nested child navigation items.",
+          "items": {
+            "$ref": "#/$defs/navItem"
+          },
+          "minItems": 1
         }
       }
     },
@@ -64,7 +89,8 @@
       "properties": {
         "image": {
           "type": "string",
-          "description": "Optional image source used in the navbar."
+          "description": "Optional image source used in the navbar.",
+          "minLength": 1
         },
         "items": {
           "type": "array",
