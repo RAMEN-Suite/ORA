@@ -13,6 +13,7 @@ export class NavigationService {
       relativeTo: route,
       queryParams: params,
       queryParamsHandling: 'merge',
+      replaceUrl: true,
       ...options,
     });
   }
