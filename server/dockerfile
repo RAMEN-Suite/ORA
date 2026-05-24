@@ -4,13 +4,12 @@ ENV NPM_CONFIG_UPDATE_NOTIFIER=false \
   NPM_CONFIG_FUND=false
 
 FROM base AS deps
-COPY package*.json .
+COPY server/package*.json .
 RUN npm ci --omit=dev
 
 FROM base AS build
-COPY . .
+COPY server .
 RUN npm ci && npm run build
-
 
 FROM node:24-alpine3.23 AS runtime
 WORKDIR /app
@@ -22,7 +21,8 @@ RUN addgroup -S nodeapp && adduser -S nodeapp -G nodeapp && \
 
 COPY --from=deps --chown=nodeapp:nodeapp /app/node_modules ./node_modules
 COPY --from=build --chown=nodeapp:nodeapp /app/dist ./dist
-COPY --chown=nodeapp:nodeapp package.json .
+COPY --from=build --chown=nodeapp:nodeapp /app/package.json .
+COPY --chown=nodeapp:nodeapp schema /schema
 
 EXPOSE 3000
 USER nodeapp

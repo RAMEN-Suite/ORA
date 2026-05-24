@@ -4,10 +4,12 @@ on:
   pull_request:
     paths:
       - "server/**"
+      - "schema/**"
       - ".github/workflows/server.yml"
   push:
     paths:
       - "server/**"
+      - "schema/**"
       - ".github/workflows/server.yml"
 
 defaults:
@@ -75,7 +77,7 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v7.1.0
         with:
-          context: server
+          context: .
           file: server/dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
