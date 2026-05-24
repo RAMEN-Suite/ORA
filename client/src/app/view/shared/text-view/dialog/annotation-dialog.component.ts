@@ -1,198 +1,193 @@
 import {
   Component,
   computed,
-  DestroyRef,
   ElementRef,
   inject,
   input,
   InputSignal,
-  signal,
   Signal,
+  signal,
   viewChild,
   WritableSignal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { firstValueFrom } from 'rxjs';
-import { Divider } from 'primeng/divider';
-import { Popover } from 'primeng/popover';
-import { BlockPathResolver } from '../../../../resolvers/block-path.resolver';
-import { ViewResponse, ViewService } from '../../../../services/view.service';
-import { AnnotationDialog, AnnotationValue } from '../../../../models/config/Annotations';
-import { InlineAnnotation } from '../../../../models/TextAnnotation';
-import { AnnotationDialogItemComponent } from './annotation-dialog-item.component';
-import { ActivateDirective } from '../../../../directives/activate.directive';
+import { NgTemplateOutlet } from '@angular/common';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
-import { NgTemplateOutlet } from '@angular/common';
+import { Divider } from 'primeng/divider';
+import { Popover } from 'primeng/popover';
 import { TranslocoDirective } from '@jsverse/transloco';
-
-const LOADING_STYLE_CLASSES: string[] = ['cursor-wait'];
-const DEFAULT_STYLE_CLASSES: string[] = ['cursor-pointer'];
+import { ActivateDirective } from '../../../../directives/activate.directive';
+import { InlineAnnotation } from '../../../../models/TextAnnotation';
+import { AnnotationDialogItemComponent } from './annotation-dialog-item.component';
+import { AnnotationDialogController } from './annotation-dialog.controller';
 
 @Component({
   selector: 'annotation-dialog',
   imports: [
-    Divider,
-    AnnotationDialogItemComponent,
     ActivateDirective,
-    Popover,
+    AnnotationDialogItemComponent,
     Button,
     Dialog,
+    Divider,
     NgTemplateOutlet,
+    Popover,
     TranslocoDirective,
   ],
+  providers: [AnnotationDialogController],
   templateUrl: './annotation-dialog.component.html',
   host: { class: 'contents' },
 })
 export class AnnotationDialogComponent {
-  private readonly destroyRef: DestroyRef = inject(DestroyRef);
-  private readonly viewService: ViewService = inject(ViewService);
-
-  private readonly parentDialog: AnnotationDialogComponent | null = inject(AnnotationDialogComponent, {
+  protected readonly controller: AnnotationDialogController = inject(AnnotationDialogController);
+  protected readonly parent: AnnotationDialogComponent | null = inject(AnnotationDialogComponent, {
     optional: true,
     skipSelf: true,
   });
 
-  private readonly popoverRef: Signal<Popover | undefined> = viewChild(Popover);
-  private readonly annotationAnchor: Signal<ElementRef<HTMLElement> | undefined> = viewChild('anchor');
+  private readonly popover: Signal<Popover | undefined> = viewChild(Popover);
+  private readonly anchor: Signal<ElementRef<HTMLElement> | undefined> = viewChild<ElementRef<HTMLElement>>('anchor');
 
   public readonly classes: InputSignal<string> = input<string>('');
   public readonly annotations: InputSignal<InlineAnnotation[]> = input<InlineAnnotation[]>([]);
 
-  protected readonly isScrollHighlighted: WritableSignal<boolean> = signal(false);
-  protected readonly isLoading: WritableSignal<boolean> = signal(false);
   protected readonly isPopoverOpen: WritableSignal<boolean> = signal(false);
   protected readonly isDialogOpen: WritableSignal<boolean> = signal(false);
-  protected readonly hasError: WritableSignal<boolean> = signal(false);
 
-  protected readonly currentAnnotations: WritableSignal<InlineAnnotation[]> = signal<InlineAnnotation[]>([]);
-  protected readonly viewMap: WritableSignal<Record<string, ViewResponse | undefined>> = signal({});
+  private readonly isJumpHighlighted: WritableSignal<boolean> = signal(false);
+  private readonly activeAnnotationIds: WritableSignal<string[]> = signal<string[]>([]);
 
-  protected readonly relevant: Signal<InlineAnnotation[]> = computed((): InlineAnnotation[] => this.filterAnnotations());
-  protected readonly hasRelevant: Signal<boolean> = computed((): boolean => this.relevant().length > 0);
+  private readonly dialogs: Signal<InlineAnnotation[]> = computed((): InlineAnnotation[] => this.getDialogAnnotations());
 
-  protected readonly loadingClasses: Signal<string> = computed((): string => LOADING_STYLE_CLASSES.join(' '));
-  protected readonly defaultClasses: Signal<string> = computed((): string => DEFAULT_STYLE_CLASSES.join(' '));
+  protected readonly selected: Signal<InlineAnnotation[]> = computed((): InlineAnnotation[] => this.getSelectedAnnotations());
+  protected readonly isInteractive: Signal<boolean> = computed((): boolean => this.selected().length > 0);
+  protected readonly triggerClasses: Signal<string> = computed((): string => this.getTriggerClasses());
+  protected readonly isHighlighted: Signal<boolean> = computed((): boolean => this.getIsHighlighted());
+
+  public ensureDialogOpen(): void {
+    this.parent?.ensureDialogOpen();
+    this.showDialog();
+  }
+
+  public setActiveAnnotations(annotations: InlineAnnotation[], active: boolean): void {
+    const ids: string[] = annotations.map((annotation: InlineAnnotation): string => annotation.uuid);
+    const idSet: Set<string> = new Set<string>(ids);
+
+    this.activeAnnotationIds.update((current: string[]): string[] => {
+      if (active) return Array.from(new Set([...current, ...ids]));
+      return current.filter((id: string): boolean => !idSet.has(id));
+    });
+  }
 
   public handleScrollToAnnotation(uuid?: string): void {
     if (uuid && !this.hasAnnotation(uuid)) return;
-    this.parentDialog?.ensureDialogOpen();
+    this.parent?.ensureDialogOpen();
 
-    const element: HTMLElement | undefined = this.annotationAnchor()?.nativeElement;
+    const element: HTMLElement | undefined = this.anchor()?.nativeElement;
     if (!element) return;
 
-    element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'nearest',
-    });
-
+    element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
     element.focus({ preventScroll: true });
-    this.isScrollHighlighted.set(true);
-    window.setTimeout((): void => this.isScrollHighlighted.set(false), 1600);
+    this.highlightTemporarily();
   }
 
-  public ensureDialogOpen(): void {
-    this.parentDialog?.ensureDialogOpen();
-
-    this.popoverRef()?.hide();
-    this.isPopoverOpen.set(false);
-    this.isDialogOpen.set(true);
-  }
-
-  protected async handleOpenPopover(event: Event): Promise<void> {
-    if (!this.hasRelevant() || this.isLoading()) return;
+  protected async handleOpenAnnotation(event: Event): Promise<void> {
+    if (!this.isInteractive()) return;
     event.preventDefault();
     event.stopPropagation();
 
-    const target: EventTarget | null = event.currentTarget;
-    const annotations: InlineAnnotation[] = this.relevant();
+    const loaded: boolean = await this.controller.load(this.selected());
+    if (!loaded) return;
 
-    this.currentAnnotations.set(annotations);
-    this.isLoading.set(true);
-
-    try {
-      const response: Record<string, ViewResponse | undefined> = await this.resolveView(annotations);
-      this.viewMap.set(response);
-      this.showPopover(event, target);
-    } catch {
-      this.hasError.set(true);
-      this.showPopover(event, target);
-    } finally {
-      this.isLoading.set(false);
+    if (this.isInsideDialog(event.currentTarget)) {
+      this.openDialog(true);
+      return;
     }
+
+    this.openPopover(event);
+  }
+
+  protected handleOpenDialog(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.openDialog(false);
   }
 
   protected handlePopoverHide(): void {
     this.isPopoverOpen.set(false);
   }
 
-  protected handleOpenDialog(event?: Event): void {
-    event?.preventDefault();
-    event?.stopPropagation();
+  protected handleDialogChange(open: boolean): void {
+    this.isDialogOpen.set(open);
+    if (!open) this.parent?.setActiveAnnotations(this.controller.currentAnnotations(), false);
+  }
 
-    this.popoverRef()?.hide();
+  private getDialogAnnotations(): InlineAnnotation[] {
+    return this.annotations().filter((annotation: InlineAnnotation): boolean => annotation.definition.behavior === 'dialog');
+  }
+
+  private getSelectedAnnotations(): InlineAnnotation[] {
+    const annotation: InlineAnnotation | undefined = this.dialogs()[0];
+    return annotation ? [annotation] : [];
+  }
+
+  private getTriggerClasses(): string {
+    const classes: string[] = [this.classes()];
+
+    if (this.isInteractive()) classes.push('cursor-pointer');
+    if (this.controller.isLoading()) classes.push('cursor-wait');
+
+    return classes.filter(Boolean).join(' ');
+  }
+
+  private getIsHighlighted(): boolean {
+    return this.isDialogOpen() || this.isJumpHighlighted() || this.isHighlightedFromParent();
+  }
+
+  private openPopover(event: Event): void {
+    const target: EventTarget | null = event.currentTarget;
+    this.isPopoverOpen.set(true);
+
+    if (target instanceof HTMLElement) {
+      this.popover()?.show(event, target);
+      return;
+    }
+
+    this.popover()?.show(event);
+  }
+
+  private openDialog(openParents: boolean): void {
+    if (openParents) this.parent?.ensureDialogOpen();
+
+    this.showDialog();
+    this.parent?.setActiveAnnotations(this.controller.currentAnnotations(), true);
+  }
+
+  private showDialog(): void {
+    this.popover()?.hide();
     this.isPopoverOpen.set(false);
     this.isDialogOpen.set(true);
-  }
-
-  protected handleDialogChange(isVisible: boolean): void {
-    this.isDialogOpen.set(isVisible);
-  }
-
-  protected getViewResponse(annotation: InlineAnnotation): ViewResponse | undefined {
-    return this.viewMap()[annotation.uuid];
-  }
-
-  private showPopover(event: Event, target: EventTarget | null): void {
-    this.isPopoverOpen.set(true);
-    const isHTMLElement: boolean = target instanceof HTMLElement;
-
-    if (!isHTMLElement) return this.popoverRef()?.show(event);
-    this.popoverRef()?.show(event, target);
   }
 
   private hasAnnotation(uuid: string): boolean {
     return this.annotations().some((annotation: InlineAnnotation): boolean => annotation.uuid === uuid);
   }
 
-  private filterAnnotations(): InlineAnnotation[] {
-    return this.annotations().filter((annotation: InlineAnnotation): boolean => annotation.definition.behavior === 'dialog');
+  private isHighlightedFromParent(): boolean {
+    const activeIds: string[] = this.parent?.activeAnnotationIds() ?? [];
+    return this.annotations().some((annotation: InlineAnnotation): boolean => activeIds.includes(annotation.uuid));
   }
 
-  private async resolveView(annotations: InlineAnnotation[]): Promise<Record<string, ViewResponse | undefined>> {
-    const entries: [string, ViewResponse | undefined][] = await Promise.all(
-      annotations.map(async (annotation: InlineAnnotation): Promise<[string, ViewResponse | undefined]> => {
-        const response: ViewResponse | undefined = await this.fetchView(annotation);
-        return [annotation.uuid, response];
-      }),
-    );
+  private isInsideDialog(target: EventTarget | null): boolean {
+    if (!(target instanceof HTMLElement)) return false;
 
-    return Object.fromEntries(entries);
+    const dialog: Element | null = target.closest('.p-dialog');
+    const popover: Element | null = target.closest('.p-popover, .p-popover-panel');
+
+    return !!dialog && !popover;
   }
 
-  private async fetchView(annotation: InlineAnnotation): Promise<ViewResponse | undefined> {
-    const paths: string[] = this.resolveViewPaths(annotation);
-    if (paths.length === 0) return undefined;
-
-    const uuid: string = annotation.uuid;
-    return await firstValueFrom(this.viewService.fetchViewOnce(uuid, paths).pipe(takeUntilDestroyed(this.destroyRef)));
-  }
-
-  private resolveViewPaths(annotation: InlineAnnotation): string[] {
-    const dialog: AnnotationDialog | undefined = annotation.definition.dialog;
-    const paths: string[] = BlockPathResolver.resolvePaths(dialog);
-
-    for (const description of dialog?.description ?? []) {
-      const annotationPath: string | undefined = this.annotationPath(description);
-      if (annotationPath) paths.push(annotationPath);
-    }
-
-    return Array.from(new Set(paths)).sort();
-  }
-
-  private annotationPath(description: AnnotationValue): string | undefined {
-    const path: string | undefined = description.annotations?.path;
-    return path && path.trim().length > 0 ? path : undefined;
+  private highlightTemporarily(): void {
+    this.isJumpHighlighted.set(true);
+    window.setTimeout((): void => this.isJumpHighlighted.set(false), 1600);
   }
 }

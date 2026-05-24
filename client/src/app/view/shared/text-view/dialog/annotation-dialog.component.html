@@ -1,47 +1,52 @@
-@let isInteractive = hasRelevant();
-@let triggerClasses = classes() + " " + (isInteractive ? defaultClasses() : "") + " " + (isLoading() ? loadingClasses() : "");
-
 <span
   #anchor
   class="relative inline"
-  [class]="triggerClasses"
-  [class.annotation-popover-anchor-active]="isDialogOpen() || isScrollHighlighted()"
-  [attr.role]="isInteractive ? 'button' : null"
-  [attr.tabindex]="isInteractive ? 0 : null"
-  [attr.aria-busy]="isLoading() ? 'true' : null"
-  (onActivate)="handleOpenPopover($event)"
+  [class]="triggerClasses()"
+  [class.annotation-popover-anchor-active]="isHighlighted()"
+  [attr.role]="isInteractive() ? 'button' : null"
+  [attr.tabindex]="isInteractive() ? 0 : null"
+  [attr.aria-busy]="controller.isLoading() ? 'true' : null"
+  (onActivate)="handleOpenAnnotation($event)"
 >
   <ng-content />
 </span>
 
-<ng-template #annotation let-open="open">
-  @if (hasError()) {
-    <div class="text-surface-500 max-w-80 p-3 text-sm" *transloco="let t">{{ t("app.shared.textView.error") }}</div>
+<ng-template #annotationContent let-open="open">
+  @if (controller.hasError()) {
+    <div class="text-surface-500 max-w-80 p-3 text-sm" *transloco="let t">
+      {{ t("app.shared.textView.error") }}
+    </div>
   } @else {
-    @for (annotation of currentAnnotations(); track annotation.uuid) {
-      <annotation-dialog-item [annotation]="annotation" [viewResponse]="getViewResponse(annotation)" [isAnnotationOpened]="open" />
+    @for (annotation of controller.currentAnnotations(); track annotation.uuid) {
+      <annotation-dialog-item
+        [annotation]="annotation"
+        [viewResponse]="controller.viewMap()[annotation.uuid]"
+        [isAnnotationOpened]="open"
+      />
+
       <p-divider [hidden]="$last" />
     }
   }
 </ng-template>
 
-<p-popover appendTo="body" styleClass="print:hidden" (onHide)="handlePopoverHide()" [focusOnShow]="false">
+<p-popover styleClass="print:hidden" [focusOnShow]="false" (onHide)="handlePopoverHide()">
   <div class="max-w-96">
     <div class="absolute -top-3 -right-3 hidden md:block">
       <p-button icon="pi pi-window-maximize" rounded size="small" severity="primary" (onClick)="handleOpenDialog($event)" />
     </div>
-    <ng-container *ngTemplateOutlet="annotation; context: { open: isPopoverOpen() }" />
+
+    <ng-container *ngTemplateOutlet="annotationContent; context: { open: isPopoverOpen() }" />
   </div>
 </p-popover>
 
 <p-dialog
   #dialog
   appendTo="body"
+  minY="60"
+  styleClass="w-100 print:hidden!"
   [modal]="false"
   [dismissableMask]="false"
   [visible]="isDialogOpen()"
-  (visibleChange)="handleDialogChange($event)"
-  styleClass="w-100 print:hidden!"
   [pt]="{
     root: {
       onPointerDown: dialog.moveOnTop.bind(dialog),
@@ -50,6 +55,7 @@
   draggable
   closable
   resizable
+  (visibleChange)="handleDialogChange($event)"
 >
   <ng-template #header>
     <div class="px-2" *transloco="let t">
@@ -57,5 +63,5 @@
     </div>
   </ng-template>
 
-  <ng-container *ngTemplateOutlet="annotation; context: { open: isDialogOpen() }" />
+  <ng-container *ngTemplateOutlet="annotationContent; context: { open: isDialogOpen() }" />
 </p-dialog>
