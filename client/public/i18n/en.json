@@ -1,5 +1,12 @@
 {
   "app": {
+    "languages": {
+      "de": "Deutsch",
+      "en": "English",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano"
+    },
     "screens": {
       "collections": {
         "available": "{{ count }} entries available in total",
