@@ -28,4 +28,6 @@ export const view: ValidationChain[] = [
   query("paths.*").isString().isLength({ min: 1, max: 512 }).trim(),
 ];
 
-export const chains = { filter, list, view };
+export const language: ValidationChain[] = [param("language").matches(REGEXP.LANGUAGE)];
+
+export const chains = { filter, list, view, language };
