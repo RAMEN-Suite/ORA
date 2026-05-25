@@ -93,14 +93,11 @@ export class AnnotationDialogComponent {
     event.preventDefault();
     event.stopPropagation();
 
+    const isInsideDialog: boolean = this.isInsideDialog(event.currentTarget);
     const loaded: boolean = await this.controller.load(this.selected());
     if (!loaded) return;
 
-    if (this.isInsideDialog(event.currentTarget)) {
-      this.openDialog(true);
-      return;
-    }
-
+    if (isInsideDialog) return this.openDialog(true);
     this.openPopover(event);
   }
 
