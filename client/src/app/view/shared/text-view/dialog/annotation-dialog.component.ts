@@ -56,9 +56,7 @@ export class AnnotationDialogComponent {
   private readonly isJumpHighlighted: WritableSignal<boolean> = signal(false);
   private readonly activeAnnotationIds: WritableSignal<string[]> = signal<string[]>([]);
 
-  private readonly dialogs: Signal<InlineAnnotation[]> = computed((): InlineAnnotation[] => this.getDialogAnnotations());
-
-  protected readonly selected: Signal<InlineAnnotation[]> = computed((): InlineAnnotation[] => this.getSelectedAnnotations());
+  protected readonly selected: Signal<InlineAnnotation[]> = computed((): InlineAnnotation[] => this.getDialogAnnotations());
   protected readonly isInteractive: Signal<boolean> = computed((): boolean => this.selected().length > 0);
   protected readonly triggerClasses: Signal<string> = computed((): string => this.getTriggerClasses());
   protected readonly isHighlighted: Signal<boolean> = computed((): boolean => this.getIsHighlighted());
@@ -123,11 +121,6 @@ export class AnnotationDialogComponent {
 
   private getDialogAnnotations(): InlineAnnotation[] {
     return this.annotations().filter((annotation: InlineAnnotation): boolean => annotation.definition.behavior === 'dialog');
-  }
-
-  private getSelectedAnnotations(): InlineAnnotation[] {
-    const annotation: InlineAnnotation | undefined = this.dialogs()[0];
-    return annotation ? [annotation] : [];
   }
 
   private getTriggerClasses(): string {
