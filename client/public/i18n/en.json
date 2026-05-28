@@ -46,6 +46,9 @@
         "print": "Save PDF",
         "usage": "Usage note",
         "usageSoftware": "The display is provided by *[ORA](https://ramen-schema.org)*, an edition software licensed under Apache 2.0."
+      },
+      "footer": {
+        "software": "Powered by [ORA]({{ url }})."
       }
     },
     "blocks": {

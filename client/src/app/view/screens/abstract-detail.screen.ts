@@ -64,11 +64,11 @@ export abstract class AbstractDetailScreen<TNode extends Node = Node> {
 
   protected handleNodeError(error: unknown): Observable<never> {
     if (error instanceof HttpErrorResponse && error.status === 404) {
-      this.navigationService.toNotFound();
+      void this.navigationService.toNotFound();
       return EMPTY;
     }
 
-    this.navigationService.toError(REASONS.SERVER);
+    void this.navigationService.toError(REASONS.SERVER);
     return EMPTY;
   }
 }

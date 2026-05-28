@@ -117,12 +117,12 @@ export class CollectionsScreen extends AbstractListScreen {
     const next: QueryOptions = { ...this.queryOptions(), ...change };
     const limit: number = PaginationUtils.parseLimit(next.limit);
     const page: number = PaginationUtils.skipToPage(next.skip, limit);
-    this.navigationService.updateQuery(this.route, { page, limit }, { scroll: 'manual' });
+    void this.navigationService.updateQuery(this.route, { page, limit }, { scroll: 'manual' });
   }
 
   protected handleActiveItemChange(option: ListOption | undefined): void {
     if (!option) return;
-    this.navigationService.updateQuery(this.route, {
+    void this.navigationService.updateQuery(this.route, {
       label: option.value,
       limit: this.queryOptions().limit,
       page: 1,
@@ -133,24 +133,24 @@ export class CollectionsScreen extends AbstractListScreen {
   protected handleSearchChange(searchPhrase: string): void {
     const search: string = searchPhrase.trim();
     if (search.length < 3 && search !== '') return;
-    this.navigationService.updateQuery(this.route, { search: search || null, page: 1 }, { scroll: 'manual' });
+    void this.navigationService.updateQuery(this.route, { search: search || null, page: 1 }, { scroll: 'manual' });
   }
 
   protected handleFilterChange(filters: ActiveFilter[]): void {
     const activeFilters: string[] = filters.map(FilterUtils.serializeFilter);
-    this.navigationService.updateQuery(this.route, { filters: activeFilters, page: 1 }, { scroll: 'manual' });
+    void this.navigationService.updateQuery(this.route, { filters: activeFilters, page: 1 }, { scroll: 'manual' });
   }
 
   protected handleSortChange(change: Partial<Pick<QueryOptions, 'asc' | 'orderBy'>>): void {
     const next: QueryOptions = { ...this.queryOptions(), ...change };
     const newOrder: string = next.orderBy ?? 'label';
     const newDirection: string = String(next.asc);
-    this.navigationService.updateQuery(this.route, { orderBy: newOrder, asc: newDirection, page: 1 }, { scroll: 'manual' });
+    void this.navigationService.updateQuery(this.route, { orderBy: newOrder, asc: newDirection, page: 1 }, { scroll: 'manual' });
   }
 
   protected handleClearFilter(): void {
     this.facetListComponent()?.collapseAccordions();
-    this.navigationService.updateQuery(this.route, null, { queryParamsHandling: null });
+    void this.navigationService.updateQuery(this.route, null, { queryParamsHandling: null });
   }
 
   private applyQueryParams(params: Params): void {

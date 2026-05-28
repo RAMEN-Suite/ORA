@@ -45,7 +45,10 @@
         "copyLink": "Copier le lien",
         "print": "Enregistrer le PDF",
         "usage": "Note d’utilisation",
-        "usageSoftware": "L’affichage est assuré par *[ORA](https://ramen-schema.org)*, un logiciel d’édition sous licence Apache 2.0."
+        "usageSoftware": "L’affichage est assuré par *[ORA]({{ url }})*, un logiciel d’édition sous licence Apache 2.0."
+      },
+      "footer": {
+        "software": "Powered by [ORA]({{ url }})."
       }
     },
     "blocks": {

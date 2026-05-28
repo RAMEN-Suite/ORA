@@ -28,7 +28,7 @@
           <ng-container [ngTemplateOutlet]="navItem" [ngTemplateOutletContext]="{ item }" />
         </a>
       } @else {
-        <a class="block w-full rounded-md" [ngClass]="item.linkClass">
+        <a tabindex="0" class="block w-full rounded-md" [ngClass]="item.linkClass">
           <ng-container [ngTemplateOutlet]="navItem" [ngTemplateOutletContext]="{ item }" />
         </a>
       }

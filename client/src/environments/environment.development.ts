@@ -6,6 +6,7 @@ export const environment = {
     view: '/view',
     config: '/config',
     i18n: '/i18n',
+    content: '/content',
   },
   repositoryURL: 'https://github.com/RAMEN-Suite',
   softwareURL: 'https://ramen-schema.org',

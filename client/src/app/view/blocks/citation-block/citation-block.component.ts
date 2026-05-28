@@ -33,7 +33,8 @@ export class CitationBlockComponent extends AbstractBlock<CitationProps> {
   protected readonly usage: Signal<string> = computed((): string => {
     const license: string = this.license();
     const licenseText: string = license ? this.translocoService.translate(license) : '';
-    const softwareText: string = this.translocoService.translate('app.shared.citation.usageSoftware');
+    const url: string = environment.softwareURL;
+    const softwareText: string = this.translocoService.translate('app.shared.citation.usageSoftware', { url });
     return [licenseText, softwareText].filter(Boolean).join(' ');
   });
 

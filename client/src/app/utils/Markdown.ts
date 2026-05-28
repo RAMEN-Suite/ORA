@@ -6,7 +6,7 @@ export function markedOptionsFactory(): { renderer: MarkedRenderer } {
 
   renderer.link = ({ href, title, text }: Tokens.Link): string => {
     const titleAttr: string = title ? ` title="${title}"` : '';
-    return `<a href="${href}"${titleAttr} class="underline underline-offset-2" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    return `<a href="${href}"${titleAttr} target="_blank" rel="noopener noreferrer">${text}</a>`;
   };
 
   return { renderer };

@@ -8,8 +8,12 @@ import { REASONS, ROUTES } from '../constants/ROUTES';
 export class NavigationService {
   private readonly router: Router = inject(Router);
 
-  public updateQuery(route: ActivatedRoute, params: Params | null, options?: NavigationExtras): void {
-    void this.router.navigate([], {
+  public navigateByUrl(url: string, options?: NavigationExtras): Promise<boolean> {
+    return this.router.navigateByUrl(url, options);
+  }
+
+  public updateQuery(route: ActivatedRoute, params: Params | null, options?: NavigationExtras): Promise<boolean> {
+    return this.router.navigate([], {
       relativeTo: route,
       queryParams: params,
       queryParamsHandling: 'merge',
@@ -18,8 +22,8 @@ export class NavigationService {
     });
   }
 
-  public toNode(uuid: string, options?: NavigationExtras): void {
-    void this.router.navigate(this.nodeLink(uuid), { ...options });
+  public toNode(uuid: string, options?: NavigationExtras): Promise<boolean> {
+    return this.router.navigate(this.nodeLink(uuid), { ...options });
   }
 
   public nodeTree(uuid: string): UrlTree {
@@ -46,8 +50,8 @@ export class NavigationService {
     return ['/', ROUTES.ENTITIES, uuid];
   }
 
-  public toNotFound(options?: NavigationExtras): void {
-    void this.router.navigate(this.notFoundLink(), { replaceUrl: true, ...options });
+  public toNotFound(options?: NavigationExtras): Promise<boolean> {
+    return this.router.navigate(this.notFoundLink(), { replaceUrl: true, ...options });
   }
 
   public notFoundTree(): UrlTree {
@@ -58,8 +62,8 @@ export class NavigationService {
     return ['/', ROUTES.NOT_FOUND];
   }
 
-  public toError(reason: REASONS, options?: NavigationExtras): void {
-    void this.router.navigate(this.errorLink(), { queryParams: { reason }, replaceUrl: true, ...options });
+  public toError(reason: REASONS, options?: NavigationExtras): Promise<boolean> {
+    return this.router.navigate(this.errorLink(), { queryParams: { reason }, replaceUrl: true, ...options });
   }
 
   public errorTree(reason: REASONS): UrlTree {

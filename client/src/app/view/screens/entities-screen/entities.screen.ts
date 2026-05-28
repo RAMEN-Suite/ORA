@@ -104,12 +104,12 @@ export class EntitiesScreen extends AbstractListScreen<EntityListOption> {
     if (!option) return;
     this.activeOption.set(option);
     this.activeIndex.set('');
-    this.navigationService.updateQuery(this.route, { label: option.value || null, index: null });
+    void this.navigationService.updateQuery(this.route, { label: option.value || null, index: null });
   }
 
   protected handleIndexChange(index: string): void {
     this.activeIndex.set(index);
-    this.navigationService.updateQuery(this.route, { index: this.searchPhrase() === '' ? index : null });
+    void this.navigationService.updateQuery(this.route, { index: this.searchPhrase() === '' ? index : null });
   }
 
   protected handleSearchChange(input: string): void {
@@ -118,7 +118,7 @@ export class EntitiesScreen extends AbstractListScreen<EntityListOption> {
     this.searchPhrase.set(phrase);
 
     const index: string | null = phrase === '' ? this.activeIndex() : null;
-    this.navigationService.updateQuery(this.route, { index, search: phrase || null });
+    void this.navigationService.updateQuery(this.route, { index, search: phrase || null });
   }
 
   private filterEntityList(): Entity[] {
