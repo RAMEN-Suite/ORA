@@ -1,11 +1,14 @@
 <footer class="flex flex-col" *transloco="let t">
-  <section class="bg-primary-800 border-primary-950 border-t px-5 py-12">
-    <div class="mx-auto flex max-w-7xl flex-wrap gap-10">
+  <section class="bg-primary-800 border-primary-950 border-t px-5 py-10 md:py-12">
+    <div class="mx-auto flex max-w-7xl flex-wrap gap-x-10 gap-y-8 md:gap-y-10">
       @for (column of columns; track $index) {
-        <section class="text-primary-50 flex min-w-64 flex-1 basis-64 flex-col gap-4" [ngClass]="column.classes ?? []">
+        <section
+          class="text-primary-50 flex min-w-64 flex-1 basis-64 flex-col gap-3 md:gap-4"
+          [ngClass]="column.kind === 'empty' ? ['hidden', 'lg:flex', ...(column.classes ?? [])] : (column.classes ?? [])"
+        >
           @switch (column.kind) {
             @case ("empty") {
-              <div class="hidden lg:block" aria-hidden="true"></div>
+              <div aria-hidden="true"></div>
             }
 
             @case ("links") {
@@ -13,8 +16,8 @@
                 {{ t(column.caption) }}
               </h2>
 
-              <nav class="flex flex-col gap-3">
-                @for (item of column.items; track $index) {
+              <nav class="flex flex-col gap-2.5 md:gap-3">
+                @for (item of column.items; track item.label ?? item.href ?? $index) {
                   <a
                     class="text-primary-100/80 hover:text-primary-50 flex items-center gap-2 transition"
                     [ngClass]="item.classes ?? []"
@@ -47,15 +50,15 @@
   </section>
 
   @if (cooperation && cooperation.items.length) {
-    <section class="text-primary-50 bg-primary-900 px-5 py-12">
-      <div class="mx-auto flex max-w-7xl flex-col items-center gap-7">
+    <section class="text-primary-50 bg-primary-900 px-5 py-10 md:py-12">
+      <div class="mx-auto flex max-w-7xl flex-col items-center gap-6 md:gap-7">
         @if (cooperation.caption) {
           <h2 class="text-sm font-semibold tracking-wide uppercase">
             {{ t(cooperation.caption) }}
           </h2>
         }
 
-        <div class="flex w-full flex-wrap items-center justify-center gap-5">
+        <div class="flex w-full flex-wrap items-center justify-center gap-4 md:gap-5">
           @for (item of cooperation.items; track item.src) {
             @if (item.href) {
               <a
@@ -80,17 +83,17 @@
     </section>
   }
 
-  <section class="bg-primary-950 px-5 py-3">
-    <div class="flex w-full flex-col gap-2 text-sm md:flex-row md:items-center md:justify-between">
+  <section class="bg-primary-950 px-5 py-4 md:py-3">
+    <div class="flex w-full flex-col items-center gap-3 text-center text-sm md:flex-row md:items-center md:justify-between md:text-left">
       @if (notice) {
-        <div class="text-primary-50 flex flex-wrap gap-1 tracking-tighter select-none">
+        <div class="text-primary-50 flex flex-wrap justify-center gap-1 tracking-tighter select-none md:justify-start">
           <markdown class="[&>p]:m-0" [data]="t(notice, { currentYear })"></markdown>
           <markdown class="[&>p]:m-0" [data]="t('app.shared.footer.software', { url: softwareUrl })"></markdown>
         </div>
       }
 
       @if (links.length) {
-        <nav class="flex flex-wrap gap-x-4 gap-y-1 md:justify-end" aria-label="Footer links">
+        <nav class="flex flex-wrap justify-center gap-x-4 gap-y-1 md:justify-end" aria-label="Footer links">
           @for (item of links; track item.label ?? item.href ?? $index) {
             <a
               class="text-primary-100/70 hover:text-primary-50 transition"

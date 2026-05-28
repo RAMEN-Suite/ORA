@@ -10,6 +10,7 @@ import { viewRedirect } from './guards/view.redirect';
 import { PARAMS, ROUTES } from './constants/ROUTES';
 
 export const routes: Routes = [
+  { path: ROUTES.ERROR, component: ErrorScreen },
   {
     path: '',
     canActivate: [configGuard],
@@ -17,11 +18,12 @@ export const routes: Routes = [
       { path: `${ROUTES.IDENTIFIER}/:${PARAMS.UUID}`, redirectTo: viewRedirect },
       { path: ROUTES.COLLECTIONS, component: CollectionsScreen },
       { path: ROUTES.ENTITIES, component: EntitiesScreen },
+
       { path: `${ROUTES.ENTITIES}/:${PARAMS.UUID}`, component: EntityScreen },
       { path: `${ROUTES.COLLECTIONS}/:${PARAMS.UUID}`, component: CollectionScreen },
+
+      { path: ROUTES.NOT_FOUND, component: NotFoundScreen },
+      { path: '**', redirectTo: ROUTES.NOT_FOUND },
     ],
   },
-  { path: ROUTES.NOT_FOUND, component: NotFoundScreen },
-  { path: ROUTES.ERROR, component: ErrorScreen },
-  { path: '**', redirectTo: ROUTES.NOT_FOUND },
 ];

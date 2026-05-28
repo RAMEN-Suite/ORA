@@ -1,13 +1,17 @@
 <div class="flex min-h-dvh flex-col">
-  <div class="sticky top-0 z-9999 h-15 print:hidden">
-    <shared-navbar />
-  </div>
+  @if (hasConfig()) {
+    <div class="sticky top-0 z-9999 h-15 print:hidden">
+      <shared-navbar />
+    </div>
+  }
 
   <main class="min-h-dvh flex-1">
     <router-outlet />
   </main>
 
-  <div class="print:hidden">
-    <shared-footer />
-  </div>
+  @if (hasConfig()) {
+    <div class="print:hidden">
+      <shared-footer />
+    </div>
+  }
 </div>

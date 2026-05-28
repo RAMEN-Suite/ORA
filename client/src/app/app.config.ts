@@ -39,6 +39,7 @@ async function initApplication(): Promise<void> {
   const languageService: LanguageService = inject(LanguageService);
   await configService.init();
 
+  if (!configService.hasConfig()) return;
   const options: LanguageOptions = configService.config().site().language;
   languageService.init(options);
 }

@@ -8,10 +8,6 @@ import { REASONS, ROUTES } from '../constants/ROUTES';
 export class NavigationService {
   private readonly router: Router = inject(Router);
 
-  public navigateByUrl(url: string, options?: NavigationExtras): Promise<boolean> {
-    return this.router.navigateByUrl(url, options);
-  }
-
   public updateQuery(route: ActivatedRoute, params: Params | null, options?: NavigationExtras): Promise<boolean> {
     return this.router.navigate([], {
       relativeTo: route,
@@ -20,14 +16,6 @@ export class NavigationService {
       replaceUrl: true,
       ...options,
     });
-  }
-
-  public toNode(uuid: string, options?: NavigationExtras): Promise<boolean> {
-    return this.router.navigate(this.nodeLink(uuid), { ...options });
-  }
-
-  public nodeTree(uuid: string): UrlTree {
-    return this.router.createUrlTree(this.nodeLink(uuid));
   }
 
   public nodeLink(uuid: string): string[] {
