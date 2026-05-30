@@ -1,5 +1,5 @@
 import { Component, input, InputSignal } from '@angular/core';
-import { ListSegment, StructureSegment, TableSegment, TextViewSegment } from '../../../../models/TextViewSegments';
+import { ListSegment, StructureSegment, TableSegment, ViewSegment } from '../../../../models/annotations/ViewSegments';
 import { AnnotationListComponent } from '../layout/annotation-list.component';
 import { AnnotationStructureComponent } from '../structure/annotation-structure.component';
 import { AnnotationTableComponent } from '../layout/annotation-table.component';
@@ -11,17 +11,17 @@ import { AnnotationSegmentsComponent } from './annotation-segments.component';
   templateUrl: './text-view-segments.component.html',
 })
 export class TextViewSegmentsComponent {
-  public readonly segments: InputSignal<TextViewSegment[]> = input<TextViewSegment[]>([]);
+  public readonly segments: InputSignal<ViewSegment[]> = input<ViewSegment[]>([]);
 
-  protected isStructure(segment: TextViewSegment): segment is StructureSegment {
+  protected isStructure(segment: ViewSegment): segment is StructureSegment {
     return segment.kind === 'structure';
   }
 
-  protected isTable(segment: TextViewSegment): segment is TableSegment {
+  protected isTable(segment: ViewSegment): segment is TableSegment {
     return segment.kind === 'table';
   }
 
-  protected isList(segment: TextViewSegment): segment is ListSegment {
+  protected isList(segment: ViewSegment): segment is ListSegment {
     return segment.kind === 'list';
   }
 }

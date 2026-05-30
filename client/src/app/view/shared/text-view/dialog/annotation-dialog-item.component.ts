@@ -6,10 +6,10 @@ import { Tooltip } from 'primeng/tooltip';
 import { ViewResponse } from '../../../../services/view.service';
 import { ConfigService } from '../../../../services/config.service';
 import { AnnotationDialog, Annotations } from '../../../../models/config/Annotations';
-import { InlineAnnotation } from '../../../../models/TextAnnotation';
 import { TextViewComponent } from '../text-view.component';
 import { AnnotationDialogResolver, DialogDescription, DialogReference } from '../../../../resolvers/annotation-dialog.resolver';
 import { ROUTES } from '../../../../constants/ROUTES';
+import { InlineAnnotation } from '../../../../models/annotations/ResolvedAnnotation';
 
 @Component({
   selector: 'annotation-dialog-item',
@@ -30,7 +30,6 @@ export class AnnotationDialogItemComponent {
   protected readonly values: Signal<Record<string, unknown>> = computed((): Record<string, unknown> => {
     return this.viewResponse()?.values ?? {};
   });
-
   protected readonly dialog: Signal<AnnotationDialog | undefined> = computed((): AnnotationDialog | undefined => {
     return this.annotation().definition.dialog;
   });
@@ -38,15 +37,12 @@ export class AnnotationDialogItemComponent {
   protected readonly title: Signal<string> = computed((): string => {
     return this.dialog()?.title ?? this.annotation().type;
   });
-
   protected readonly descriptions: Signal<DialogDescription[]> = computed((): DialogDescription[] => {
     return AnnotationDialogResolver.resolveDescriptions(this.dialog(), this.values());
   });
-
   protected readonly references: Signal<DialogReference[]> = computed((): DialogReference[] => {
     return AnnotationDialogResolver.resolveReferences(this.dialog(), this.values());
   });
-
   protected readonly externalLink: Signal<string> = computed((): string => {
     return AnnotationDialogResolver.resolveExternalLink(this.dialog(), this.values());
   });

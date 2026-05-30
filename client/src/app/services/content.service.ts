@@ -1,7 +1,7 @@
 import { HttpClient, httpResource, HttpResourceRef, HttpResourceRequest } from '@angular/common/http';
 import { inject, Injectable, Signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { environment } from '../../envs/environment';
 import { withCache } from '@ngneat/cashew';
 
 @Injectable({

@@ -1,0 +1,12 @@
+@let triggerClasses = classes();
+@let wrapperClasses = isMargin() ? marginClasses() : "";
+
+@if (isMargin()) {
+  <span class="inline-block h-[1em] w-0 align-baseline" #anchor></span>
+}
+
+<span [class]="wrapperClasses" [ngStyle]="isMargin() ? marginPosition() : null" #detached>
+  <annotation-dialog [annotations]="[annotation()]" [classes]="triggerClasses">
+    {{ displayLabel() }}
+  </annotation-dialog>
+</span>

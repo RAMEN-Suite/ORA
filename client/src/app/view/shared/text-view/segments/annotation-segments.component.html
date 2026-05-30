@@ -6,8 +6,14 @@
     @case ("inline-range") {
       <annotation-inline [segment]="segment" />
     }
+    @case ("detached") {
+      <annotation-detach [annotation]="segment.annotation" />
+    }
     @case ("zero-point") {
-      <annotation-zero-point [segment]="segment" />
+      <annotation-detach [annotation]="segment.annotation" />
+    }
+    @case ("line-break") {
+      <br />
     }
   }
 }

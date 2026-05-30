@@ -5,7 +5,7 @@ import { MarkdownComponent } from 'ngx-markdown';
 import { ImageModule } from 'primeng/image';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../envs/environment';
 import { ConfigService } from '../../../services/config.service';
 import { ContentService } from '../../../services/content.service';
 import {
@@ -16,7 +16,9 @@ import {
   NavItem,
   SiteOptions,
 } from '../../../models/config/SiteOptions';
-import { REGEXP } from '../../../constants/REGEXP';
+
+const MARKDOWN_IMAGE: RegExp = /!\[([^\]]*)]\(([^)\s]+)(?:\s+"([^"]*)")?\)/g;
+const EXTERNAL_URL: RegExp = /^https?:\/\//i;
 
 @Component({
   selector: 'shared-footer',
@@ -63,8 +65,8 @@ export class FooterComponent {
   }
 
   private resolveMarkdownAssets(markdown: string): string {
-    return markdown.replace(REGEXP.MARKDOWN_IMAGE, (_match: string, alt: string, src: string, title?: string): string => {
-      if (REGEXP.EXTERNAL_URL.test(src)) return title ? `![${alt}](${src} "${title}")` : `![${alt}](${src})`;
+    return markdown.replace(MARKDOWN_IMAGE, (_match: string, alt: string, src: string, title?: string): string => {
+      if (EXTERNAL_URL.test(src)) return title ? `![${alt}](${src} "${title}")` : `![${alt}](${src})`;
       const assetUrl: string = this.getAssetUrl(src);
       return title ? `![${alt}](${assetUrl} "${title}")` : `![${alt}](${assetUrl})`;
     });

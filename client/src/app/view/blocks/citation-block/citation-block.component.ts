@@ -2,7 +2,7 @@ import { Component, computed, inject, input, InputSignal, signal, Signal, Writab
 import { AbstractBlock } from '../abstract.block';
 import { CitationLink, CitationProps } from '../../../models/config/DetailViews';
 import { Binding } from '../../../models/config/Config';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../envs/environment';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { Fieldset } from 'primeng/fieldset';
 import { Clipboard } from '@angular/cdk/clipboard';

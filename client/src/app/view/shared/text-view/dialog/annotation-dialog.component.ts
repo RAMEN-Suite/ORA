@@ -17,9 +17,9 @@ import { Divider } from 'primeng/divider';
 import { Popover } from 'primeng/popover';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { ActivateDirective } from '../../../../directives/activate.directive';
-import { InlineAnnotation } from '../../../../models/TextAnnotation';
 import { AnnotationDialogItemComponent } from './annotation-dialog-item.component';
 import { AnnotationDialogController } from './annotation-dialog.controller';
+import { InlineAnnotation } from '../../../../models/annotations/ResolvedAnnotation';
 
 @Component({
   selector: 'annotation-dialog',
@@ -117,7 +117,9 @@ export class AnnotationDialogComponent {
   }
 
   private getDialogAnnotations(): InlineAnnotation[] {
-    return this.annotations().filter((annotation: InlineAnnotation): boolean => annotation.definition.behavior === 'dialog');
+    return this.annotations().filter((annotation: InlineAnnotation): boolean => {
+      return annotation.definition.behavior === 'dialog' || annotation.definition.behavior === 'detach';
+    });
   }
 
   private getTriggerClasses(): string {

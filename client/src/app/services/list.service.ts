@@ -2,7 +2,7 @@ import { Injectable, Signal } from '@angular/core';
 import { HttpParams, httpResource, HttpResourceRef, HttpResourceRequest } from '@angular/common/http';
 import { withCache } from '@ngneat/cashew';
 import { List, Listable, QueryOptions } from '../models/List';
-import { environment } from '../../environments/environment';
+import { environment } from '../../envs/environment';
 import { FacetGroup, FacetOptions } from '../models/Facet';
 import { FilterUtils } from '../utils/FilterUtils';
 import { ParseUtils } from '../utils/ParseUtils';

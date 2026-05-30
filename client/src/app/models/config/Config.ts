@@ -8,9 +8,11 @@ export type BindingPath = string;
 
 export interface Config {
   site: SiteOptions;
+
   lists: ListViews;
   details: DetailViews;
   annotations: Annotations;
+
   features: FeatureOptions;
 }
 

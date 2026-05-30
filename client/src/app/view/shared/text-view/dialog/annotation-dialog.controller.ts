@@ -3,8 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { firstValueFrom } from 'rxjs';
 import { BlockPathResolver } from '../../../../resolvers/block-path.resolver';
 import { AnnotationDialog } from '../../../../models/config/Annotations';
-import { InlineAnnotation } from '../../../../models/TextAnnotation';
 import { ViewResponse, ViewService } from '../../../../services/view.service';
+import { InlineAnnotation } from '../../../../models/annotations/ResolvedAnnotation';
 
 @Injectable()
 export class AnnotationDialogController {
