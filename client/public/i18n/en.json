@@ -14,9 +14,9 @@
         "search": "Search collection:",
         "sort": "Sort by:",
         "tooltips": {
-          "reset": "reset",
-          "ascending": "ascending",
-          "descending": "descending"
+          "reset": "Reset",
+          "ascending": "Ascending",
+          "descending": "Descending"
         }
       },
       "entities": {
@@ -28,6 +28,9 @@
       }
     },
     "shared": {
+      "index": {
+        "unknown": "No classification"
+      },
       "searchableList": {
         "search": "Search list:",
         "empty": "No entries available."
@@ -41,25 +44,19 @@
         "jumpTo": "Jump to annotation"
       },
       "citation": {
-        "currentVersion": "Link to the current version:",
+        "currentVersion": "Link to current version:",
         "copyLink": "Copy link",
         "print": "Save PDF",
         "usage": "Usage note",
-        "usageSoftware": "The display is provided by *[ORA](https://ramen-schema.org)*, an edition software licensed under Apache 2.0."
+        "usageSoftware": "The presentation is rendered with *[ORA](https://ramen-schema.org)*, edition software licensed under Apache 2.0."
       },
       "footer": {
-        "software": "Powered by [ORA]({{ url }})."
+        "software": "Presented with <b>[ORA]({{ url }})</b>."
       }
     },
     "blocks": {
       "attributes": {
         "missing": "–"
-      }
-    },
-    "features": {
-      "bibleList": {
-        "search": "Search by book:",
-        "unknown": "No classification"
       }
     }
   }

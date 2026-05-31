@@ -20,7 +20,7 @@ import { Collection } from '../../../models/Node';
 import { FilterOption, ListOption, Option, Property } from '../../../models/config/ListViews';
 import { AbstractListScreen } from '../abstract-list.screen';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { ROUTES } from '../../../constants/ROUTES';
+import { ROUTES } from '../../../app.routes';
 import { ParseUtils } from '../../../utils/ParseUtils';
 
 @Component({

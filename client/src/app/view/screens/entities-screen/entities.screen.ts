@@ -4,23 +4,23 @@ import { InputText } from 'primeng/inputtext';
 import { FormsModule } from '@angular/forms';
 import { HttpResourceRef } from '@angular/common/http';
 import { DataView } from 'primeng/dataview';
-import { CharacterListComponent } from '../../shared/character-list/character-list.component';
 import { ActivatedRoute, Params } from '@angular/router';
 import { Utils } from '../../../utils/Utils';
 import { NavigationService } from '../../../services/navigation.service';
 import { List, Listable, QueryOptions } from '../../../models/List';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SelectComponent } from '../../shared/select/select.component';
-import { ROUTES } from '../../../constants/ROUTES';
+import { ROUTES } from '../../../app.routes';
 import { NodesViewComponent } from '../../shared/data-view/nodes-view/nodes-view.component';
-import { BibleListComponent } from '../../features/bible-list/bible-list.component';
-import { BibleAlias, BibleListHelper } from '../../features/bible-list/bible-list.helper';
-import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { Entity } from '../../../models/Node';
-import { EntityIndex, EntityListOption, Property } from '../../../models/config/ListViews';
-import { BibleBook } from '../../../models/config/FeatureOptions';
+import { EntityListOption, Property } from '../../../models/config/ListViews';
 import { AbstractListScreen } from '../abstract-list.screen';
 import { ParseUtils } from '../../../utils/ParseUtils';
+import { SearchableListComponent, SearchableOption } from '../../shared/searchable-list/searchable-list.component';
+import { ListIndexService } from '../../../services/list-index/list-index.service';
+import { ListIndex } from '../../../models/ListIndex';
+import { CharacterListComponent } from '../../shared/character-list/character-list.component';
 
 const DEFAULT_OPTION: EntityListOption = {
   icon: 'pi pi-folder-open',
@@ -36,36 +36,39 @@ const DEFAULT_OPTION: EntityListOption = {
     InputText,
     FormsModule,
     DataView,
-    CharacterListComponent,
     SelectComponent,
     NodesViewComponent,
-    BibleListComponent,
     TranslocoDirective,
+    SearchableListComponent,
+    CharacterListComponent,
   ],
   templateUrl: './entities.screen.html',
 })
 export class EntitiesScreen extends AbstractListScreen<EntityListOption> {
-  private readonly translocoService: TranslocoService = inject(TranslocoService);
   private readonly navigationService: NavigationService = inject(NavigationService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly listIndexService: ListIndexService = inject(ListIndexService);
 
-  protected readonly bibleBooks: BibleBook[] = this.config.feature('bible');
-  protected readonly bibleAliases: BibleAlias[] = BibleListHelper.createIndex(this.bibleBooks);
-
-  protected readonly indexType: Signal<EntityIndex> = computed((): EntityIndex => this.activeOption()?.index ?? 'character');
   protected readonly activeIndex: WritableSignal<string> = signal('');
-  protected readonly activeIndexLabel: Signal<string> = computed((): string => {
-    if (this.searchPhrase()) return this.searchPhrase();
-    const index: string = this.activeIndex();
-    return index.length > 1 ? this.translocoService.translate(index) : index;
-  });
-
   protected readonly searchPhrase: WritableSignal<string> = signal('');
-  protected readonly filteredEntities: Signal<Entity[]> = computed((): Entity[] => this.filterEntityList());
 
+  protected readonly filteredEntities: Signal<Entity[]> = computed((): Entity[] => this.filterEntityList());
   protected readonly entityLabels: Signal<string[]> = computed((): string[] =>
     this.entities().data.map((entity: Entity): string => entity.label),
   );
+
+  protected readonly indexOptions: Signal<SearchableOption[]> = computed((): SearchableOption[] =>
+    this.activeListIndex().options(this.entityLabels()),
+  );
+  protected readonly activeListIndex: Signal<ListIndex> = computed(
+    (): ListIndex => this.listIndexService.getIndex(this.activeOption()?.index),
+  );
+  protected readonly activeIndexLabel: Signal<string> = computed((): string => {
+    if (this.searchPhrase()) return this.searchPhrase();
+    const index: string = this.activeIndex();
+    const option: SearchableOption | undefined = this.indexOptions().find((c: SearchableOption): boolean => c.value === index);
+    return option?.label ?? index;
+  });
 
   protected readonly queryOptions: Signal<QueryOptions> = signal({
     orderBy: 'label',
@@ -128,9 +131,7 @@ export class EntitiesScreen extends AbstractListScreen<EntityListOption> {
 
     if (searchPhrase !== '') return this.filterBySearch(entities, searchPhrase);
     if (currentIndex === '') return [];
-    if (this.indexType() === 'bible') return this.filterByBible(entities, currentIndex);
-
-    return this.filterByDefault(entities, currentIndex);
+    return this.filterByList(entities, currentIndex);
   }
 
   private filterBySearch(entities: Entity[], searchPhrase: string): Entity[] {
@@ -140,17 +141,10 @@ export class EntitiesScreen extends AbstractListScreen<EntityListOption> {
     });
   }
 
-  private filterByBible(entities: Entity[], currentIndex: string): Entity[] {
-    return entities
-      .filter((entity: Entity): boolean => BibleListHelper.value(entity.label, this.bibleAliases) === currentIndex)
-      .sort((a: Entity, b: Entity): number => BibleListHelper.compare(a.label, b.label, this.bibleAliases));
-  }
-
-  private filterByDefault(entities: Entity[], currentIndex: string): Entity[] {
-    return entities.filter((entity: Entity): boolean => {
-      const index: string = Utils.firstCharacter(entity.label);
-      return currentIndex === '' || currentIndex === index;
-    });
+  private filterByList(entities: Entity[], currentIndex: string): Entity[] {
+    const index: ListIndex = this.activeListIndex();
+    const filtered: Entity[] = entities.filter((entity: Entity): boolean => index.value(entity.label) === currentIndex);
+    return filtered.sort((a: Entity, b: Entity): number => index.compare(a.label, b.label));
   }
 
   private applyQueryParams(params: Params): void {

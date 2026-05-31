@@ -1,5 +1,5 @@
 import { Config } from '../models/config/Config';
-import { FeatureOptions } from '../models/config/FeatureOptions';
+import { ListIndexConfig } from '../models/config/IndexOptions';
 import { DetailView, DetailViews } from '../models/config/DetailViews';
 import { ListViews } from '../models/config/ListViews';
 import { Annotations } from '../models/config/Annotations';
@@ -36,7 +36,7 @@ export class Registry {
     return this.config.annotations;
   }
 
-  public feature<K extends keyof FeatureOptions>(key: K): FeatureOptions[K] {
-    return this.config.features[key];
+  public index(key: string): ListIndexConfig | undefined {
+    return this.config.indexes[key];
   }
 }

@@ -1,6 +1,6 @@
 import { ListViews } from './ListViews';
 import { DetailViews } from './DetailViews';
-import { FeatureOptions } from './FeatureOptions';
+import { IndexOptions } from './IndexOptions';
 import { Annotations } from './Annotations';
 import { SiteOptions } from './SiteOptions';
 
@@ -13,7 +13,7 @@ export interface Config {
   details: DetailViews;
   annotations: Annotations;
 
-  features: FeatureOptions;
+  indexes: IndexOptions;
 }
 
 export interface Binding {

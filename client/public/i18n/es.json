@@ -1,1 +1,63 @@
-{}
+{
+  "app": {
+    "languages": {
+      "de": "Deutsch",
+      "en": "English",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano"
+    },
+    "screens": {
+      "collections": {
+        "available": "{{ count }} entradas disponibles en total",
+        "select": "Seleccionar colección:",
+        "search": "Buscar en la colección:",
+        "sort": "Ordenar por:",
+        "tooltips": {
+          "reset": "Restablecer",
+          "ascending": "Ascendente",
+          "descending": "Descendente"
+        }
+      },
+      "entities": {
+        "select": "Seleccionar registro:",
+        "search": "Buscar en el registro:",
+        "entries": "Entradas de: {{ value }}",
+        "empty": "No se pudieron encontrar entradas.",
+        "default": "Todos los registros"
+      }
+    },
+    "shared": {
+      "index": {
+        "unknown": "Sin clasificación"
+      },
+      "searchableList": {
+        "search": "Buscar en la lista:",
+        "empty": "No hay entradas disponibles."
+      },
+      "textView": {
+        "copyUuid": "Copiar UUID",
+        "references": "Referenciado por:",
+        "empty": "No hay más información.",
+        "error": "No se pudo cargar la anotación.",
+        "externalLink": "Abrir enlace externo",
+        "jumpTo": "Ir a la anotación"
+      },
+      "citation": {
+        "currentVersion": "Enlace a la versión actual:",
+        "copyLink": "Copiar enlace",
+        "print": "Guardar PDF",
+        "usage": "Nota de uso",
+        "usageSoftware": "La presentación se realiza con *[ORA](https://ramen-schema.org)*, un software de edición con licencia Apache 2.0."
+      },
+      "footer": {
+        "software": "Presentado con <b>[ORA]({{ url }})</b>."
+      }
+    },
+    "blocks": {
+      "attributes": {
+        "missing": "–"
+      }
+    }
+  }
+}

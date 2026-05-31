@@ -8,8 +8,8 @@ import { ConfigService } from '../../../../services/config.service';
 import { AnnotationDialog, Annotations } from '../../../../models/config/Annotations';
 import { TextViewComponent } from '../text-view.component';
 import { AnnotationDialogResolver, DialogDescription, DialogReference } from '../../../../resolvers/annotation-dialog.resolver';
-import { ROUTES } from '../../../../constants/ROUTES';
 import { InlineAnnotation } from '../../../../models/annotations/ResolvedAnnotation';
+import { ROUTES } from '../../../../app.routes';
 
 @Component({
   selector: 'annotation-dialog-item',

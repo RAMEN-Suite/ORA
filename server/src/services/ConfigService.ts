@@ -12,7 +12,7 @@ const SCHEMA_DIR: string = path.resolve(process.cwd(), "../schema");
 const CONFIG_FILES = [
   "lists.config.json",
   "details.config.json",
-  "features.config.json",
+  "indexes.config.json",
   "annotations.config.json",
   "site.config.json",
 ] as const;

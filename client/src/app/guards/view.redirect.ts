@@ -1,12 +1,12 @@
 import { inject } from '@angular/core';
 import { PartialMatchRouteSnapshot, RedirectFunction, UrlTree } from '@angular/router';
 import { catchError, firstValueFrom, map, Observable, of } from 'rxjs';
-import { PARAMS, REASONS } from '../constants/ROUTES';
 import { Node } from '../models/Node';
 import { ViewService } from '../services/view.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ParseUtils } from '../utils/ParseUtils';
 import { NavigationService } from '../services/navigation.service';
+import { PARAMS, REASONS } from '../app.routes';
 
 export const viewRedirect: RedirectFunction = async (route: PartialMatchRouteSnapshot): Promise<UrlTree> => {
   const navigationService: NavigationService = inject(NavigationService);

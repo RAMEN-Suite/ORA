@@ -15,10 +15,10 @@
       "description": "Default direction used by a sort option group.",
       "enum": ["asc", "desc"]
     },
-    "entityIndex": {
+    "listIndexName": {
       "type": "string",
-      "description": "Optional index mode used for grouping or navigating entity lists.",
-      "enum": ["character", "bible"]
+      "description": "Name of the configured list index used for grouping, filtering, sorting, or navigating this list option. The value should reference a key from index.config.json.",
+      "pattern": "^[A-Za-z0-9_.:-]+$"
     },
     "stringMap": {
       "type": "object",
@@ -183,8 +183,8 @@
           }
         },
         "index": {
-          "$ref": "#/$defs/entityIndex",
-          "description": "Optional index mode used for this entity option."
+          "$ref": "#/$defs/listIndexName",
+          "description": "Optional configured list index used for this entity option. References a key from index.config.json."
         }
       }
     },

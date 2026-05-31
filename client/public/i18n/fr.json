@@ -10,56 +10,53 @@
     "screens": {
       "collections": {
         "available": "{{ count }} entrées disponibles au total",
-        "select": "Sélectionner une collection:",
-        "search": "Rechercher dans la collection:",
-        "sort": "Trier par:",
+        "select": "Sélectionner une collection :",
+        "search": "Rechercher dans la collection :",
+        "sort": "Trier par :",
         "tooltips": {
-          "reset": "réinitialiser",
-          "ascending": "croissant",
-          "descending": "décroissant"
+          "reset": "Réinitialiser",
+          "ascending": "Croissant",
+          "descending": "Décroissant"
         }
       },
       "entities": {
-        "select": "Sélectionner un registre:",
-        "search": "Rechercher dans le registre:",
-        "entries": "Entrées pour: {{ value }}",
+        "select": "Sélectionner un registre :",
+        "search": "Rechercher dans le registre :",
+        "entries": "Entrées pour : {{ value }}",
         "empty": "Aucune entrée n’a pu être trouvée.",
         "default": "Tous les registres"
       }
     },
     "shared": {
+      "index": {
+        "unknown": "Aucun classement"
+      },
       "searchableList": {
-        "search": "Rechercher dans la liste:",
+        "search": "Rechercher dans la liste :",
         "empty": "Aucune entrée disponible."
       },
       "textView": {
         "copyUuid": "Copier l’UUID",
-        "references": "Référencé par:",
+        "references": "Référencé par :",
         "empty": "Aucune information supplémentaire.",
         "error": "L’annotation n’a pas pu être chargée.",
         "externalLink": "Ouvrir le lien externe",
         "jumpTo": "Aller à l’annotation"
       },
       "citation": {
-        "currentVersion": "Lien vers la version actuelle:",
+        "currentVersion": "Lien vers la version actuelle :",
         "copyLink": "Copier le lien",
         "print": "Enregistrer le PDF",
         "usage": "Note d’utilisation",
-        "usageSoftware": "L’affichage est assuré par *[ORA]({{ url }})*, un logiciel d’édition sous licence Apache 2.0."
+        "usageSoftware": "La présentation est réalisée avec *[ORA](https://ramen-schema.org)*, un logiciel d’édition sous licence Apache 2.0."
       },
       "footer": {
-        "software": "Powered by [ORA]({{ url }})."
+        "software": "Présenté avec <b>[ORA]({{ url }})</b>."
       }
     },
     "blocks": {
       "attributes": {
         "missing": "–"
-      }
-    },
-    "features": {
-      "bibleList": {
-        "search": "Rechercher par livre:",
-        "unknown": "Aucun classement"
       }
     }
   }

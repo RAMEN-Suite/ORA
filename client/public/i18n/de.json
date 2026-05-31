@@ -14,9 +14,9 @@
         "search": "Sammlung durchsuchen:",
         "sort": "Sortieren nach:",
         "tooltips": {
-          "reset": "zurücksetzen",
-          "ascending": "aufsteigend",
-          "descending": "absteigend"
+          "reset": "Zurücksetzen",
+          "ascending": "Aufsteigend",
+          "descending": "Absteigend"
         }
       },
       "entities": {
@@ -28,6 +28,9 @@
       }
     },
     "shared": {
+      "index": {
+        "unknown": "Keine Einsortierung"
+      },
       "searchableList": {
         "search": "Liste durchsuchen:",
         "empty": "Keine Einträge vorhanden."
@@ -54,12 +57,6 @@
     "blocks": {
       "attributes": {
         "missing": "–"
-      }
-    },
-    "features": {
-      "bibleList": {
-        "search": "Nach Buch suchen:",
-        "unknown": "Keine Einsortierung"
       }
     }
   }

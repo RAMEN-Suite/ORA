@@ -6,11 +6,11 @@ import { catchError, EMPTY, filter, map, Observable, switchMap } from 'rxjs';
 import { ConfigService } from '../../services/config.service';
 import { ViewResponse, ViewService } from '../../services/view.service';
 import { Registry } from '../../utils/Registry';
-import { PARAMS, REASONS } from '../../constants/ROUTES';
 import { BlockPathResolver } from '../../resolvers/block-path.resolver';
 import { Block, DetailView, DetailViews } from '../../models/config/DetailViews';
 import { Node } from '../../models/Node';
 import { NavigationService } from '../../services/navigation.service';
+import { PARAMS, REASONS } from '../../app.routes';
 
 @Component({ template: '' })
 export abstract class AbstractDetailScreen<TNode extends Node = Node> {

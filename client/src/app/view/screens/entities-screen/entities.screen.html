@@ -32,25 +32,20 @@
           </p-ifta-label>
 
           <div class="animate__animated animate__fadeIn">
-            @switch (indexType()) {
-              @case ("bible") {
-                <feature-bible-list
-                  [isDisabled]="isSearching"
-                  [aliases]="bibleAliases"
-                  [items]="entityLabels()"
-                  [activeBook]="activeIndex()"
-                  (activeBookChange)="handleIndexChange($event)"
-                />
-              }
-
-              @default {
-                <shared-character-list
-                  [isDisabled]="isSearching"
-                  [items]="entityLabels()"
-                  [activeCharacter]="activeIndex()"
-                  (activeCharacterChange)="handleIndexChange($event)"
-                />
-              }
+            @if (activeListIndex().type === "character") {
+              <shared-character-list
+                [isDisabled]="isSearching"
+                [items]="entityLabels()"
+                [activeCharacter]="activeIndex()"
+                (activeCharacterChange)="handleIndexChange($event)"
+              />
+            } @else {
+              <shared-searchable-list
+                [options]="indexOptions()"
+                [isDisabled]="isSearching"
+                [activeValue]="activeIndex()"
+                (activeValueChange)="handleIndexChange($event)"
+              />
             }
           </div>
         </nav>

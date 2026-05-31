@@ -1,4 +1,5 @@
 import { BindingPath } from './Config';
+import { ListIndexType } from './IndexOptions';
 
 export interface ListViews {
   entities: ListView<EntityListOption>;
@@ -12,7 +13,6 @@ export interface ListView<TOption extends Option = ListOption> {
 }
 
 export type SortDirection = 'asc' | 'desc';
-export type EntityIndex = 'character' | 'bible';
 
 export interface Option {
   icon?: string;
@@ -28,7 +28,7 @@ export interface ListOption extends Option {
 
 export interface EntityListOption extends ListOption {
   properties?: Property[];
-  index?: EntityIndex;
+  index?: ListIndexType;
 }
 
 export interface FilterOption extends Option {

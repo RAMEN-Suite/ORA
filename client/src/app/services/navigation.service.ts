@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Params, Router, UrlTree } from '@angular/router';
-import { REASONS, ROUTES } from '../constants/ROUTES';
+import { REASONS, ROUTES } from '../app.routes';
 
 @Injectable({
   providedIn: 'root',
