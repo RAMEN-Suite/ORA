@@ -77,6 +77,30 @@ export const SuitePreset: Preset = definePreset(Aura, {
     },
   },
   components: {
+    button: {
+      colorScheme: {
+        light: {
+          outlined: {
+            secondary: {
+              borderColor: '{surface.400}',
+              color: '{surface.800}',
+              hoverBackground: '{surface.50}',
+              activeBackground: '{surface.100}',
+            },
+          },
+        },
+        dark: {
+          outlined: {
+            secondary: {
+              borderColor: '{surface.100}',
+              color: '{surface.100}',
+              hoverBackground: '{surface.900}',
+              activeBackground: '{surface.800}',
+            },
+          },
+        },
+      },
+    },
     fieldset: {
       legend: {
         background: 'transparent',

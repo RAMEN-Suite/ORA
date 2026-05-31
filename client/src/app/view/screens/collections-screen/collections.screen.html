@@ -61,6 +61,7 @@
                 positionTop="5"
                 showDelay="500"
                 outlined
+                severity="secondary"
                 [pTooltip]="t('app.screens.collections.tooltips.reset')"
                 (click)="handleClearFilter()"
               />
@@ -81,6 +82,7 @@
                 positionTop="5"
                 showDelay="500"
                 outlined
+                severity="secondary"
                 [icon]="queryOptions().asc ? 'pi pi-sort-amount-up' : 'pi pi-sort-amount-down-alt'"
                 [pTooltip]="
                   queryOptions().asc ? t('app.screens.collections.tooltips.ascending') : t('app.screens.collections.tooltips.descending')
