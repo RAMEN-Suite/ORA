@@ -5,17 +5,17 @@ import Aura from '@primeuix/themes/aura';
 export const SuitePreset: Preset = definePreset(Aura, {
   semantic: {
     primary: {
-      50: '#fbf3f5',
-      100: '#f4dce2',
-      200: '#e9b8c4',
-      300: '#d98aa0',
-      400: '#c55a76',
-      500: '#a93c58',
-      600: '#8b3044',
-      700: '#712639',
-      800: '#5f2233',
-      900: '#511f2d',
-      950: '#2f0d18',
+      50: '#f8f1f1',
+      100: '#ead7d6',
+      200: '#d8b8b6',
+      300: '#c59a98',
+      400: '#a76b72',
+      500: '#8f4556',
+      600: '#782f43',
+      700: '#642538',
+      800: '#531d2e',
+      900: '#481722',
+      950: '#2a0912',
     },
     colorScheme: {
       light: {
