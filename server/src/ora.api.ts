@@ -25,5 +25,5 @@ ContentService.attachContentRoutes(application, "/api/content");
 ExpressUtils.attachGenericResponses(application);
 
 application
-  .listen(ORA_SERVER_PORT, (): void => logger.info(`ORA API is listening on ${ORA_SERVER_PORT}.`))
+  .listen(ORA_SERVER_PORT, (): void => logger.info(`ORA API is listening: ${ORA_SERVER_PORT}.`))
   .on("error", (error: Error): void => logger.error(error));
