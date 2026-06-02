@@ -18,7 +18,7 @@ import { Nullable } from 'primeng/ts-helpers';
 export class NavbarComponent {
   private readonly languageService: LanguageService = inject(LanguageService);
   private readonly configService: ConfigService = inject(ConfigService);
-  private readonly config: SiteOptions = this.configService.config().site();
+  private readonly config: SiteOptions = this.configService.config().getSite();
 
   protected readonly image: Signal<string | undefined> = computed((): string | undefined => this.config.navbar.image);
   protected readonly navItems: Signal<NavItem[]> = computed((): NavItem[] => this.config.navbar.items ?? []);

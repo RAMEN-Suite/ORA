@@ -1,6 +1,7 @@
 import { inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 import { LanguageKey, LanguageOptions } from '../models/config/SiteOptions';
+import { ConfigService } from './config.service';
 
 const LANGUAGE_STORAGE_KEY = 'language';
 
@@ -8,12 +9,14 @@ const LANGUAGE_STORAGE_KEY = 'language';
   providedIn: 'root',
 })
 export class LanguageService {
+  private readonly configService: ConfigService = inject(ConfigService);
   private readonly translocoService: TranslocoService = inject(TranslocoService);
   private readonly activeLanguageState: WritableSignal<LanguageKey | undefined> = signal(undefined);
 
   public readonly activeLanguage: Signal<LanguageKey | undefined> = this.activeLanguageState.asReadonly();
 
-  public init(options: LanguageOptions): void {
+  public init(): void {
+    const options: LanguageOptions = this.configService.config().getSite().language;
     const current: LanguageKey = this.getStored(options.available) ?? this.getBrowser(options.available) ?? options.initial;
 
     this.translocoService.setAvailableLangs(options.available);

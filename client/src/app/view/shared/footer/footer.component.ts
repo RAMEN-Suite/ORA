@@ -29,7 +29,7 @@ export class FooterComponent {
   private readonly configService: ConfigService = inject(ConfigService);
   private readonly contentService: ContentService = inject(ContentService);
 
-  private readonly config: SiteOptions = this.configService.config().site();
+  private readonly config: SiteOptions = this.configService.config().getSite();
   private readonly markdowns: Map<string, Observable<string>> = new Map<string, Observable<string>>();
 
   protected readonly columns: FooterColumn[] = this.config.footer.columns;

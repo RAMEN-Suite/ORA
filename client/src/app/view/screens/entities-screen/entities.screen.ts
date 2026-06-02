@@ -95,7 +95,7 @@ export class EntitiesScreen extends AbstractListScreen<EntityListOption> {
 
   public constructor() {
     super();
-    this.init(this.config.list('entities'));
+    this.init(this.config.getListView('entities'));
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(this.applyQueryParams.bind(this));
   }
 

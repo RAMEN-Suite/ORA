@@ -45,7 +45,7 @@ export abstract class AbstractDetailScreen<TNode extends Node = Node> {
     const labels: string[] = this.nodeLabels();
 
     if (!compositionType || labels.length === 0) return null;
-    return this.config.composition(compositionType, labels);
+    return this.config.getComposition(compositionType, labels);
   });
 
   protected readonly nodeLabels: Signal<string[]> = computed((): string[] => this.node()?._labels ?? []);

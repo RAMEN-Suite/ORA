@@ -87,7 +87,7 @@ export class CollectionsScreen extends AbstractListScreen {
 
   public constructor() {
     super();
-    this.init(this.config.list('collections'));
+    this.init(this.config.getListView('collections'));
     this.initPageState();
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(this.applyQueryParams.bind(this));
   }

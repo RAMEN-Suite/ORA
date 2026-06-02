@@ -3,24 +3,20 @@ import { ListIndexConfig } from '../models/config/IndexOptions';
 import { DetailView, DetailViews } from '../models/config/DetailViews';
 import { ListViews } from '../models/config/ListViews';
 import { Annotations } from '../models/config/Annotations';
-import { LanguageOptions, SiteOptions } from '../models/config/SiteOptions';
+import { SiteOptions } from '../models/config/SiteOptions';
 
 export class Registry {
   public constructor(private readonly config: Config) {}
 
-  public site(): SiteOptions {
+  public getSite(): SiteOptions {
     return this.config.site;
   }
 
-  public language(): LanguageOptions {
-    return this.config.site.language;
-  }
-
-  public list<K extends keyof ListViews>(key: K): ListViews[K] {
+  public getListView<K extends keyof ListViews>(key: K): ListViews[K] {
     return this.config.lists[key];
   }
 
-  public composition(key: keyof DetailViews, labels: string[]): DetailView {
+  public getComposition(key: keyof DetailViews, labels: string[]): DetailView {
     const views: DetailView[] = this.config.details[key];
 
     const view: DetailView | undefined = views.find((candidate: DetailView): boolean => {
@@ -32,11 +28,11 @@ export class Registry {
     return view;
   }
 
-  public annotations(): Annotations {
+  public getAnnotations(): Annotations {
     return this.config.annotations;
   }
 
-  public index(key: string): ListIndexConfig | undefined {
+  public getIndex(key: string): ListIndexConfig | undefined {
     return this.config.indexes[key];
   }
 }

@@ -24,7 +24,7 @@ export class AnnotationDialogItemComponent {
   public readonly viewResponse: InputSignal<ViewResponse | undefined> = input<ViewResponse | undefined>(undefined);
   public readonly isAnnotationOpened: InputSignal<boolean> = input<boolean>(false);
 
-  protected readonly config: Annotations = this.configService.config().annotations();
+  protected readonly config: Annotations = this.configService.config().getAnnotations();
   protected readonly hasCopiedIdentifier: WritableSignal<boolean> = signal(false);
 
   protected readonly values: Signal<Record<string, unknown>> = computed((): Record<string, unknown> => {

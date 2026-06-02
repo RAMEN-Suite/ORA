@@ -17,7 +17,6 @@ import { MARKED_OPTIONS, provideMarkdown } from 'ngx-markdown';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco } from '@jsverse/transloco';
 import { markedOptionsFactory } from './utils/Markdown';
-import { LanguageOptions } from './models/config/SiteOptions';
 import { LanguageService } from './services/language.service';
 
 export const appConfig: ApplicationConfig = {
@@ -37,9 +36,8 @@ export const appConfig: ApplicationConfig = {
 async function initApplication(): Promise<void> {
   const configService: ConfigService = inject(ConfigService);
   const languageService: LanguageService = inject(LanguageService);
-  await configService.init();
 
+  await configService.init();
   if (!configService.hasConfig()) return;
-  const options: LanguageOptions = configService.config().site().language;
-  languageService.init(options);
+  languageService.init();
 }
