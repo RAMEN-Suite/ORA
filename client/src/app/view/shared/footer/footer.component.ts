@@ -55,7 +55,7 @@ export class FooterComponent {
 
   protected getAssetUrl(src: string): string {
     const normalizedSrc: string = src.startsWith('/') ? src.slice(1) : src;
-    return this.contentService.assetUrl(normalizedSrc);
+    return this.contentService.resolveAssetUrl(normalizedSrc);
   }
 
   protected getImageAlt(item: ImageItem, translate: (key: string) => string): string {
