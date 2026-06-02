@@ -9,7 +9,7 @@ RUN cp src/index.docker.html src/index.html \
   && npm ci \
   && npm run build
 
-FROM caddy:2.6-alpine AS runtime
+FROM caddy:2.11.2-alpine AS runtime
 WORKDIR /app
 
 RUN addgroup -S webuser \
