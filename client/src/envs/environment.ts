@@ -8,6 +8,9 @@ export const environment = {
     i18n: '/i18n',
     content: '/content',
   },
+  cache: {
+    configTtl: 60 * 1000,
+  },
   repositoryURL: 'https://github.com/RAMEN-Suite',
   softwareURL: 'https://ramen-schema.org',
 };

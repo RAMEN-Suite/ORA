@@ -27,7 +27,7 @@ export class ConfigService {
 
   public async init(): Promise<void> {
     try {
-      const context: HttpContext = withCache({ storage: 'localStorage', ttl: 1 });
+      const context: HttpContext = withCache({ storage: 'localStorage', ttl: environment.cache.configTtl });
       const config: Config = await firstValueFrom(this.http.get<Config>(this.baseUrl, { context }));
       this.configState.set(config);
     } catch (error: unknown) {
