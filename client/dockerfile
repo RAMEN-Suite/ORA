@@ -12,8 +12,9 @@ RUN cp src/index.docker.html src/index.html \
 FROM caddy:2.6-alpine AS runtime
 WORKDIR /app
 
-RUN addgroup -S webuser && adduser -S webuser -G webuser
-RUN apk add --no-cache gettext
+RUN addgroup -S webuser \
+  && adduser -S webuser -G webuser \
+  && apk add --no-cache envsubst=0.1-r1
 
 COPY --from=build --chown=webuser:webuser /app/dist/ora/browser /usr/share/caddy
 
@@ -25,7 +26,8 @@ RUN cat > /etc/caddy/Caddyfile <<'EOF'
 }
 EOF
 
-RUN cat > /usr/local/bin/ora-entrypoint <<'EOF'
+RUN cat > /usr/local/bin/ora-entrypoint <<'EOF' \
+  && chmod +x /usr/local/bin/ora-entrypoint
 #!/bin/sh
 set -eu
 
@@ -45,8 +47,6 @@ envsubst '${ORA_CLIENT_LANG} ${ORA_CLIENT_TITLE} ${ORA_CLIENT_DESCRIPTION} ${ORA
 
 exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
 EOF
-
-RUN chmod +x /usr/local/bin/ora-entrypoint
 
 USER webuser
 EXPOSE 8080
