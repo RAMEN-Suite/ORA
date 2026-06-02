@@ -5,6 +5,7 @@ import { Annotations } from './Annotations';
 import { SiteOptions } from './SiteOptions';
 
 export type BindingPath = string;
+export type TemplateValue = Binding | string;
 
 export interface Config {
   site: SiteOptions;
@@ -19,4 +20,9 @@ export interface Config {
 export interface Binding {
   path: BindingPath;
   valueMap?: Record<string, unknown>;
+}
+
+export interface Template {
+  template: string;
+  values?: Record<string, TemplateValue>;
 }

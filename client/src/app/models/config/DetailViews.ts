@@ -1,4 +1,4 @@
-import { Binding } from './Config';
+import { Binding, Template } from './Config';
 
 export interface DetailViews {
   entity: DetailView[];
@@ -59,14 +59,9 @@ export interface AttributesNodeItem extends AttributesBaseItem {
 
 export interface CitationProps {
   title?: string;
-  citation: CitationTemplate;
-  license?: Binding | string;
+  citation: Template;
+  license?: Template;
   links?: CitationLink[];
-}
-
-export interface CitationTemplate {
-  template: string;
-  values?: Record<string, Binding | string>;
 }
 
 export interface CitationLink {

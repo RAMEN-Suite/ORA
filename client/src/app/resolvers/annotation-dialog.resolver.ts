@@ -33,7 +33,7 @@ export class AnnotationDialogResolver {
   }
 
   private static resolveDescription(value: AnnotationValue, values: Record<string, unknown>): DialogDescription | undefined {
-    const text: string = BlockValueResolver.resolveStrings(value, values).join(',');
+    const text: string = BlockValueResolver.resolveStrings(value, values).join(', ');
     if (!text.trim()) return undefined;
     return { text, annotations: this.resolveDescriptionAnnotations(value, values) };
   }

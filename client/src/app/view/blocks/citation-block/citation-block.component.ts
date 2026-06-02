@@ -1,9 +1,8 @@
 import { Component, computed, inject, input, InputSignal, signal, Signal, WritableSignal } from '@angular/core';
 import { AbstractBlock } from '../abstract.block';
 import { CitationLink, CitationProps } from '../../../models/config/DetailViews';
-import { Binding } from '../../../models/config/Config';
 import { environment } from '../../../../envs/environment';
-import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { Fieldset } from 'primeng/fieldset';
 import { Clipboard } from '@angular/cdk/clipboard';
 import { MarkdownComponent } from 'ngx-markdown';
@@ -21,18 +20,16 @@ interface ResolvedLink {
   templateUrl: './citation-block.component.html',
 })
 export class CitationBlockComponent extends AbstractBlock<CitationProps> {
-  private readonly translocoService: TranslocoService = inject(TranslocoService);
   private readonly clipboard: Clipboard = inject(Clipboard);
 
   public readonly uuid: InputSignal<string | null> = input<string | null>(null);
 
   protected readonly title: Signal<string> = computed((): string => this.properties()?.title ?? '');
-  protected readonly template: Signal<string> = computed((): string => this.properties()?.citation.template ?? '');
-  protected readonly license: Signal<string> = computed((): string => this.resolveText(this.properties()?.license));
+  protected readonly citation: Signal<string> = computed((): string => this.resolveTemplate(this.properties()?.citation));
+  protected readonly license: Signal<string> = computed((): string => this.resolveTemplate(this.properties()?.license));
 
   protected readonly usage: Signal<string> = computed((): string => {
-    const license: string = this.license();
-    const licenseText: string = license ? this.translocoService.translate(license) : '';
+    const licenseText: string = this.license();
     const url: string = environment.softwareURL;
     const softwareText: string = this.translocoService.translate('app.shared.citation.usageSoftware', { url });
     return [licenseText, softwareText].filter(Boolean).join(' ');
@@ -42,18 +39,6 @@ export class CitationBlockComponent extends AbstractBlock<CitationProps> {
   protected readonly permalink: Signal<string> = computed((): string => {
     const host: string = this.resolveHost();
     return `${host}/id/${encodeURIComponent(this.uuid() ?? '')}`;
-  });
-
-  protected readonly params: Signal<Record<string, string>> = computed((): Record<string, string> => {
-    const values: Record<string, Binding | string> = this.properties()?.citation.values ?? {};
-    const params: Record<string, string> = {};
-
-    for (const [key, value] of Object.entries(values)) {
-      const resolved: string = this.resolveTexts(value).join(',');
-      params[key] = this.translocoService.translate(resolved);
-    }
-
-    return params;
   });
 
   protected readonly links: Signal<ResolvedLink[]> = computed((): ResolvedLink[] => {

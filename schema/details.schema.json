@@ -38,19 +38,19 @@
         }
       ]
     },
-    "citationTemplate": {
+    "template": {
       "type": "object",
-      "description": "Translation-backed template configuration used to render a citation text. The template is usually a translation key; values are resolved and passed as translation parameters.",
+      "description": "Translation-backed template configuration. The template is usually a translation key; values are resolved and passed as translation parameters.",
       "additionalProperties": false,
       "required": ["template"],
       "properties": {
         "template": {
           "type": "string",
-          "description": "Translation key for the citation text, for example app.shared.citation.antjeBrons.default."
+          "description": "Translation key or template string rendered by the configured language transpiler."
         },
         "values": {
           "type": "object",
-          "description": "Values passed to the citation translation template. Each value is either a static translation key/string or a backend-resolved binding.",
+          "description": "Values passed to the translation template. Each value is either a static translation key/string or a backend-resolved binding.",
           "additionalProperties": {
             "$ref": "#/$defs/bindingOrString"
           }
@@ -88,12 +88,12 @@
           "description": "Static title or translation key shown above the citation block."
         },
         "citation": {
-          "$ref": "#/$defs/citationTemplate",
+          "$ref": "#/$defs/template",
           "description": "Template configuration used to render the citation text."
         },
         "license": {
-          "$ref": "#/$defs/bindingOrString",
-          "description": "Optional license key or binding resolving to a license key, for example cc-by-4.0 or app.shared.citation.license.ccBy40."
+          "$ref": "#/$defs/template",
+          "description": "Optional template configuration used to render the license notice."
         },
         "links": {
           "type": "array",
