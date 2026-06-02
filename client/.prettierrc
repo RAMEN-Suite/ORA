@@ -10,6 +10,7 @@
     {
       "files": ["*.scss", "*.css"],
       "options": {
+        "printWidth": 200,
         "singleQuote": false
       }
     }

@@ -44,7 +44,7 @@ body {
 }
 
 body {
-  @apply m-0 bg-surface-50!;
+  @apply bg-surface-50! m-0;
 }
 
 /**** Pagination Definitions **/
@@ -62,17 +62,17 @@ body {
 }
 
 .p-menuitem-link-active {
-  @apply bg-(--p-menubar-item-focus-background)! text-(--p-menubar-item-focus-color)! rounded-md!;
+  @apply rounded-md! bg-(--p-menubar-item-focus-background)! text-(--p-menubar-item-focus-color)!;
 }
 
 /**** General Dialog Definitions **/
 
 .p-dialog {
-  @apply overflow-hidden rounded-2xl border-surface-300!;
+  @apply border-surface-300! overflow-hidden rounded-2xl;
 }
 
 .p-dialog .p-dialog-header {
-  @apply bg-primary-900 px-2 py-2 text-primary-50;
+  @apply bg-primary-900 text-primary-50 px-2 py-2;
 }
 
 .p-dialog .p-dialog-content {
@@ -81,13 +81,13 @@ body {
 
 .p-dialog .p-dialog-close-button,
 .p-dialog .p-dialog-header-close {
-  @apply text-primary-50! text-sm! hover:bg-primary-800!;
+  @apply text-primary-50! hover:bg-primary-800! text-sm!;
 }
 
 /**** Annotation Popover Definitions **/
 
 .annotation-popover-anchor-active {
-  @apply rounded-sm bg-yellow-50 ring-2 ring-surface-900 ring-offset-6 z-50;
+  @apply ring-surface-900 z-50 rounded-sm bg-yellow-50 ring-2 ring-offset-6;
 }
 
 /** Spinner Definitions **/
