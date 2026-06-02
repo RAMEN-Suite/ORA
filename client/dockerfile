@@ -14,7 +14,7 @@ WORKDIR /app
 
 RUN addgroup -S webuser \
   && adduser -S webuser -G webuser \
-  && apk add --no-cache gettext-envsubst-0.24.1-r1
+  && apk add --no-cache gettext-envsubst=0.24.1-r1
 
 COPY --from=build --chown=webuser:webuser /app/dist/ora/browser /usr/share/caddy
 
