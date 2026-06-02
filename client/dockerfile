@@ -5,22 +5,48 @@ ENV NPM_CONFIG_UPDATE_NOTIFIER=false \
 
 FROM base AS build
 COPY . .
-RUN npm ci && npm run build
+RUN cp src/index.docker.html src/index.html \
+  && npm ci \
+  && npm run build
 
 FROM caddy:2.6-alpine AS runtime
 WORKDIR /app
 
 RUN addgroup -S webuser && adduser -S webuser -G webuser
+RUN apk add --no-cache gettext
 
 COPY --from=build --chown=webuser:webuser /app/dist/ora/browser /usr/share/caddy
 
 RUN cat > /etc/caddy/Caddyfile <<'EOF'
 :8080 {
-    root * /usr/share/caddy
+    root * /tmp/www
     try_files {path} {path}/ /index.html
     file_server
 }
 EOF
+
+RUN cat > /usr/local/bin/ora-entrypoint <<'EOF'
+#!/bin/sh
+set -eu
+
+: "${ORA_CLIENT_LANG:=de}"
+: "${ORA_CLIENT_TITLE:=ORA}"
+: "${ORA_CLIENT_DESCRIPTION:=ORA}"
+: "${ORA_CLIENT_BASE_HREF:=/}"
+: "${ORA_CLIENT_FAVICON_HREF:=/favicon.ico}"
+
+rm -rf /tmp/www
+mkdir -p /tmp/www
+cp -R /usr/share/caddy/. /tmp/www/
+
+envsubst '${ORA_CLIENT_LANG} ${ORA_CLIENT_TITLE} ${ORA_CLIENT_DESCRIPTION} ${ORA_CLIENT_BASE_HREF} ${ORA_CLIENT_FAVICON_HREF}' \
+  < /usr/share/caddy/index.html \
+  > /tmp/www/index.html
+
+exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+EOF
+
+RUN chmod +x /usr/local/bin/ora-entrypoint
 
 USER webuser
 EXPOSE 8080
@@ -28,4 +54,4 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
   CMD wget -q -O /dev/null http://127.0.0.1:8080 || exit 1
 
-CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+CMD ["ora-entrypoint"]
