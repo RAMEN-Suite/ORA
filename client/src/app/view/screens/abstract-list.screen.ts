@@ -1,7 +1,7 @@
 import { Component, computed, inject, linkedSignal, Signal, signal, WritableSignal } from '@angular/core';
 import { ConfigService } from '../../services/config.service';
 import { ListService } from '../../services/list.service';
-import { Registry } from '../../utils/Registry';
+import { Registry } from '../../helper/Registry';
 import { FilterOption, ListOption, ListView, Option, OptionGroup, Property } from '../../models/config/ListViews';
 import { Utils } from '../../utils/Utils';
 import { PreviousLinkedValue } from '../../../types/global';

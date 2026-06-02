@@ -7,6 +7,8 @@ import { CollectionsScreen } from './view/screens/collections-screen/collections
 import { EntityScreen } from './view/screens/entity-screen/entity.screen';
 import { NotFoundScreen } from './view/screens/not-found-screen/not-found.screen';
 import { viewRedirect } from './guards/view.redirect';
+import { PageScreen } from './view/screens/page-screen/page-screen.component';
+import { HomeScreen } from './view/screens/home-screen/home-screen.component';
 
 export enum ROUTES {
   ENTITIES = 'entities',
@@ -18,6 +20,8 @@ export enum ROUTES {
 
 export enum PARAMS {
   UUID = 'uuid',
+  PAGE = 'page',
+  GROUP = 'group',
 }
 
 export enum REASONS {
@@ -31,7 +35,9 @@ export const routes: Routes = [
     path: '',
     canActivate: [configGuard],
     children: [
+      { path: '', component: HomeScreen },
       { path: `${ROUTES.IDENTIFIER}/:${PARAMS.UUID}`, redirectTo: viewRedirect },
+
       { path: ROUTES.COLLECTIONS, component: CollectionsScreen },
       { path: ROUTES.ENTITIES, component: EntitiesScreen },
 
@@ -39,7 +45,7 @@ export const routes: Routes = [
       { path: `${ROUTES.COLLECTIONS}/:${PARAMS.UUID}`, component: CollectionScreen },
 
       { path: ROUTES.NOT_FOUND, component: NotFoundScreen },
-      { path: '**', redirectTo: ROUTES.NOT_FOUND },
+      { path: '**', component: PageScreen },
     ],
   },
 ];

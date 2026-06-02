@@ -15,9 +15,10 @@ import { provideHttpCache, withHttpCacheInterceptor, withLocalStorage } from '@n
 import { ConfigService } from './services/config.service';
 import { MARKED_OPTIONS, provideMarkdown } from 'ngx-markdown';
 import { TranslocoHttpLoader } from './transloco-loader';
-import { provideTransloco } from '@jsverse/transloco';
-import { markedOptionsFactory } from './utils/Markdown';
+import { provideTransloco, provideTranslocoTranspiler } from '@jsverse/transloco';
+import { markedOptionsFactory } from './helper/Markdown';
 import { LanguageService } from './services/language.service';
+import { Transpiler } from './helper/Transpiler';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,6 +31,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([withHttpCacheInterceptor()])),
     provideHttpCache(withLocalStorage()),
     provideTransloco({ config: { reRenderOnLangChange: true, prodMode: !isDevMode() }, loader: TranslocoHttpLoader }),
+    provideTranslocoTranspiler(Transpiler),
   ],
 };
 

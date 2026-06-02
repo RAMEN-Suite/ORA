@@ -49,7 +49,7 @@ export class CitationBlockComponent extends AbstractBlock<CitationProps> {
     const params: Record<string, string> = {};
 
     for (const [key, value] of Object.entries(values)) {
-      const resolved: string = this.resolveTexts(value).join(' ');
+      const resolved: string = this.resolveTexts(value).join(',');
       params[key] = this.translocoService.translate(resolved);
     }
 

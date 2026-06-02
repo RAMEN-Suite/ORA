@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 import { ListIndexConfig, ListIndexItem } from '../../models/config/IndexOptions';
 import { ListIndex } from '../../models/ListIndex';
-import { Registry } from '../../utils/Registry';
+import { Registry } from '../../helper/Registry';
 import { ConfigService } from '../config.service';
 import { CharacterListIndex } from './character-list.index';
 import { AliasListIndex } from './alias-list.index';
