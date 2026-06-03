@@ -26,7 +26,7 @@ export class StructureParser {
 
   public constructor(
     private readonly text: string,
-    private readonly annotations: ResolvedAnnotation[],
+    annotations: ResolvedAnnotation[],
   ) {
     this.structures = annotations.filter((a: ResolvedAnnotation): a is StructuredAnnotation => this.isVisibleStructure(a));
     this.inlineAnnotations = annotations.filter((a: ResolvedAnnotation): boolean => a.definition.layer !== 'structure');

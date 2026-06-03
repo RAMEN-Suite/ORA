@@ -95,3 +95,21 @@ body {
 .spinner-base {
   @apply h-16.25! w-16.25!;
 }
+
+/** Background Base **/
+
+.bg-gradient {
+  @apply from-primary-950 via-primary-800 to-primary-600 text-primary-100 bg-linear-to-br;
+}
+
+.bg-soft {
+  @apply bg-primary-600 text-primary-50;
+}
+
+.bg-dark {
+  @apply bg-primary-950 text-primary-50;
+}
+
+.bg-light {
+  @apply bg-primary-100 text-primary-950;
+}

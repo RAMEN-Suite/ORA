@@ -10,10 +10,10 @@ export type TemplateValue = Binding | string;
 export interface Config {
   site: SiteOptions;
 
-  lists: ListViews;
   details: DetailViews;
   annotations: Annotations;
 
+  lists: ListViews;
   indexes: IndexOptions;
 }
 

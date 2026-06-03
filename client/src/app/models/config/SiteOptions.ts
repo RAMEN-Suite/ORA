@@ -1,5 +1,6 @@
 export interface SiteOptions {
   language: LanguageOptions;
+  home: HomeOptions;
   navbar: NavbarOptions;
   footer: FooterOptions;
 }
@@ -16,6 +17,21 @@ export interface NavbarOptions {
   image?: string;
   items?: NavItem[];
 }
+
+export interface HomeOptions {
+  hero?: HeroOptions;
+}
+
+export interface HeroOptions {
+  title?: string;
+  subTitle?: string;
+  align?: HeroAlign;
+  background?: HeroBackground;
+  image?: string;
+}
+
+export type HeroAlign = 'left' | 'center' | 'right';
+export type HeroBackground = 'gradient' | 'soft' | 'dark' | 'light';
 
 export interface FooterOptions {
   notice?: string;

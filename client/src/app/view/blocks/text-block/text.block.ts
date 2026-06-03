@@ -16,7 +16,7 @@ import { Annotations } from '../../../models/config/Annotations';
 })
 export class TextBlock extends AbstractBlock<TextProps> {
   private readonly configService: ConfigService = inject(ConfigService);
-  protected readonly config: Annotations = this.configService.config().getAnnotations();
+  protected readonly definitions: Annotations = this.configService.config().getAnnotations();
 
   protected readonly title: Signal<string> = computed((): string => this.resolveText(this.properties()?.title));
   protected readonly text: Signal<string> = computed((): string => this.resolveText(this.properties()?.text));

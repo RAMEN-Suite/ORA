@@ -3,6 +3,6 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'screen-page',
   imports: [],
-  templateUrl: './page-screen.component.html',
+  templateUrl: './page-screen.html',
 })
 export class PageScreen {}

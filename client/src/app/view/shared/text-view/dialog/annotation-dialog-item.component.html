@@ -29,7 +29,7 @@
       @for (description of descriptions(); track description.text) {
         <div class="text-surface-700 leading-relaxed">
           @if (description.annotations.length > 0) {
-            <shared-text-view [config]="config" [text]="description.text" [annotations]="description.annotations" />
+            <shared-text-view [config]="definitions" [text]="description.text" [annotations]="description.annotations" />
           } @else {
             <p>{{ description.text }}</p>
           }

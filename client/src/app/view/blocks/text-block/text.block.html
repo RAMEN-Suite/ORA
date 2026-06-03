@@ -11,8 +11,8 @@
     </ng-template>
 
     <div class="px-3 whitespace-pre-line">
-      @if (config && annotations(); as annotations) {
-        <shared-text-view [text]="text" [annotations]="annotations" [config]="config" />
+      @if (definitions && annotations(); as annotations) {
+        <shared-text-view [text]="text" [annotations]="annotations" [config]="definitions" />
       } @else {
         {{ text }}
       }
