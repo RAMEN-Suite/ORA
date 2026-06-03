@@ -12,7 +12,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "docs": "node openapi/generator.js",
+    "docs:dev": "node --env-file=.env openapi/generator.js ",
+    "docs:prod": "node openapi/generator.js",
     "build": "webpack",
     "ora:dev": "tsx watch --env-file=.env src/ora.api.ts | pino-pretty",
     "ora:prod": "node dist/ora.api.js",

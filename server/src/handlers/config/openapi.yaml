@@ -1,0 +1,98 @@
+openapi: 3.0.1
+info:
+  title: ORA Config API
+  version: 1.0.0
+
+paths:
+  /api/config:
+    get:
+      summary: Get application configuration
+      operationId: getConfig
+      tags:
+        - Config
+      responses:
+        "200":
+          description: Application configuration.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Config"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/i18n/{language}.json:
+    get:
+      summary: Get translation by language
+      operationId: getLanguage
+      tags:
+        - I18n
+      parameters:
+        - name: language
+          in: path
+          required: true
+          description: Language code.
+          schema:
+            type: string
+            pattern: "^[a-z]{2}(-[A-Z]{2})?$"
+          examples:
+            german:
+              value: de
+            englishUnitedStates:
+              value: en-US
+      responses:
+        "200":
+          description: Translation for the requested language.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Translation"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+  responses:
+    BadRequest:
+      description: Invalid request parameters.
+
+    InternalError:
+      description: Internal server error.
+
+  schemas:
+    Config:
+      type: object
+      description: Combined ORA configuration loaded from the configured configuration directory.
+      required:
+        - lists
+        - details
+        - indexes
+        - annotations
+        - site
+      properties:
+        lists:
+          type: object
+          additionalProperties: true
+          description: Content of lists.config.json.
+        details:
+          type: object
+          additionalProperties: true
+          description: Content of details.config.json.
+        indexes:
+          type: object
+          additionalProperties: true
+          description: Content of indexes.config.json.
+        annotations:
+          type: object
+          additionalProperties: true
+          description: Content of annotations.config.json.
+        site:
+          type: object
+          additionalProperties: true
+          description: Content of site.config.json.
+      additionalProperties: true
+
+    Translation:
+      type: object
+      additionalProperties: true
+      description: Translation JSON object loaded from the configured languages directory.

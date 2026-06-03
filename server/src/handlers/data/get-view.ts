@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { matchedData } from "express-validator";
-import { Utils } from "../utils/Utils";
-import { STATUS_CODE } from "../constants/STATUS_CODE";
-import { Node } from "../models/Node";
-import { ViewDAO } from "../database/ViewDAO";
+import { Utils } from "../../utils/Utils";
+import { STATUS_CODE } from "../../constants/STATUS_CODE";
+import { Node } from "../../models/Node";
+import { ViewDAO } from "../../database/ViewDAO";
 
 export async function getView(req: Request, res: Response): Promise<void> {
   const params: Record<string, unknown> = matchedData(req);

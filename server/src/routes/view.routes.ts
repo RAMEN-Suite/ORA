@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { ExpressUtils } from "../utils/ExpressUtils";
-import { getList } from "../handlers/get-list";
-import { getFacets } from "../handlers/get-facets";
+import { getList } from "../handlers/data/get-list";
+import { getFacets } from "../handlers/data/get-facets";
 import { chains } from "./validators";
-import { getView } from "../handlers/get-view";
+import { getView } from "../handlers/data/get-view";
 import { RESOURCE } from "../constants/RESOURCE";
 
 const router: Router = Router();

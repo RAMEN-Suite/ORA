@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
-import { STATUS_CODE } from "../constants/STATUS_CODE";
-import { Utils } from "../utils/Utils";
-import { FacetGroup, FacetOptions } from "../models/Facet";
-import { FacetDAO } from "../database/FacetDAO";
+import { STATUS_CODE } from "../../constants/STATUS_CODE";
+import { Utils } from "../../utils/Utils";
+import { FacetGroup, FacetOptions } from "../../models/Facet";
+import { FacetDAO } from "../../database/FacetDAO";
 import { matchedData } from "express-validator";
-import { FilterParser } from "../parser/FilterParser";
-import { RESOURCE } from "../constants/RESOURCE";
+import { FilterParser } from "../../parser/FilterParser";
+import { RESOURCE } from "../../constants/RESOURCE";
 
 export async function getFacets(resource: RESOURCE, req: Request, res: Response): Promise<void> {
   const params: Record<string, unknown> = matchedData(req);

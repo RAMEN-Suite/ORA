@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { ViewRoutes } from "./view.routes";
-import { getConfig } from "../handlers/get-config";
-import { getLanguage } from "../handlers/get-language";
+import { getConfig } from "../handlers/config/get-config";
+import { getLanguage } from "../handlers/config/get-language";
 import { ExpressUtils } from "../utils/ExpressUtils";
 import { chains } from "./validators";
 
