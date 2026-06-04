@@ -1,5 +1,5 @@
 import { Component, computed, inject, Signal } from '@angular/core';
-import { NgClass, NgOptimizedImage } from '@angular/common';
+import { NgClass, NgStyle } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { ConfigService } from '../../../services/config.service';
 import { ContentService } from '../../../services/content.service';
@@ -7,7 +7,7 @@ import { HeroAlign, HomeOptions } from '../../../models/config/SiteOptions';
 
 @Component({
   selector: 'screen-home',
-  imports: [NgClass, TranslocoDirective, NgOptimizedImage],
+  imports: [NgClass, TranslocoDirective, NgStyle],
   templateUrl: './home.screen.html',
 })
 export class HomeScreen {
@@ -25,6 +25,18 @@ export class HomeScreen {
     const align: HeroAlign | undefined = this.options.hero?.align;
     const background: string = this.heroImage() ? 'bg-dark md:bg-parallax' : `bg-${this.options.hero?.background ?? 'light'}`;
     return [background, this.resolveHeroAlign(align)];
+  });
+
+  protected readonly heroStyles: Signal<Record<string, string | null>> = computed((): Record<string, string | null> => {
+    const image: string | null = this.heroImage();
+    if (!image) return {};
+
+    return {
+      'background-image': `url(${image})`,
+      'background-size': 'cover',
+      'background-position': 'center',
+      'background-repeat': 'no-repeat',
+    };
   });
 
   private resolveHeroAlign(align: HeroAlign | undefined): string {

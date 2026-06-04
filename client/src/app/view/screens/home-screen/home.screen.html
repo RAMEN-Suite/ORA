@@ -1,15 +1,15 @@
 @if (options.hero; as hero) {
   <section
-    class="relative flex min-h-70 flex-col justify-center gap-2 px-8 md:min-h-105 md:gap-5 md:px-30"
+    class="relative flex min-h-70 flex-col justify-center overflow-hidden border-b px-8 md:min-h-105 md:px-30"
     [ngClass]="heroClasses()"
+    [ngStyle]="heroStyles()"
     *transloco="let t"
   >
-    @if (heroImage(); as image) {
-      <img class="absolute inset-0 h-full w-full object-cover object-center" [src]="image" alt="" />
+    @if (heroImage()) {
       <div class="bg-primary-950/25 absolute inset-0"></div>
     }
 
-    <div class="flex max-w-3/4 flex-col gap-3 text-shadow-lg md:gap-5">
+    <div class="relative z-10 flex max-w-3/4 flex-col gap-3 text-shadow-lg md:gap-5">
       @if (hero.title) {
         <h3 class="text-4xl font-extralight tracking-wide drop-shadow-xl md:text-6xl lg:text-7xl">{{ t(hero.title) }}</h3>
       }
