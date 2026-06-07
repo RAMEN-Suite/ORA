@@ -4,20 +4,29 @@ import { DetailView, DetailViews } from '../models/config/DetailViews';
 import { ListViews } from '../models/config/ListViews';
 import { Annotations } from '../models/config/Annotations';
 import { SiteOptions } from '../models/config/SiteOptions';
+import { HomeOptions } from '../models/config/PageViews';
 
 export class Registry {
   public constructor(private readonly config: Config) {}
 
-  public getSite(): SiteOptions {
+  public getSiteOptions(): SiteOptions {
     return this.config.site;
   }
 
-  public getListView<K extends keyof ListViews>(key: K): ListViews[K] {
-    return this.config.lists[key];
+  public getHomeOptions(): HomeOptions {
+    return this.config.pageViews.home;
   }
 
-  public getComposition(key: keyof DetailViews, labels: string[]): DetailView {
-    const views: DetailView[] = this.config.details[key];
+  public getListView<K extends keyof ListViews>(key: K): ListViews[K] {
+    return this.config.listViews[key];
+  }
+
+  public getListIndex(key: string): ListIndexConfig | undefined {
+    return this.config.listIndexes[key];
+  }
+
+  public getDetailView(key: keyof DetailViews, labels: string[]): DetailView {
+    const views: DetailView[] = this.config.detailViews[key];
 
     const view: DetailView | undefined = views.find((candidate: DetailView): boolean => {
       if (candidate.match.length === 0) return true;
@@ -30,9 +39,5 @@ export class Registry {
 
   public getAnnotations(): Annotations {
     return this.config.annotations;
-  }
-
-  public getIndex(key: string): ListIndexConfig | undefined {
-    return this.config.indexes[key];
   }
 }

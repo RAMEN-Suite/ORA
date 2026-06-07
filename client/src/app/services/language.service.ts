@@ -16,7 +16,7 @@ export class LanguageService {
   public readonly activeLanguage: Signal<LanguageKey | undefined> = this.activeLanguageState.asReadonly();
 
   public init(): void {
-    const options: LanguageOptions = this.configService.config().getSite().language;
+    const options: LanguageOptions = this.configService.config().getSiteOptions().language;
     const current: LanguageKey = this.getStored(options.available) ?? this.getBrowser(options.available) ?? options.initial;
 
     this.translocoService.setAvailableLangs(options.available);

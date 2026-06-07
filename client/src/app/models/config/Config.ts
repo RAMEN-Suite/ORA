@@ -3,18 +3,20 @@ import { DetailViews } from './DetailViews';
 import { IndexOptions } from './IndexOptions';
 import { Annotations } from './Annotations';
 import { SiteOptions } from './SiteOptions';
+import { PageViews } from './PageViews';
 
 export type BindingPath = string;
 export type TemplateValue = Binding | string;
 
 export interface Config {
   site: SiteOptions;
+  pageViews: PageViews;
 
-  details: DetailViews;
+  listViews: ListViews;
+  listIndexes: IndexOptions;
+
+  detailViews: DetailViews;
   annotations: Annotations;
-
-  lists: ListViews;
-  indexes: IndexOptions;
 }
 
 export interface Binding {

@@ -19,7 +19,7 @@ export class ListIndexService {
   public getIndex(name: string | undefined): ListIndex {
     if (!name || name === 'character') return this.fallbackIndex;
 
-    const index: ListIndexConfig | undefined = this.config.getIndex(name);
+    const index: ListIndexConfig | undefined = this.config.getListIndex(name);
     if (!index) return this.fallbackIndex;
 
     const items: ListIndexItem[] = index.items ?? [];

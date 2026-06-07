@@ -3,7 +3,7 @@ import { NgClass, NgStyle } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { ConfigService } from '../../../services/config.service';
 import { ContentService } from '../../../services/content.service';
-import { HeroAlign, HomeOptions } from '../../../models/config/SiteOptions';
+import { HeroAlign, HomeOptions } from '../../../models/config/PageViews';
 
 @Component({
   selector: 'screen-home',
@@ -13,8 +13,7 @@ import { HeroAlign, HomeOptions } from '../../../models/config/SiteOptions';
 export class HomeScreen {
   private readonly configService: ConfigService = inject(ConfigService);
   private readonly contentService: ContentService = inject(ContentService);
-
-  protected readonly options: HomeOptions = this.configService.config().getSite().home;
+  protected readonly options: HomeOptions = this.configService.config().getHomeOptions();
 
   protected readonly heroImage: Signal<string | null> = computed((): string | null => {
     const image: string | undefined = this.options.hero?.image;

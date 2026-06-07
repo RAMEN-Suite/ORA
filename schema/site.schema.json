@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ramen-schema.org/ora/2026.1/site.schema.json",
   "title": "ORA Site",
-  "description": "Configuration for site-level options such as language, home screen, navbar and footer.",
+  "description": "Configuration for site-level options such as language, content loading, navbar and footer.",
   "$ref": "#/$defs/siteOptions",
   "$defs": {
     "languageKey": {
@@ -31,56 +31,22 @@
         }
       }
     },
-    "heroAlign": {
-      "type": "string",
-      "description": "Horizontal alignment of the hero content.",
-      "enum": ["left", "center", "right"]
-    },
-    "heroBackground": {
-      "type": "string",
-      "description": "Predefined hero background style. Ignored or overlaid when a hero image is configured, depending on the frontend implementation.",
-      "enum": ["gradient", "soft", "dark", "light"]
-    },
-    "heroOptions": {
+    "contentOptions": {
       "type": "object",
-      "description": "Optional home screen hero configuration.",
+      "description": "Content loading configuration for markdown files and related static content.",
       "additionalProperties": false,
       "properties": {
-        "title": {
-          "type": "string",
-          "description": "Optional static title or translation key rendered as the hero title.",
-          "minLength": 1
+        "isLocalized": {
+          "type": "boolean",
+          "description": "Whether content files are resolved below a language folder such as markdown/en/home.md.",
+          "default": false
         },
-        "subTitle": {
-          "type": "string",
-          "description": "Optional static subtitle or translation key rendered below the hero title.",
-          "minLength": 1
-        },
-        "align": {
-          "$ref": "#/$defs/heroAlign",
-          "description": "Optional horizontal alignment of the hero content. Defaults to center."
-        },
-        "background": {
-          "$ref": "#/$defs/heroBackground",
-          "description": "Optional predefined background style for the hero. Defaults to light."
-        },
-        "image": {
-          "type": "string",
-          "description": "Optional hero background image source resolved through the content service.",
-          "minLength": 1
+        "fallbackLanguage": {
+          "$ref": "#/$defs/languageKey",
+          "description": "Language used as fallback when localized content is missing. Defaults to language.initial when omitted."
         }
-      }
-    },
-    "homeOptions": {
-      "type": "object",
-      "description": "Home screen configuration.",
-      "additionalProperties": false,
-      "properties": {
-        "hero": {
-          "$ref": "#/$defs/heroOptions",
-          "description": "Optional hero section rendered on the home screen."
-        }
-      }
+      },
+      "default": {}
     },
     "navTarget": {
       "type": "string",
@@ -367,15 +333,15 @@
       "type": "object",
       "description": "Site-level configuration.",
       "additionalProperties": false,
-      "required": ["language", "home", "navbar", "footer"],
+      "required": ["language", "navbar", "footer"],
       "properties": {
         "language": {
           "$ref": "#/$defs/languageOptions",
           "description": "Language options for the application."
         },
-        "home": {
-          "$ref": "#/$defs/homeOptions",
-          "description": "Home screen options for the application."
+        "content": {
+          "$ref": "#/$defs/contentOptions",
+          "description": "Content loading options for markdown files and static content."
         },
         "navbar": {
           "$ref": "#/$defs/navbarOptions",

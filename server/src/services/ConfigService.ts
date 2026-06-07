@@ -10,11 +10,12 @@ export type Config = JSONObject;
 
 const SCHEMA_DIR: string = path.resolve(process.cwd(), "../schema");
 const CONFIG_FILES = [
-  "lists.config.json",
-  "details.config.json",
-  "indexes.config.json",
-  "annotations.config.json",
-  "site.config.json",
+  { key: "listViews", prefix: "list-views" },
+  { key: "listIndexes", prefix: "list-indexes" },
+  { key: "detailViews", prefix: "detail-views" },
+  { key: "annotations", prefix: "annotations" },
+  { key: "pageViews", prefix: "page-views" },
+  { key: "site", prefix: "site" },
 ] as const;
 
 export class ConfigService {
@@ -32,8 +33,7 @@ export class ConfigService {
     const config: Config = {};
 
     for (const file of CONFIG_FILES) {
-      const key: string = file.replace(".config.json", "");
-      config[key] = await FileUtils.readJSON(path.join(this.configPath, file));
+      config[file.key] = await FileUtils.readJSON(path.join(this.configPath, `${file.prefix}.config.json`));
     }
 
     return config;
@@ -43,9 +43,8 @@ export class ConfigService {
     if (!this.configPath) throw new ServiceError(ERROR_CODE.NOT_INITIALIZED, "ConfigService not initialized");
 
     for (const file of CONFIG_FILES) {
-      const key: string = file.replace(".config.json", "");
-      const configPath: string = path.join(this.configPath, file);
-      const schemaPath: string = path.join(SCHEMA_DIR, `${key}.schema.json`);
+      const configPath: string = path.join(this.configPath, `${file.prefix}.config.json`);
+      const schemaPath: string = path.join(SCHEMA_DIR, `${file.prefix}.schema.json`);
 
       const config: Config = await FileUtils.readJSON(configPath);
       const schema: Config = await FileUtils.readJSON(schemaPath);
@@ -54,7 +53,7 @@ export class ConfigService {
       if (!result.valid) {
         const message: string = result.errors.map((error: ValidationError): string => error.stack).join("; ");
         logger.error({ file: configPath, schema: schemaPath, errors: result.errors }, "ConfigService: Invalid configuration.");
-        throw new ServiceError(ERROR_CODE.INVALID_CONFIG, `Invalid config against "${key}.schema.json": ${message}`);
+        throw new ServiceError(ERROR_CODE.INVALID_CONFIG, `Invalid config against "${file.prefix}.config.json": ${message}`);
       }
 
       logger.debug({ file: configPath, schema: schemaPath }, "ConfigService: Configuration file validated.");

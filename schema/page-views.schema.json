@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ramen-schema.org/ora/2026.1/page-views.schema.json",
+  "title": "ORA Page Views",
+  "description": "Configuration for static application page views such as the home page.",
+  "$ref": "#/$defs/pageViews",
+  "$defs": {
+    "heroAlign": {
+      "type": "string",
+      "description": "Horizontal alignment of the hero content.",
+      "enum": ["left", "center", "right"]
+    },
+    "heroBackground": {
+      "type": "string",
+      "description": "Predefined hero background style. Ignored or overlaid when a hero image is configured, depending on the frontend implementation.",
+      "enum": ["gradient", "soft", "dark", "light"]
+    },
+    "heroOptions": {
+      "type": "object",
+      "description": "Optional hero configuration for a page view.",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Optional static title or translation key rendered as the hero title.",
+          "minLength": 1
+        },
+        "subTitle": {
+          "type": "string",
+          "description": "Optional static subtitle or translation key rendered below the hero title.",
+          "minLength": 1
+        },
+        "align": {
+          "$ref": "#/$defs/heroAlign",
+          "description": "Optional horizontal alignment of the hero content. Defaults to center."
+        },
+        "background": {
+          "$ref": "#/$defs/heroBackground",
+          "description": "Optional predefined background style for the hero. Defaults to light."
+        },
+        "image": {
+          "type": "string",
+          "description": "Optional hero background image source resolved through the content service.",
+          "minLength": 1
+        }
+      }
+    },
+    "homeOptions": {
+      "type": "object",
+      "description": "Home page view configuration.",
+      "additionalProperties": false,
+      "properties": {
+        "hero": {
+          "$ref": "#/$defs/heroOptions",
+          "description": "Optional hero section rendered on the home page."
+        }
+      }
+    },
+    "pageViews": {
+      "type": "object",
+      "description": "Page view configuration.",
+      "additionalProperties": false,
+      "required": ["home"],
+      "properties": {
+        "home": {
+          "$ref": "#/$defs/homeOptions",
+          "description": "Home page view options."
+        }
+      }
+    }
+  }
+}
