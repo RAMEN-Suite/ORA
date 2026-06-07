@@ -15,7 +15,6 @@ export interface LanguageOptions {
 
 export interface ContentOptions {
   isLocalized?: boolean;
-  fallbackLanguage?: LanguageKey;
 }
 
 export interface NavbarOptions {

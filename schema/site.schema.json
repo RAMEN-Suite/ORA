@@ -40,10 +40,6 @@
           "type": "boolean",
           "description": "Whether content files are resolved below a language folder such as markdown/en/home.md.",
           "default": false
-        },
-        "fallbackLanguage": {
-          "$ref": "#/$defs/languageKey",
-          "description": "Language used as fallback when localized content is missing. Defaults to language.initial when omitted."
         }
       },
       "default": {}
