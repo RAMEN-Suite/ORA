@@ -3,17 +3,21 @@ import { NgClass, NgStyle } from '@angular/common';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { ConfigService } from '../../../services/config.service';
 import { ContentService } from '../../../services/content.service';
-import { HeroAlign, HomeOptions } from '../../../models/config/PageViews';
+import { Content, HeroAlign, HomeOptions } from '../../../models/config/PageViews';
+import { ContentRendererComponent } from '../../shared/content-renderer/content-renderer.component';
 
 @Component({
   selector: 'screen-home',
-  imports: [NgClass, TranslocoDirective, NgStyle],
+  imports: [NgClass, TranslocoDirective, NgStyle, ContentRendererComponent],
   templateUrl: './home.screen.html',
 })
 export class HomeScreen {
   private readonly configService: ConfigService = inject(ConfigService);
   private readonly contentService: ContentService = inject(ContentService);
+
   protected readonly options: HomeOptions = this.configService.config().getHomeOptions();
+  protected readonly mainContent: Signal<Content[]> = computed((): Content[] => this.options.main ?? []);
+  protected readonly asideContent: Signal<Content[]> = computed((): Content[] => this.options.aside ?? []);
 
   protected readonly heroImage: Signal<string | null> = computed((): string | null => {
     const image: string | undefined = this.options.hero?.image;

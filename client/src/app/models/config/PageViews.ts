@@ -4,6 +4,8 @@ export interface PageViews {
 
 export interface HomeOptions {
   hero?: HeroOptions;
+  main?: Content[];
+  aside?: Content[];
 }
 
 export interface HeroOptions {
@@ -16,3 +18,16 @@ export interface HeroOptions {
 
 export type HeroAlign = 'left' | 'center' | 'right';
 export type HeroBackground = 'gradient' | 'soft' | 'dark' | 'light';
+
+export type Content = MarkdownContent;
+
+export interface ContentOf<TType extends string, TProperties> {
+  type: TType;
+  properties: TProperties;
+}
+
+export type MarkdownContent = ContentOf<'markdown', MarkdownContentProperties>;
+
+export interface MarkdownContentProperties {
+  file: string;
+}

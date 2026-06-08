@@ -11,12 +11,28 @@
 
     <div class="relative z-10 flex max-w-3/4 flex-col gap-3 text-shadow-lg md:gap-5">
       @if (hero.title) {
-        <h3 class="text-4xl font-extralight tracking-wide drop-shadow-xl md:text-6xl lg:text-7xl">{{ t(hero.title) }}</h3>
+        <h3 class="text-4xl font-extralight tracking-wide drop-shadow-xl md:text-6xl lg:text-7xl">
+          {{ t(hero.title) }}
+        </h3>
       }
 
       @if (hero.subTitle) {
-        <p class="tracking-wide drop-shadow-lg md:text-2xl">{{ t(hero.subTitle) }}</p>
+        <p class="tracking-wide drop-shadow-lg md:text-2xl">
+          {{ t(hero.subTitle) }}
+        </p>
       }
     </div>
   </section>
 }
+
+<main class="px-6 py-4 md:py-10">
+  <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_350px]">
+    <section class="border-surface-300 bg-surface-0/75 order-2 rounded-md border p-5 lg:order-1">
+      <content-renderer class="block gap-6" [blocks]="mainContent()" />
+    </section>
+
+    <aside class="order-1 space-y-5 self-start lg:sticky lg:top-10 lg:order-2">
+      <content-renderer styleClass="border-surface-300 bg-surface-0 rounded-md border p-5" [blocks]="asideContent()" />
+    </aside>
+  </div>
+</main>

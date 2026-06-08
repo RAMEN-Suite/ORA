@@ -45,6 +45,49 @@
         }
       }
     },
+    "markdownContentProperties": {
+      "type": "object",
+      "description": "Markdown content properties.",
+      "additionalProperties": false,
+      "required": ["file"],
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "Markdown file path loaded through the content service.",
+          "minLength": 1
+        }
+      }
+    },
+    "markdownContent": {
+      "type": "object",
+      "description": "Content block rendering a markdown file.",
+      "additionalProperties": false,
+      "required": ["type", "properties"],
+      "properties": {
+        "type": {
+          "const": "markdown"
+        },
+        "properties": {
+          "$ref": "#/$defs/markdownContentProperties"
+        }
+      }
+    },
+    "content": {
+      "description": "Content block rendered in a page view area.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/markdownContent"
+        }
+      ]
+    },
+    "contentList": {
+      "type": "array",
+      "description": "Ordered content blocks rendered in a page view area.",
+      "items": {
+        "$ref": "#/$defs/content"
+      },
+      "default": []
+    },
     "homeOptions": {
       "type": "object",
       "description": "Home page view configuration.",
@@ -53,6 +96,14 @@
         "hero": {
           "$ref": "#/$defs/heroOptions",
           "description": "Optional hero section rendered on the home page."
+        },
+        "main": {
+          "$ref": "#/$defs/contentList",
+          "description": "Content rendered in the main home page area."
+        },
+        "aside": {
+          "$ref": "#/$defs/contentList",
+          "description": "Content rendered in the home page aside area."
         }
       }
     },

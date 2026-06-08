@@ -16,9 +16,9 @@ import { ConfigService } from './services/config.service';
 import { MARKED_OPTIONS, provideMarkdown } from 'ngx-markdown';
 import { TranslocoHttpLoader } from './transloco-loader';
 import { provideTransloco, provideTranslocoTranspiler } from '@jsverse/transloco';
-import { markedOptionsFactory } from './helper/Markdown';
+import { markedOptionsFactory } from './parser/Markdown';
 import { LanguageService } from './services/language.service';
-import { Transpiler } from './helper/Transpiler';
+import { Transpiler } from './parser/Transpiler';
 
 export const appConfig: ApplicationConfig = {
   providers: [

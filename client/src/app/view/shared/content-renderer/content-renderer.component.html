@@ -1,0 +1,11 @@
+<div class="flex flex-col gap-6 print:gap-2">
+  @for (block of blocks(); track block.type + "-" + $index) {
+    <div [class]="styleClass()">
+      @switch (block.type) {
+        @case ("markdown") {
+          <content-markdown [properties]="block.properties" />
+        }
+      }
+    </div>
+  }
+</div>

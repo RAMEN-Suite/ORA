@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { MarkedRenderer } from 'ngx-markdown';
-import { Tokens } from 'marked';
+import { Parser, Tokens } from 'marked';
 import { ContentService } from '../services/content.service';
 
 const IMAGE_HTML: RegExp = /^<img\b[^>]*>$/i;
@@ -9,7 +9,23 @@ export function markedOptionsFactory(): { renderer: MarkedRenderer } {
   const contentService: ContentService = inject(ContentService);
   const renderer: MarkedRenderer = new MarkedRenderer();
 
-  renderer.link = ({ href, title, text }: Tokens.Link): string => {
+  renderer.heading = ({ depth, tokens }: Tokens.Heading): string => {
+    const tag: string = `h${depth}`;
+    const classes: string = resolveHeadingClasses(depth);
+    const text: string = Parser.parseInline(tokens);
+
+    return `<${tag} class="${classes}">${text}</${tag}>`;
+  };
+
+  renderer.paragraph = ({ tokens }: Tokens.Paragraph): string => {
+    const text: string = Parser.parseInline(tokens);
+
+    return `<p class="mb-5 leading-relaxed">${text}</p>`;
+  };
+
+  renderer.link = ({ href, title, tokens }: Tokens.Link): string => {
+    const text: string = Parser.parseInline(tokens);
+
     if (!href) return text;
 
     const safeHref: string = escapeAttribute(href);
@@ -34,6 +50,25 @@ export function markedOptionsFactory(): { renderer: MarkedRenderer } {
   };
 
   return { renderer };
+}
+
+function resolveHeadingClasses(depth: number): string {
+  switch (depth) {
+    case 1:
+      return 'mb-5 text-3xl font-semibold leading-tight';
+    case 2:
+      return 'mb-4 text-2xl font-semibold leading-tight';
+    case 3:
+      return 'mb-4 text-xl font-semibold leading-tight';
+    case 4:
+      return 'mb-3 text-lg font-semibold leading-tight';
+    case 5:
+      return 'mb-3 text-base font-semibold leading-tight';
+    case 6:
+      return 'mb-3 text-sm font-semibold leading-tight';
+    default:
+      return 'mb-3 font-semibold leading-tight';
+  }
 }
 
 function resolveHtmlImage(text: string, contentService: ContentService): string {

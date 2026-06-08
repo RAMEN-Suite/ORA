@@ -5,10 +5,10 @@ import { Node } from '../../models/Node';
 import { TranslocoService } from '@jsverse/transloco';
 
 @Component({ template: '', host: { class: 'contents' } })
-export abstract class AbstractBlock<TProps extends object = object> {
+export abstract class AbstractBlock<TProperties extends object = object> {
   protected readonly translocoService: TranslocoService = inject(TranslocoService);
 
-  public readonly properties: InputSignal<TProps | undefined> = input<TProps>();
+  public readonly properties: InputSignal<TProperties | undefined> = input<TProperties>();
   public readonly values: InputSignal<Record<string, unknown>> = input<Record<string, unknown>>({});
 
   protected resolveTemplate(value: Template | undefined): string {
@@ -43,13 +43,6 @@ export abstract class AbstractBlock<TProps extends object = object> {
   protected resolveNodes(value: Binding | undefined): Node[] {
     if (!this.isBinding(value)) return [];
     return BlockValueResolver.resolveNodes(value, this.values());
-  }
-
-  protected requireValue<T>(value: T | undefined | null, name: string): T | undefined {
-    if (value !== undefined && value !== null) return value;
-
-    console.warn(`Missing ${this.constructor.name} property: ${name}`);
-    return undefined;
   }
 
   private isBinding(value: unknown): value is Binding {
