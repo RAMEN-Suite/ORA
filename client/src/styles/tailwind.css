@@ -27,6 +27,11 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@theme {
+  --spacing-navbar: 3.75rem;
+  --spacing-current-screen: calc(100vh - 10.75rem);
+}
+
 @utility no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

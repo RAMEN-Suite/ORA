@@ -1,7 +1,7 @@
 import { Component, inject, Signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavbarComponent } from './view/shared/navbar/navbar.component';
-import { FooterComponent } from './view/shared/footer/footer.component';
+import { NavbarComponent } from './view/shared/layout/navbar/navbar.component';
+import { FooterComponent } from './view/shared/layout/footer/footer.component';
 import { ConfigService } from './services/config.service';
 
 @Component({

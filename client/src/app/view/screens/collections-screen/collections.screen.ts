@@ -1,20 +1,20 @@
 import { Component, computed, inject, Signal, signal, viewChild, WritableSignal } from '@angular/core';
 import { TableModule } from 'primeng/table';
-import { PaginatedListComponent } from '../../shared/paginated-list/paginated-list.component';
+import { PaginatedListComponent } from '../../shared/interface/paginated-list/paginated-list.component';
 import { List, Listable, QueryOptions } from '../../../models/List';
 import { HttpResourceRef } from '@angular/common/http';
 import { NavigationService } from '../../../services/navigation.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationUtils } from '../../../utils/PaginationUtils';
-import { SelectComponent } from '../../shared/select/select.component';
+import { SelectComponent } from '../../shared/interface/select/select.component';
 import { FormsModule } from '@angular/forms';
 import { IftaLabel } from 'primeng/iftalabel';
 import { InputText } from 'primeng/inputtext';
 import { Button } from 'primeng/button';
 import { Tooltip } from 'primeng/tooltip';
 import { ActiveFilter, FacetGroup, FacetOptions } from '../../../models/Facet';
-import { FacetListComponent } from '../../shared/facet-list/facet-list.component';
+import { FacetListComponent } from '../../shared/interface/facet-list/facet-list.component';
 import { FilterUtils } from '../../../utils/FilterUtils';
 import { Collection } from '../../../models/Node';
 import { FilterOption, ListOption, Option, Property } from '../../../models/config/ListViews';
@@ -22,6 +22,7 @@ import { AbstractListScreen } from '../abstract-list.screen';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { ROUTES } from '../../../app.routes';
 import { ParseUtils } from '../../../utils/ParseUtils';
+import { ScreenShellComponent } from '../../shared/layout/screen-shell/screen-shell.component';
 
 @Component({
   selector: 'screen-collections',
@@ -36,6 +37,7 @@ import { ParseUtils } from '../../../utils/ParseUtils';
     Tooltip,
     FacetListComponent,
     TranslocoDirective,
+    ScreenShellComponent,
   ],
   templateUrl: './collections.screen.html',
 })

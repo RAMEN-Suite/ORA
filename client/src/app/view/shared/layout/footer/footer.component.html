@@ -1,0 +1,123 @@
+<footer *transloco="let t">
+  <section class="bg-primary-800 border-primary-950 border-t px-6 py-8 md:py-12">
+    <div class="mx-auto flex max-w-7xl flex-wrap gap-x-10 gap-y-8 md:gap-y-10">
+      @for (column of columns; track $index) {
+        <section
+          class="text-primary-50 flex min-w-50 flex-1 flex-col gap-3 md:gap-4"
+          [ngClass]="column.kind === 'empty' ? ['hidden', 'lg:flex', ...(column.classes ?? [])] : (column.classes ?? [])"
+        >
+          @switch (column.kind) {
+            @case ("links") {
+              <h2 class="font-semibold tracking-wide uppercase">
+                {{ t(column.caption) }}
+              </h2>
+
+              <nav class="flex flex-col gap-2.5 md:gap-3">
+                @for (item of column.items; track item.label ?? item.href ?? $index) {
+                  <a
+                    class="text-primary-100/80 hover:text-primary-50 flex items-center gap-2 transition"
+                    [ngClass]="item.classes ?? []"
+                    [href]="item.href"
+                    [target]="item.target ?? '_self'"
+                  >
+                    <i class="pi pi-angle-right text-xs!"></i>
+
+                    @if (item.label) {
+                      <span>{{ t(item.label) }}</span>
+                    }
+                  </a>
+                }
+              </nav>
+            }
+
+            @case ("markdown") {
+              <h2 class="font-semibold tracking-wide uppercase">
+                {{ t(column.caption) }}
+              </h2>
+
+              @let markdown = getMarkdown(column) | async;
+              <ng-container *ngTemplateOutlet="footerMarkdownBlock; context: { content: markdown ?? '' }" />
+            }
+          }
+        </section>
+      }
+    </div>
+  </section>
+
+  @if (cooperation && cooperation.items.length) {
+    <section class="text-primary-50 bg-primary-900 px-5 py-10 md:py-12">
+      <div class="mx-auto flex max-w-7xl flex-col items-center gap-6 md:gap-7">
+        @if (cooperation.caption) {
+          <h2 class="text-sm font-semibold tracking-wide uppercase">
+            {{ t(cooperation.caption) }}
+          </h2>
+        }
+
+        <div class="flex w-full flex-wrap items-center justify-center gap-4 md:gap-5">
+          @for (item of cooperation.items; track item.src) {
+            @if (item.href) {
+              <a
+                class="bg-primary-50 ring-primary-950 flex min-h-20 min-w-30 flex-col items-center justify-center rounded-sm px-5 py-5 ring-1 transition"
+                [ngClass]="item.classes ?? []"
+                [href]="item.href"
+                [target]="item.target ?? '_blank'"
+              >
+                <ng-container *ngTemplateOutlet="cooperationImage; context: { item, t }" />
+              </a>
+            } @else {
+              <div
+                class="bg-primary-50 ring-primary-950 flex min-h-20 min-w-30 flex-col items-center justify-center rounded-sm px-5 py-5 ring-1"
+                [ngClass]="item.classes ?? []"
+              >
+                <ng-container *ngTemplateOutlet="cooperationImage; context: { item, t }" />
+              </div>
+            }
+          }
+        </div>
+      </div>
+    </section>
+  }
+
+  <section class="bg-primary-950 px-5 py-4 md:py-3">
+    <div class="flex w-full flex-col items-center gap-3 text-center text-sm md:flex-row md:justify-between md:text-left">
+      @if (notice) {
+        <div class="text-primary-50 flex flex-wrap justify-center gap-1 tracking-tighter select-none md:justify-start">
+          <markdown class="[&>p]:m-0" [data]="t(notice, { currentYear })"></markdown>
+          <markdown class="[&>p]:m-0" [data]="t('app.shared.footer.software', { url: softwareUrl })"></markdown>
+        </div>
+      }
+
+      @if (links.length) {
+        <nav class="flex flex-wrap justify-center gap-x-4 gap-y-1 md:justify-end" aria-label="Footer links">
+          @for (item of links; track item.label ?? item.href ?? $index) {
+            <a
+              class="text-primary-100/70 hover:text-primary-50 transition"
+              [ngClass]="item.classes ?? []"
+              [href]="item.href"
+              [target]="item.target ?? '_self'"
+            >
+              {{ t(item.label) }}
+            </a>
+          }
+        </nav>
+      }
+    </div>
+  </section>
+</footer>
+
+<ng-template #footerMarkdownBlock let-content="content">
+  <markdown
+    class="footer-markdown text-primary-100 prose prose-sm prose-invert max-w-none [&>p:first-child]:mt-0 [&>p:last-child]:mb-0"
+    [data]="content"
+  ></markdown>
+</ng-template>
+
+<ng-template #cooperationImage let-item="item" let-t="t">
+  <p-image [src]="getAssetUrl(item.src)" [alt]="getImageAlt(item, t)" imageClass="max-h-15 min-h-15 w-full object-contain" />
+
+  @if (item.label) {
+    <span class="text-primary-950/90 mt-3 block text-center text-sm leading-snug">
+      {{ t(item.label) }}
+    </span>
+  }
+</ng-template>

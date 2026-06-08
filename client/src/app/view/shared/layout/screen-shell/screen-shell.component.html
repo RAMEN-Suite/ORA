@@ -1,0 +1,49 @@
+<main class="px-6 py-8">
+  <div class="mx-auto grid max-w-7xl gap-6" [ngClass]="gridClasses()">
+    @if (!hasSidebar() && isFullWidth()) {
+      <section
+        class="w-full"
+        [ngClass]="{
+          'min-h-current-screen flex items-center justify-center': isCentered(),
+        }"
+      >
+        <ng-container *ngTemplateOutlet="mainTemplate()" />
+      </section>
+    } @else if (!hasSidebar()) {
+      <ng-container *ngTemplateOutlet="mainOnlyOutlet" />
+
+      <aside class="hidden lg:block print:hidden"></aside>
+    } @else if (isSidebarLeft()) {
+      <ng-container *ngTemplateOutlet="sidebarOutlet" />
+      <ng-container *ngTemplateOutlet="mainOutlet" />
+    } @else {
+      <ng-container *ngTemplateOutlet="mainOutlet" />
+      <ng-container *ngTemplateOutlet="sidebarOutlet" />
+    }
+  </div>
+</main>
+
+<ng-template #mainOnlyOutlet>
+  <section>
+    <ng-container *ngTemplateOutlet="mainTemplate()" />
+  </section>
+</ng-template>
+
+<ng-template #mainOutlet>
+  <section [class.order-2]="!isSidebarLeft()" [class.lg:order-1]="!isSidebarLeft()">
+    <ng-container *ngTemplateOutlet="mainTemplate()" />
+  </section>
+</ng-template>
+
+<ng-template #sidebarOutlet>
+  <aside
+    class="no-scrollbar space-y-5 self-start print:hidden"
+    [class.order-1]="!isSidebarLeft()"
+    [class.lg:order-2]="!isSidebarLeft()"
+    [ngClass]="{
+      'lg:sticky lg:top-23 lg:max-h-[calc(100vh-5rem)] lg:overflow-y-auto': isStickySidebar(),
+    }"
+  >
+    <ng-container *ngTemplateOutlet="sidebarTemplate()" />
+  </aside>
+</ng-template>

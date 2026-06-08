@@ -1,32 +1,34 @@
-<main class="min-h-screen px-6 py-4 md:py-10" *transloco="let t">
+<ng-container *transloco="let t">
   @if (collections(); as list) {
     @if (activeOption(); as active) {
-      <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[minmax(0,1fr)_350px]">
-        <section class="border-surface-300 bg-surface-0/75 order-2 rounded-md border p-5 lg:order-1!">
-          <header class="mb-3 pb-5 select-none">
-            <h1 class="text-4xl font-semibold tracking-tight">
-              {{ t(active.label) }}
-            </h1>
+      <shared-screen-shell sidebarPosition="right">
+        <ng-template #main>
+          <div class="border-surface-300 bg-surface-0/75 rounded-md border p-5">
+            <header class="mb-3 pb-5 select-none">
+              <h1 class="text-4xl font-semibold tracking-tight">
+                {{ t(active.label) }}
+              </h1>
 
-            <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
-              {{ t("app.screens.collections.available", { count: list.pagination.total }) }}
-            </p>
-          </header>
+              <p class="text-surface-600 mt-3 text-sm tracking-wide uppercase">
+                {{ t("app.screens.collections.available", { count: list.pagination.total }) }}
+              </p>
+            </header>
 
-          <shared-paginated-list
-            class="animate__animated animate__fadeIn"
-            [items]="list.data"
-            [properties]="properties()"
-            [totalRecords]="list.pagination.total"
-            [rows]="list.pagination.limit"
-            [skip]="list.pagination.skip"
-            [routeTarget]="['/', ROUTES.COLLECTIONS]"
-            [isLoading]="$list.isLoading()"
-            (pageChange)="handlePaginationChange($event)"
-          />
-        </section>
+            <shared-paginated-list
+              class="animate__animated animate__fadeIn"
+              [items]="list.data"
+              [properties]="properties()"
+              [totalRecords]="list.pagination.total"
+              [rows]="list.pagination.limit"
+              [skip]="list.pagination.skip"
+              [routeTarget]="['/', ROUTES.COLLECTIONS]"
+              [isLoading]="$list.isLoading()"
+              (pageChange)="handlePaginationChange($event)"
+            />
+          </div>
+        </ng-template>
 
-        <aside class="order-1 space-y-5 lg:order-2">
+        <ng-template #sidebar>
           <section class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
             <shared-select
               label="app.screens.collections.select"
@@ -102,8 +104,8 @@
               />
             </section>
           }
-        </aside>
-      </div>
+        </ng-template>
+      </shared-screen-shell>
     }
   }
-</main>
+</ng-container>

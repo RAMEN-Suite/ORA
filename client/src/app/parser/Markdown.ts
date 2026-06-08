@@ -55,11 +55,11 @@ export function markedOptionsFactory(): { renderer: MarkedRenderer } {
 function resolveHeadingClasses(depth: number): string {
   switch (depth) {
     case 1:
-      return 'mb-5 text-3xl font-semibold leading-tight';
+      return 'mb-5 md:text-3xl text-2xl font-semibold leading-tight';
     case 2:
-      return 'mb-4 text-2xl font-semibold leading-tight';
+      return 'mb-4 md:text-2xl text-xl font-semibold leading-tight';
     case 3:
-      return 'mb-4 text-xl font-semibold leading-tight';
+      return 'mb-4 md:text-xl text-lg font-semibold leading-tight';
     case 4:
       return 'mb-3 text-lg font-semibold leading-tight';
     case 5:

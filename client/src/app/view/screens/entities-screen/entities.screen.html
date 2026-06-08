@@ -1,58 +1,56 @@
 @let isSearching = searchPhrase() !== "";
 @let active = activeOption();
 
-<main class="min-h-screen px-6 py-4 md:py-10" *transloco="let t">
-  <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[350px_minmax(0,1fr)]">
-    <aside class="no-scrollbar self-start overflow-y-auto lg:sticky lg:top-18 lg:max-h-[calc(100vh-5rem)]">
-      <div class="space-y-5">
-        <section class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
-          <shared-select
-            label="app.screens.entities.select"
-            [items]="listOptions()"
-            [activeItem]="active"
-            (activeItemChange)="handleActiveItemChange($event)"
+<shared-screen-shell [isStickySidebar]="true" sidebarPosition="left" *transloco="let t">
+  <ng-template #sidebar>
+    <section class="border-surface-300 bg-surface-0 rounded-md border p-5 select-none">
+      <shared-select
+        label="app.screens.entities.select"
+        [items]="listOptions()"
+        [activeItem]="active"
+        (activeItemChange)="handleActiveItemChange($event)"
+      />
+    </section>
+
+    <nav class="border-surface-300 bg-surface-0 space-y-5 rounded-md border p-5 select-none">
+      <p-ifta-label>
+        <input
+          id="search"
+          pInputText
+          fluid
+          type="search"
+          autocomplete="off"
+          [ngModel]="searchPhrase()"
+          (ngModelChange)="handleSearchChange($event)"
+        />
+
+        <label for="search">
+          {{ t("app.screens.entities.search") }}
+        </label>
+      </p-ifta-label>
+
+      <div class="animate__animated animate__fadeIn">
+        @if (activeListIndex().type === "character") {
+          <shared-character-list
+            [isDisabled]="isSearching"
+            [items]="entityLabels()"
+            [activeCharacter]="activeIndex()"
+            (activeCharacterChange)="handleIndexChange($event)"
           />
-        </section>
-
-        <nav class="border-surface-300 bg-surface-0 space-y-5 rounded-md border p-5 select-none">
-          <p-ifta-label>
-            <input
-              id="search"
-              pInputText
-              fluid
-              type="search"
-              autocomplete="off"
-              [ngModel]="searchPhrase()"
-              (ngModelChange)="handleSearchChange($event)"
-            />
-
-            <label for="search">
-              {{ t("app.screens.entities.search") }}
-            </label>
-          </p-ifta-label>
-
-          <div class="animate__animated animate__fadeIn">
-            @if (activeListIndex().type === "character") {
-              <shared-character-list
-                [isDisabled]="isSearching"
-                [items]="entityLabels()"
-                [activeCharacter]="activeIndex()"
-                (activeCharacterChange)="handleIndexChange($event)"
-              />
-            } @else {
-              <shared-searchable-list
-                [options]="indexOptions()"
-                [isDisabled]="isSearching"
-                [activeValue]="activeIndex()"
-                (activeValueChange)="handleIndexChange($event)"
-              />
-            }
-          </div>
-        </nav>
+        } @else {
+          <shared-searchable-list
+            [options]="indexOptions()"
+            [isDisabled]="isSearching"
+            [activeValue]="activeIndex()"
+            (activeValueChange)="handleIndexChange($event)"
+          />
+        }
       </div>
-    </aside>
+    </nav>
+  </ng-template>
 
-    <section class="border-surface-300 bg-surface-0/75 rounded-md border p-5">
+  <ng-template #main>
+    <div class="border-surface-300 bg-surface-0/75 rounded-md border p-5">
       <header class="mb-6 pb-5 select-none">
         @if (active) {
           <h1 class="text-4xl font-semibold tracking-tight">
@@ -81,6 +79,6 @@
           }
         </ng-template>
       </p-data-view>
-    </section>
-  </div>
-</main>
+    </div>
+  </ng-template>
+</shared-screen-shell>

@@ -1,5 +1,5 @@
 import { ListIndex } from '../../models/ListIndex';
-import { SearchableOption } from '../../view/shared/searchable-list/searchable-list.component';
+import { SearchableOption } from '../../view/shared/interface/searchable-list/searchable-list.component';
 import { Utils } from '../../utils/Utils';
 
 export class CharacterListIndex implements ListIndex {

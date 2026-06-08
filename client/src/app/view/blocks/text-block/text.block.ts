@@ -3,7 +3,7 @@ import { Fieldset } from 'primeng/fieldset';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { AbstractBlock } from '../abstract.block';
 import { TextProps } from '../../../models/config/DetailViews';
-import { TextViewComponent } from '../../shared/text-view/text-view.component';
+import { TextViewComponent } from '../../shared/interface/text-view/text-view.component';
 import { TextAnnotation } from '../../../models/annotations/TextAnnotation';
 import { AnnotationUtils } from '../../../utils/AnnotationUtils';
 import { ConfigService } from '../../../services/config.service';

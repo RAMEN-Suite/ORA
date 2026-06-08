@@ -1,4 +1,4 @@
-import { SearchableOption } from '../view/shared/searchable-list/searchable-list.component';
+import { SearchableOption } from '../view/shared/interface/searchable-list/searchable-list.component';
 
 export const UNKNOWN_INDEX_VALUE = '#';
 export type ListIndexType = 'character' | 'alias-list' | 'bible';

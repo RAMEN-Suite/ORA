@@ -1,7 +1,9 @@
-<main class="min-h-screen px-6 py-4 md:py-10">
-  <div class="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[350px_minmax(0,1fr)]">
-    <aside class="no-scrollbar self-start overflow-y-auto lg:sticky lg:top-18 lg:max-h-[calc(100vh-5rem)]"></aside>
+<shared-screen-shell sidebarPosition="left">
+  <ng-template #sidebar>
+    <!-- Sidebar content -->
+  </ng-template>
 
-    <section class="border-surface-300 bg-surface-0/75 rounded-md border p-5">work in progress..</section>
-  </div>
-</main>
+  <ng-template #main>
+    <div class="border-surface-300 bg-surface-0/75 rounded-md border p-5">work in progress..</div>
+  </ng-template>
+</shared-screen-shell>

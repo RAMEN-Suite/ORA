@@ -4,11 +4,12 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { ConfigService } from '../../../services/config.service';
 import { ContentService } from '../../../services/content.service';
 import { Content, HeroAlign, HomeOptions } from '../../../models/config/PageViews';
-import { ContentRendererComponent } from '../../shared/content-renderer/content-renderer.component';
+import { ContentRendererComponent } from '../../shared/renderer/content-renderer/content-renderer.component';
+import { ScreenShellComponent } from '../../shared/layout/screen-shell/screen-shell.component';
 
 @Component({
   selector: 'screen-home',
-  imports: [NgClass, TranslocoDirective, NgStyle, ContentRendererComponent],
+  imports: [NgClass, TranslocoDirective, NgStyle, ContentRendererComponent, ScreenShellComponent],
   templateUrl: './home.screen.html',
 })
 export class HomeScreen {

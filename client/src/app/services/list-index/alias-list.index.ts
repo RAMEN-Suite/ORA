@@ -1,7 +1,7 @@
 import { TranslocoService } from '@jsverse/transloco';
 import { ListIndexItem } from '../../models/config/IndexOptions';
 import { AliasMatch, AliasOption, ListIndex, UNKNOWN_INDEX_VALUE } from '../../models/ListIndex';
-import { SearchableOption } from '../../view/shared/searchable-list/searchable-list.component';
+import { SearchableOption } from '../../view/shared/interface/searchable-list/searchable-list.component';
 
 interface AliasEntry {
   alias: string;
