@@ -9,6 +9,7 @@ on:
     paths:
       - "client/**"
       - ".github/workflows/client.yml"
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
