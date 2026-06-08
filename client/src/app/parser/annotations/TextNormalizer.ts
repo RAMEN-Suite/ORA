@@ -39,7 +39,7 @@ export class TextNormalizer {
       return undefined;
     }
 
-    const isZeroPoint: boolean = annotation.isZeroPoint === true || endIndex === undefined || startIndex === endIndex;
+    const isZeroPoint: boolean = annotation.isZeroPoint === true || endIndex === undefined;
     if (!isZeroPoint && typeof endIndex !== 'number') {
       this.addIssue('missing-range', 'Annotation has no valid endIndex.', annotation);
       return undefined;
