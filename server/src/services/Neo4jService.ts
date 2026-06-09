@@ -7,7 +7,7 @@ import { EnvironmentUtils } from "../utils/EnvironmentUtils";
 
 export class Neo4jService {
   private static client: Driver | undefined;
-  private static readonly maxRetries: number = 3;
+  private static readonly maxRetries: number = -1;
   private static readonly retryDelaySeconds: number = 5;
 
   public static async initConnection(retries: number = this.maxRetries): Promise<void> {
@@ -19,14 +19,14 @@ export class Neo4jService {
       this.client = neo4j.driver(host, neo4j.auth.basic(username, password), { disableLosslessIntegers: true });
       await this.client.verifyConnectivity();
     } catch (error: unknown) {
-      if (retries <= 0) {
+      if (retries === 0) {
         logger.error(error, "Neo4jService: Failed to initialize.");
         throw error;
       }
 
       logger.warn(error, "Neo4jService failed to initialize (%d attempts left).", retries);
       await Utils.sleep(this.retryDelaySeconds);
-      await this.initConnection(retries - 1);
+      await this.initConnection(retries === -1 ? -1 : retries - 1);
     }
   }
 
