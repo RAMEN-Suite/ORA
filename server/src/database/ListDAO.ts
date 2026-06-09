@@ -13,7 +13,7 @@ export class ListDAO {
     assembler.search(options.field, options.search);
     assembler.filters(options.filters ?? []);
     assembler.where();
-    assembler.sort(options.orderBy, options.asc);
+    assembler.sort(options.orderBy);
     assembler.skip(options.skip);
     assembler.limit(options.limit);
 
