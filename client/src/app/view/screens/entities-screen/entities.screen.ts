@@ -9,18 +9,18 @@ import { Utils } from '../../../utils/Utils';
 import { NavigationService } from '../../../services/navigation.service';
 import { List, Listable, QueryOptions } from '../../../models/List';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SelectComponent } from '../../shared/interface/select/select.component';
+import { SelectComponent } from '../../shared/interfaces/select/select.component';
 import { ROUTES } from '../../../app.routes';
-import { NodesViewComponent } from '../../shared/interface/data-view/nodes-view/nodes-view.component';
+import { NodesViewComponent } from '../../shared/interfaces/data-view/nodes-view/nodes-view.component';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Entity } from '../../../models/Node';
 import { EntityListOption, Property } from '../../../models/config/ListViews';
 import { AbstractListScreen } from '../abstract-list.screen';
 import { ParseUtils } from '../../../utils/ParseUtils';
-import { SearchableListComponent, SearchableOption } from '../../shared/interface/searchable-list/searchable-list.component';
+import { SearchableListComponent, SearchableOption } from '../../shared/interfaces/searchable-list/searchable-list.component';
 import { ListIndexService } from '../../../services/list-index/list-index.service';
 import { ListIndex } from '../../../models/ListIndex';
-import { CharacterListComponent } from '../../shared/interface/character-list/character-list.component';
+import { CharacterListComponent } from '../../shared/interfaces/character-list/character-list.component';
 import { ScreenShellComponent } from '../../shared/layout/screen-shell/screen-shell.component';
 
 const DEFAULT_OPTION: EntityListOption = {

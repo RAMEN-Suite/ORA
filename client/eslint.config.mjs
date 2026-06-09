@@ -68,7 +68,7 @@ export default defineConfig(
         "error",
         {
           type: "element",
-          prefix: ["root", "annotation", "shared", "screen", "block", "content"],
+          prefix: ["root", "screen", "shared", "block", "content", "annotation", "element"],
           style: "kebab-case",
         },
       ],
