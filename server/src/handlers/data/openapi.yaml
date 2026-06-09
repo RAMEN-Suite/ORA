@@ -14,7 +14,6 @@ paths:
         - $ref: "#/components/parameters/Limit"
         - $ref: "#/components/parameters/Skip"
         - $ref: "#/components/parameters/OrderBy"
-        - $ref: "#/components/parameters/Asc"
         - $ref: "#/components/parameters/Label"
         - $ref: "#/components/parameters/Search"
         - $ref: "#/components/parameters/Field"
@@ -65,7 +64,6 @@ paths:
         - $ref: "#/components/parameters/Limit"
         - $ref: "#/components/parameters/Skip"
         - $ref: "#/components/parameters/OrderBy"
-        - $ref: "#/components/parameters/Asc"
         - $ref: "#/components/parameters/Label"
         - $ref: "#/components/parameters/Search"
         - $ref: "#/components/parameters/Field"
@@ -193,23 +191,32 @@ components:
       name: orderBy
       in: query
       required: false
-      description: RAMEN access path used for sorting.
+      description: >
+        RAMEN access paths used for sorting. This parameter may be repeated
+        to sort by multiple fields. Prefix a path with `-` to sort descending.
+        Without prefix, ascending order is used.
       schema:
-        $ref: "#/components/schemas/AccessPathString"
+        type: array
+        maxItems: 5
+        items:
+          $ref: "#/components/schemas/SortPathString"
+      style: form
+      explode: true
       examples:
-        directField:
-          value: label
-        nestedField:
-          value: annotation[type].date
-
-    Asc:
-      name: asc
-      in: query
-      required: false
-      description: Whether sorting should be ascending. Defaults to ascending unless set to false.
-      schema:
-        type: boolean
-      example: true
+        singleAscending:
+          value:
+            - label
+        singleDescending:
+          value:
+            - -label
+        multipleAscending:
+          value:
+            - status
+            - annotation[sent].dateStart
+        multipleMixed:
+          value:
+            - status
+            - -annotation[sent].dateStart
 
     Label:
       name: label
@@ -333,6 +340,20 @@ components:
         - refers[Person].name
         - parents[Collection].title
         - children[Content].*
+
+    SortPathString:
+      type: string
+      minLength: 1
+      maxLength: 512
+      description: >
+        RAMEN access path used for sorting. Prefix with `-` for descending order.
+        Without prefix, ascending order is used.
+      pattern: "^-?(?:(?:annotation|refers|parents|children)(?:\\[[^\\]]+\\])?\\.)*(?:[A-Za-z_]\\w*|\\*)$"
+      examples:
+        - label
+        - -label
+        - annotation[sent].dateStart
+        - -annotation[sent].dateStart
 
     FilterString:
       type: string

@@ -6,14 +6,14 @@ import { List, ListOptions, Pagination } from "../../models/List";
 import { matchedData } from "express-validator";
 import { FilterParser } from "../../parser/FilterParser";
 import { RESOURCE } from "../../constants/RESOURCE";
+import { SortParser } from "../../parser/SortParser";
 
 export async function getList(resource: RESOURCE, req: Request, res: Response): Promise<void> {
   const params: Record<string, unknown> = matchedData(req);
 
   const specifiedLabel: string | undefined = Utils.parseString(params.label);
   const options: ListOptions = {
-    orderBy: Utils.parseString(params.orderBy),
-    asc: Utils.parseBoolean(params.asc),
+    orderBy: SortParser.parseMany(Utils.parseStringArray(params.orderBy)),
     limit: Utils.parseNumber(params.limit) ?? 25,
     skip: Utils.parseNumber(params.skip) ?? 0,
     search: Utils.parseString(params.search),

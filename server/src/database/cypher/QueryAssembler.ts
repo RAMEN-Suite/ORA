@@ -3,6 +3,7 @@ import { AccessPattern } from "./AccessPattern";
 import { AccessParser, AccessPath } from "../../parser/AccessParser";
 import { Filter } from "../../models/Filter";
 import { RESOURCE } from "../../constants/RESOURCE";
+import { SortField } from "../../models/List";
 
 export interface BuiltQuery {
   cypher: string;
@@ -59,13 +60,19 @@ export class QueryAssembler {
     return this;
   }
 
-  public sort(field: string | undefined, asc: boolean | undefined): this {
-    if (!field) return this;
-    const pattern: AccessPattern = this.access(field, "sort");
-    const direction: string = asc === false ? "DESC" : "ASC";
+  public sort(orderBy: SortField[] | undefined): this {
+    if (!orderBy || orderBy.length === 0) return this;
+    const orderings: string[] = [];
 
-    this.query.push(...pattern.match());
-    this.query.push(`ORDER BY ${pattern.expression()} ${direction}`);
+    for (const [index, sort] of orderBy.entries()) {
+      const pattern: AccessPattern = this.access(sort.field, `sort${index}`);
+      const direction: string = sort.asc ? "ASC" : "DESC";
+
+      this.query.push(...pattern.match());
+      orderings.push(`${pattern.expression()} ${direction}`);
+    }
+
+    this.query.push(`ORDER BY ${orderings.join(", ")}`);
     return this;
   }
 
