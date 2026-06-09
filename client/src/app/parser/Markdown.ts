@@ -20,7 +20,7 @@ export function markedOptionsFactory(): { renderer: MarkedRenderer } {
   renderer.paragraph = ({ tokens }: Tokens.Paragraph): string => {
     const text: string = Parser.parseInline(tokens);
 
-    return `<p class="mb-5 leading-relaxed">${text}</p>`;
+    return `<p class="my-3 leading-relaxed">${text}</p>`;
   };
 
   renderer.link = ({ href, title, tokens }: Tokens.Link): string => {
