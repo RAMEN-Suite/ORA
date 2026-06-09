@@ -88,7 +88,7 @@
       }
 
       @if (links.length) {
-        <nav class="flex flex-wrap justify-center gap-x-4 gap-y-1 md:justify-end" aria-label="Footer links">
+        <nav class="flex flex-wrap justify-center gap-x-4 gap-y-1 md:justify-end md:px-6" aria-label="Footer links">
           @for (item of links; track item.label ?? item.href ?? $index) {
             <a
               class="text-primary-100/70 hover:text-primary-50 transition"

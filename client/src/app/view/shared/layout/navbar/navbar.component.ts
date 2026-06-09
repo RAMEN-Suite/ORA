@@ -5,10 +5,11 @@ import { NgClass, NgTemplateOutlet } from '@angular/common';
 import { Button } from 'primeng/button';
 import { Popover } from 'primeng/popover';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { AVAILABLE_LANGUAGES, LanguageKey, NavItem, SiteOptions } from '../../../../models/config/SiteOptions';
+import { AVAILABLE_LANGUAGES, LanguageKey, NavbarOptions, NavItem, SiteOptions } from '../../../../models/config/SiteOptions';
 import { ConfigService } from '../../../../services/config.service';
 import { LanguageService } from '../../../../services/language.service';
 import { Nullable } from 'primeng/ts-helpers';
+import { ContentService } from '../../../../services/content.service';
 
 @Component({
   selector: 'shared-navbar',
@@ -16,12 +17,18 @@ import { Nullable } from 'primeng/ts-helpers';
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent {
+  private readonly contentService: ContentService = inject(ContentService);
   private readonly languageService: LanguageService = inject(LanguageService);
   private readonly configService: ConfigService = inject(ConfigService);
-  private readonly config: SiteOptions = this.configService.config().getSiteOptions();
 
-  protected readonly image: Signal<string | undefined> = computed((): string | undefined => this.config.navbar.image);
-  protected readonly navItems: Signal<NavItem[]> = computed((): NavItem[] => this.config.navbar.items ?? []);
+  private readonly config: SiteOptions = this.configService.config().getSiteOptions();
+  private readonly options: NavbarOptions = this.config.navbar;
+
+  protected readonly navItems: Signal<NavItem[]> = computed((): NavItem[] => this.options.items ?? []);
+  protected readonly navImage: Signal<string | undefined> = computed((): string | undefined => {
+    if (!this.options.image) return;
+    return this.contentService.resolveAssetUrl(this.options.image);
+  });
 
   protected readonly activeLanguage: Signal<LanguageKey | undefined> = this.languageService.activeLanguage;
   protected readonly languages: Signal<LanguageKey[]> = computed((): LanguageKey[] => {
