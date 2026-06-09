@@ -50,17 +50,19 @@
     </div>
   }
 
-  @if (externalLink()) {
-    <p-button
-      icon="pi pi-external-link"
-      size="small"
-      [label]="t('app.shared.textView.externalLink')"
-      outlined
-      (onClick)="handleOpenExternal(externalLink())"
-    />
+  @if (externalLinks().length > 0) {
+    @for (externalLink of externalLinks(); track externalLink) {
+      <p-button
+        icon="pi pi-external-link"
+        size="small"
+        [label]="t('app.shared.textView.externalLink', { source: $index + 1 })"
+        (onClick)="handleOpenExternal(externalLink)"
+        outlined
+      />
+    }
   }
 
-  @if (descriptions().length === 0 && references().length === 0 && !externalLink()) {
+  @if (descriptions().length === 0 && references().length === 0 && !externalLinks()) {
     <div class="text-surface-500">
       {{ t("app.shared.textView.empty") }}
     </div>

@@ -47,7 +47,7 @@ export class AnnotationDialogItemComponent {
   protected readonly references: Signal<DialogReference[]> = computed((): DialogReference[] => {
     return AnnotationDialogResolver.resolveReferences(this.dialog(), this.values());
   });
-  protected readonly externalLink: Signal<string> = computed((): string => {
+  protected readonly externalLinks: Signal<string[]> = computed((): string[] => {
     return AnnotationDialogResolver.resolveExternalLink(this.dialog(), this.values());
   });
 

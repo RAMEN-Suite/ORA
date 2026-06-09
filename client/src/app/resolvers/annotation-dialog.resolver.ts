@@ -28,8 +28,8 @@ export class AnnotationDialogResolver {
     return references.flatMap((reference: AnnotationReference): DialogReference[] => this.resolveReference(reference, values));
   }
 
-  public static resolveExternalLink(dialog: AnnotationDialog | undefined, values: Record<string, unknown>): string {
-    return BlockValueResolver.resolveString(dialog?.externalLink, values);
+  public static resolveExternalLink(dialog: AnnotationDialog | undefined, values: Record<string, unknown>): string[] {
+    return BlockValueResolver.resolveStrings(dialog?.externalLink, values);
   }
 
   private static resolveDescription(value: AnnotationValue, values: Record<string, unknown>): DialogDescription | undefined {

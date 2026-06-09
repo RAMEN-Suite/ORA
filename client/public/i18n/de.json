@@ -40,7 +40,7 @@
         "references": "Referenziert:",
         "empty": "Keine weiteren Informationen.",
         "error": "Die Annotation konnte nicht geladen werden.",
-        "externalLink": "Externen Link öffnen",
+        "externalLink": "Externen Link öffnen (#{{ source }})",
         "jumpTo": "Zur Annotation springen"
       },
       "citation": {
