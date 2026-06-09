@@ -1,9 +1,9 @@
-<p-menubar [model]="navItems()" *transloco="let t" #menubar class="min-h-navbar! px-6!">
+<p-menubar [model]="navItems()" *transloco="let t" #menubar class="min-h-navbar! md:px-6!">
   <ng-template #start>
     @if (navImage(); as image) {
       <div class="pe-5">
         <a routerLink="/" class="flex items-center">
-          <img [src]="image" class="max-h-10" alt="" />
+          <img [src]="image" class="h-10" alt="" />
         </a>
       </div>
     }

@@ -43,7 +43,7 @@
 
 html,
 body {
-  @apply text-primary overscroll-y-none;
+  @apply text-primary overflow-x-clip overscroll-y-none;
 }
 
 body {
