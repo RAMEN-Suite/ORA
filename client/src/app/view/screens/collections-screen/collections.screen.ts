@@ -17,7 +17,7 @@ import { ActiveFilter, FacetGroup, FacetOptions } from '../../../models/Facet';
 import { FacetListComponent } from '../../shared/interfaces/facet-list/facet-list.component';
 import { FilterUtils } from '../../../utils/FilterUtils';
 import { Collection } from '../../../models/Node';
-import { FilterOption, ListOption, Option, Property } from '../../../models/config/ListViews';
+import { FilterOption, ListOption, Option, Property, SortOption, SortOptionGroup } from '../../../models/config/ListViews';
 import { AbstractListScreen } from '../abstract-list.screen';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { ROUTES } from '../../../app.routes';
@@ -49,7 +49,7 @@ export class CollectionsScreen extends AbstractListScreen {
   protected readonly filters: Signal<FilterOption[]> = computed((): FilterOption[] => this.activeOption()?.filters ?? []);
   protected readonly activeFilters: WritableSignal<ActiveFilter[]> = signal<ActiveFilter[]>([]);
 
-  protected readonly sort: Signal<Option[]> = computed((): Option[] => this.activeOption()?.sort?.options ?? []);
+  protected readonly sort: Signal<Option[]> = computed((): Option[] => this.getSortOptions());
   protected readonly activeSort: WritableSignal<Option | undefined> = signal(undefined);
 
   protected readonly facetOptions: WritableSignal<FacetOptions> = signal({ facets: [] });
@@ -62,13 +62,13 @@ export class CollectionsScreen extends AbstractListScreen {
 
   public readonly $list: HttpResourceRef<List<Collection>> = this.listService.fetchList(
     Listable.COLLECTION,
-    this.activeOptionLabel,
+    this.activeOption,
     this.queryOptions,
   );
 
   public readonly $facets: HttpResourceRef<FacetGroup[]> = this.listService.fetchFacets(
     Listable.COLLECTION,
-    this.activeOptionLabel,
+    this.activeOption,
     this.facetOptions,
   );
 
@@ -96,7 +96,7 @@ export class CollectionsScreen extends AbstractListScreen {
 
   private initPageState(): void {
     const option: ListOption = this.currentOption();
-    const sort: Option | undefined = this.getInitialGroupOption(option.sort);
+    const sort: Option | undefined = this.getInitialSortOption(option);
     this.activeSort.set(sort);
 
     this.queryOptions.update(
@@ -155,6 +155,20 @@ export class CollectionsScreen extends AbstractListScreen {
     void this.navigationService.updateQuery(this.route, null, { queryParamsHandling: null });
   }
 
+  private getInitialSortOption(option: ListOption | undefined): Option | undefined {
+    const group: SortOptionGroup | undefined = option?.sort;
+    const existing: SortOption | undefined = group?.options.find((o: SortOption): boolean => o.identifier === group.initial);
+    const initial: SortOption | undefined = existing ?? group?.options[0];
+
+    if (!initial) return undefined;
+    return { icon: initial.icon, label: initial.label, value: initial.identifier };
+  }
+
+  private getSortOptions(): Option[] {
+    const options: SortOption[] = this.activeOption()?.sort?.options ?? [];
+    return options.map((option: SortOption): Option => ({ icon: option.icon, label: option.label, value: option.identifier }));
+  }
+
   private applyQueryParams(params: Params): void {
     const limit: number = PaginationUtils.parseLimit(params['limit']);
     const page: number = PaginationUtils.parsePage(params['page']);
@@ -201,11 +215,11 @@ export class CollectionsScreen extends AbstractListScreen {
 
   private applySortParams(params: Params): Pick<QueryOptions, 'orderBy' | 'asc'> {
     const option: ListOption | undefined = this.activeOption();
-    const sortOptions: Option[] = option?.sort?.options ?? [];
+    const sortOptions: Option[] = this.sort();
 
     const rawOrderBy: string | undefined = ParseUtils.parseString(params['orderBy']);
     const existing: Option | undefined = this.findOption(rawOrderBy, sortOptions);
-    const initial: Option | undefined = this.getInitialGroupOption(option?.sort);
+    const initial: Option | undefined = this.getInitialSortOption(option);
     const activeSort: Option | undefined = existing ?? initial;
 
     this.activeSort.set(activeSort);

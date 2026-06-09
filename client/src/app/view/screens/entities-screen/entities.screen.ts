@@ -81,7 +81,7 @@ export class EntitiesScreen extends AbstractListScreen<EntityListOption> {
 
   protected readonly $list: HttpResourceRef<List<Entity>> = this.listService.fetchList(
     Listable.ENTITY,
-    this.activeOptionLabel,
+    this.activeOption,
     this.queryOptions,
   );
 

@@ -19,7 +19,6 @@ export abstract class AbstractListScreen<TOption extends ListOption = ListOption
   ]);
 
   protected readonly activeOption: WritableSignal<TOption | undefined> = signal(undefined);
-  protected readonly activeOptionLabel: Signal<string> = computed((): string => this.activeOption()?.value ?? '');
   protected readonly activeProperties: Signal<Property[]> = computed((): Property[] => {
     const option: TOption | undefined = this.activeOption();
     return option ? this.mergedProperties(option) : [];
