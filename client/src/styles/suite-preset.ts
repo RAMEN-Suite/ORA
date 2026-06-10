@@ -1,7 +1,9 @@
 import { definePreset } from '@primeuix/themes';
 import type { Preset } from '@primeuix/themes/types';
 import Aura from '@primeuix/themes/aura';
+import { ZIndex } from 'primeng/config';
 
+export const zIndex: ZIndex = { modal: 10000, overlay: 9000, menu: 9000, tooltip: 11000 };
 export const SuitePreset: Preset = definePreset(Aura, {
   semantic: {
     primary: {
