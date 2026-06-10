@@ -93,7 +93,7 @@ export class Markdown {
   private resolveHeadingClasses(depth: number): string {
     switch (depth) {
       case 1:
-        return 'mb-5 md:text-3xl text-2xl font-semibold leading-tight';
+        return 'mb-5 md:text-3xl text-xl font-semibold leading-tight';
       case 2:
         return 'mb-4 md:text-2xl text-xl font-semibold leading-tight';
       case 3:
