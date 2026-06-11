@@ -2,9 +2,28 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ramen-schema.org/ora/2026.1/page-views.schema.json",
   "title": "ORA Page Views",
-  "description": "Configuration for static application page views such as the home page.",
+  "description": "Configuration for static application page views such as the home page and CMS-like pages.",
   "$ref": "#/$defs/pageViews",
   "$defs": {
+    "pathSegment": {
+      "type": "string",
+      "description": "URL-safe path segment.",
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "rootPagePathSegment": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/pathSegment"
+        },
+        {
+          "not": {
+            "enum": ["entities", "collections", "id", "error", "not-found"]
+          }
+        }
+      ],
+      "description": "Top-level URL-safe page segment. Must not collide with reserved application routes."
+    },
     "heroAlign": {
       "type": "string",
       "description": "Horizontal alignment of the hero content.",
@@ -73,18 +92,137 @@
       }
     },
     "content": {
-      "description": "Content block rendered in a page view area.",
+      "description": "Content block rendered inside a content section.",
       "oneOf": [
         {
           "$ref": "#/$defs/markdownContent"
         }
       ]
     },
-    "contentList": {
+    "contentBlockList": {
       "type": "array",
-      "description": "Ordered content blocks rendered in a page view area.",
+      "description": "Ordered content blocks rendered together inside one content section.",
+      "minItems": 1,
       "items": {
         "$ref": "#/$defs/content"
+      }
+    },
+    "contentSection": {
+      "type": "object",
+      "description": "Grouped content section. Blocks inside one section belong together and are rendered as one visual section by the content renderer.",
+      "additionalProperties": false,
+      "required": ["blocks"],
+      "properties": {
+        "blocks": {
+          "$ref": "#/$defs/contentBlockList",
+          "description": "Content blocks belonging to this section."
+        }
+      }
+    },
+    "contentSectionList": {
+      "type": "array",
+      "description": "Ordered content sections rendered in a page area.",
+      "items": {
+        "$ref": "#/$defs/contentSection"
+      },
+      "default": []
+    },
+    "pageContent": {
+      "type": "object",
+      "description": "Content areas for a CMS-like page.",
+      "additionalProperties": false,
+      "properties": {
+        "main": {
+          "$ref": "#/$defs/contentSectionList",
+          "description": "Content sections rendered in the main page area."
+        },
+        "aside": {
+          "$ref": "#/$defs/contentSectionList",
+          "description": "Optional content sections rendered in the aside area. In menu pages this is rendered below the side menu; in one-pagers it can be rendered below or beside the main content depending on the frontend."
+        }
+      }
+    },
+    "pageView": {
+      "type": "object",
+      "description": "Nested CMS-like page view. Can contain content and further nested child views.",
+      "additionalProperties": false,
+      "required": ["path", "title"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/pathSegment",
+          "description": "URL path segment for this page view."
+        },
+        "title": {
+          "type": "string",
+          "description": "Static title or translation key for this page view.",
+          "minLength": 1
+        },
+        "icon": {
+          "type": "string",
+          "description": "Optional icon name rendered in the side navigation.",
+          "minLength": 1
+        },
+        "content": {
+          "$ref": "#/$defs/pageContent",
+          "description": "Optional content rendered by this page view."
+        },
+        "views": {
+          "type": "array",
+          "description": "Nested child page views.",
+          "items": {
+            "$ref": "#/$defs/pageView"
+          },
+          "default": []
+        }
+      }
+    },
+    "page": {
+      "type": "object",
+      "description": "Top-level CMS-like page. Can be a one-pager with content or a page area with nested views and side navigation.",
+      "additionalProperties": false,
+      "required": ["path", "title"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/rootPagePathSegment",
+          "description": "Top-level URL path segment for this page."
+        },
+        "title": {
+          "type": "string",
+          "description": "Static title or translation key for this page.",
+          "minLength": 1
+        },
+        "icon": {
+          "type": "string",
+          "description": "Optional icon name rendered in the page navigation header.",
+          "minLength": 1
+        },
+        "content": {
+          "$ref": "#/$defs/pageContent",
+          "description": "Optional content rendered directly by this top-level page. Useful for one-pagers such as imprint or privacy pages."
+        },
+        "views": {
+          "type": "array",
+          "description": "Nested page views belonging to this top-level page. If configured, they are rendered as the side navigation menu.",
+          "items": {
+            "$ref": "#/$defs/pageView"
+          },
+          "default": []
+        }
+      },
+      "anyOf": [
+        {
+          "required": ["content"]
+        },
+        {
+          "required": ["views"]
+        }
+      ]
+    },
+    "pageList": {
+      "type": "array",
+      "description": "CMS-like pages rendered through the catch-all page route.",
+      "items": {
+        "$ref": "#/$defs/page"
       },
       "default": []
     },
@@ -98,12 +236,12 @@
           "description": "Optional hero section rendered on the home page."
         },
         "main": {
-          "$ref": "#/$defs/contentList",
-          "description": "Content rendered in the main home page area."
+          "$ref": "#/$defs/contentSectionList",
+          "description": "Content sections rendered in the main home page area."
         },
         "aside": {
-          "$ref": "#/$defs/contentList",
-          "description": "Content rendered in the home page aside area."
+          "$ref": "#/$defs/contentSectionList",
+          "description": "Content sections rendered in the home page aside area."
         }
       }
     },
@@ -116,6 +254,10 @@
         "home": {
           "$ref": "#/$defs/homeOptions",
           "description": "Home page view options."
+        },
+        "pages": {
+          "$ref": "#/$defs/pageList",
+          "description": "Configured CMS-like pages."
         }
       }
     }

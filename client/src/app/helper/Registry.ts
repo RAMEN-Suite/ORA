@@ -4,7 +4,7 @@ import { DetailView, DetailViews } from '../models/config/DetailViews';
 import { ListViews } from '../models/config/ListViews';
 import { Annotations } from '../models/config/Annotations';
 import { SiteOptions } from '../models/config/SiteOptions';
-import { HomeOptions } from '../models/config/PageViews';
+import { HomeOptions, PageViews } from '../models/config/PageViews';
 
 export class Registry {
   public constructor(private readonly config: Config) {}
@@ -15,6 +15,10 @@ export class Registry {
 
   public getHomeOptions(): HomeOptions {
     return this.config.pageViews.home;
+  }
+
+  public getPageViews(): PageViews {
+    return this.config.pageViews;
   }
 
   public getListView<K extends keyof ListViews>(key: K): ListViews[K] {

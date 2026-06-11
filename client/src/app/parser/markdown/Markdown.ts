@@ -4,6 +4,7 @@ import { Parser, Tokens } from 'marked';
 import { ContentService } from '../../services/content.service';
 
 const IMAGE_HTML: RegExp = /^<img\b[^>]*>$/i;
+const LINK_HTML: RegExp = /^<a\b[^>]*>.*<\/a>$/is;
 const VECTOR_IMAGE: RegExp = /\.svg(?:[?#].*)?$/i;
 
 export class Markdown {
@@ -44,17 +45,15 @@ export class Markdown {
   private renderLink({ href, title, tokens }: Tokens.Link): string {
     const text: string = Parser.parseInline(tokens);
     if (!href) return text;
-
-    const safeHref: string = this.escapeAttribute(href);
-    const titleAttribute: string = this.resolveOptionalAttribute('title', title);
-
-    return `<a href="${safeHref}"${titleAttribute} target="_blank" rel="noopener noreferrer">${text}</a>`;
+    return this.renderLinkHtml(href, title, text);
   }
 
   private renderHtml({ text }: Tokens.HTML): string {
     const html: string = text.trim();
 
     if (IMAGE_HTML.test(html)) return this.renderHtmlImage(html, text);
+    if (LINK_HTML.test(html)) return this.renderHtmlLink(html, text);
+
     return text;
   }
 
@@ -82,12 +81,37 @@ export class Markdown {
     return `<md-p-image appendTo="body" src="${safeSrc}" alt="${safeAlt}"${titleAttribute}${previewAttribute} />`;
   }
 
+  private renderHtmlLink(html: string, fallback: string): string {
+    const link: HTMLAnchorElement | null = this.parseLinkElement(html);
+    if (!link) return fallback;
+
+    const href: string | null = link.getAttribute('href');
+    if (!href) return fallback;
+
+    const title: string | null = link.getAttribute('title');
+    return this.renderLinkHtml(href, title, link.innerHTML);
+  }
+
+  private renderLinkHtml(href: string, title: string | null | undefined, html: string): string {
+    const safeHref: string = this.escapeAttribute(href);
+    const titleAttribute: string = this.resolveOptionalAttribute('title', title);
+    return `<a href="${safeHref}"${titleAttribute} target="_blank" rel="noopener noreferrer">${html}</a>`;
+  }
+
   private parseImageElement(html: string): HTMLImageElement | null {
     const template: HTMLTemplateElement = document.createElement('template');
     template.innerHTML = html;
 
     const element: Element | null = template.content.firstElementChild;
     return element instanceof HTMLImageElement ? element : null;
+  }
+
+  private parseLinkElement(html: string): HTMLAnchorElement | null {
+    const template: HTMLTemplateElement = document.createElement('template');
+    template.innerHTML = html;
+
+    const element: Element | null = template.content.firstElementChild;
+    return element instanceof HTMLAnchorElement ? element : null;
   }
 
   private resolveHeadingClasses(depth: number): string {

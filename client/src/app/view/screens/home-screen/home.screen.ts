@@ -1,56 +1,20 @@
 import { Component, computed, inject, Signal } from '@angular/core';
-import { NgClass, NgStyle } from '@angular/common';
-import { TranslocoDirective } from '@jsverse/transloco';
 import { ConfigService } from '../../../services/config.service';
-import { ContentService } from '../../../services/content.service';
-import { Content, HeroAlign, HomeOptions } from '../../../models/config/PageViews';
-import { ContentRendererComponent } from '../../shared/renderer/content-renderer/content-renderer.component';
+import { ContentSection, HomeOptions } from '../../../models/config/PageViews';
+import { HeroComponent } from '../../shared/interfaces/hero/hero.component';
 import { ScreenShellComponent } from '../../shared/layout/screen-shell/screen-shell.component';
+import { ContentRendererComponent } from '../../shared/renderer/content-renderer/content-renderer.component';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   selector: 'screen-home',
-  imports: [NgClass, TranslocoDirective, NgStyle, ContentRendererComponent, ScreenShellComponent],
+  imports: [HeroComponent, ScreenShellComponent, ContentRendererComponent, TranslocoDirective],
   templateUrl: './home.screen.html',
 })
 export class HomeScreen {
   private readonly configService: ConfigService = inject(ConfigService);
-  private readonly contentService: ContentService = inject(ContentService);
 
   protected readonly options: HomeOptions = this.configService.config().getHomeOptions();
-  protected readonly mainContent: Signal<Content[]> = computed((): Content[] => this.options.main ?? []);
-  protected readonly asideContent: Signal<Content[]> = computed((): Content[] => this.options.aside ?? []);
-
-  protected readonly heroImage: Signal<string | null> = computed((): string | null => {
-    const image: string | undefined = this.options.hero?.image;
-    return image ? this.contentService.resolveAssetUrl(image) : null;
-  });
-
-  protected readonly heroClasses: Signal<string[]> = computed((): string[] => {
-    const align: HeroAlign | undefined = this.options.hero?.align;
-    const background: string = this.heroImage() ? 'bg-dark md:bg-parallax' : `bg-${this.options.hero?.background ?? 'light'}`;
-    return [background, this.resolveHeroAlign(align)];
-  });
-
-  protected readonly heroStyles: Signal<Record<string, string | null>> = computed((): Record<string, string | null> => {
-    const image: string | null = this.heroImage();
-    if (!image) return {};
-
-    return {
-      'background-image': `url(${image})`,
-      'background-size': 'cover',
-      'background-position': 'center',
-      'background-repeat': 'no-repeat',
-    };
-  });
-
-  private resolveHeroAlign(align: HeroAlign | undefined): string {
-    switch (align ?? 'center') {
-      case 'left':
-        return 'items-start text-left';
-      case 'right':
-        return 'items-end text-right';
-      case 'center':
-        return 'items-center text-center';
-    }
-  }
+  protected readonly mainContent: Signal<ContentSection[]> = computed((): ContentSection[] => this.options.main ?? []);
+  protected readonly asideContent: Signal<ContentSection[]> = computed((): ContentSection[] => this.options.aside ?? []);
 }

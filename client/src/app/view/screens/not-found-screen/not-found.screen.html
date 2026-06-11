@@ -1,9 +1,13 @@
 <shared-screen-shell [isCentered]="true" *transloco="let t">
   <ng-template #main>
     <div class="text-center">
-      <h1 class="text-4xl font-semibold tracking-tight">404</h1>
+      <h1 class="text-4xl font-semibold tracking-tight">
+        {{ t("app.screens.not-found.title") }}
+      </h1>
 
-      <p class="text-surface-600 mt-3">not-found-screen works!</p>
+      <p class="text-surface-600 mt-3">
+        {{ t("app.screens.not-found.subTitle") }}
+      </p>
     </div>
   </ng-template>
 </shared-screen-shell>

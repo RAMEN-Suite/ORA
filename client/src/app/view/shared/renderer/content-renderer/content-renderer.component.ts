@@ -1,5 +1,5 @@
 import { Component, input, InputSignal } from '@angular/core';
-import { Content } from '../../../../models/config/PageViews';
+import { ContentSection } from '../../../../models/config/PageViews';
 import { MarkdownContent } from '../../../content/markdown-content/markdown.content';
 
 @Component({
@@ -9,5 +9,5 @@ import { MarkdownContent } from '../../../content/markdown-content/markdown.cont
   host: { class: 'contents' },
 })
 export class ContentRendererComponent {
-  public readonly blocks: InputSignal<Content[]> = input<Content[]>([]);
+  public sections: InputSignal<ContentSection[]> = input<ContentSection[]>([]);
 }

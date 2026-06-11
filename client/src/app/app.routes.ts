@@ -20,8 +20,6 @@ export enum ROUTES {
 
 export enum PARAMS {
   UUID = 'uuid',
-  PAGE = 'page',
-  GROUP = 'group',
 }
 
 export enum REASONS {

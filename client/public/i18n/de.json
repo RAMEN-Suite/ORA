@@ -25,6 +25,10 @@
         "entries": "Einträge zu: {{ value }}",
         "empty": "Es konnten keine Einträge gefunden werden.",
         "default": "Alle Register"
+      },
+      "not-found": {
+        "title": "404",
+        "subTitle": "Inhalt nicht gefunden"
       }
     },
     "shared": {

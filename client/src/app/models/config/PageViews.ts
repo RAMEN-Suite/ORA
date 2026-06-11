@@ -1,11 +1,37 @@
 export interface PageViews {
   home: HomeOptions;
+  pages?: Page[];
+}
+
+export interface Page {
+  path: string;
+  title: string;
+  icon?: string;
+  content?: PageContent;
+  views?: PageView[];
+}
+
+export interface PageView {
+  path: string;
+  title: string;
+  icon?: string;
+  content?: PageContent;
+  views?: PageView[];
+}
+
+export interface PageContent {
+  main?: ContentSection[];
+  aside?: ContentSection[];
+}
+
+export interface ContentSection {
+  blocks: Content[];
 }
 
 export interface HomeOptions {
   hero?: HeroOptions;
-  main?: Content[];
-  aside?: Content[];
+  main?: ContentSection[];
+  aside?: ContentSection[];
 }
 
 export interface HeroOptions {

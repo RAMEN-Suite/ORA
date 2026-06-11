@@ -18,6 +18,10 @@ export class NavigationService {
     });
   }
 
+  public toPath(path: string, options?: NavigationExtras): Promise<boolean> {
+    return this.router.navigateByUrl(path, { replaceUrl: true, ...options });
+  }
+
   public nodeLink(uuid: string): string[] {
     return ['/', ROUTES.IDENTIFIER, uuid];
   }
