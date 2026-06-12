@@ -26,7 +26,7 @@ concurrency:
 
 jobs:
   node-ci:
-    name: Node checks
+    name: node checks
     runs-on: ubuntu-latest
 
     steps:
@@ -47,8 +47,8 @@ jobs:
         continue-on-error: true
       - name: Build
         run: npm run build
-  container:
-    name: Dev Container
+  dev-container:
+    name: dev container
     needs: [node-ci]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
@@ -85,35 +85,35 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-  deploy:
-    name: deploy
-    runs-on: ubuntu-latest
-    needs: [container]
-    permissions:
-      contents: read
-      packages: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-      - name: Install SSH Key
-        run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/staging.key
-          chmod 600 ~/.ssh/staging.key
-          cat >>~/.ssh/config <<END
-          Host staging
-          HostName ${{ secrets.SSH_HOST}}
-          User ${{ secrets.SSH_USER }}
-          IdentityFile ~/.ssh/staging.key
-          END
-      - name: Start Container
-        run: |
-          ssh staging bash <<EOF
-          cd "${{ secrets.SSH_PATH }}/dev"
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
-          docker compose pull server
-          docker compose up -d --force-recreate server
-          EOF
+  # dev-deploy:
+  #   name: dev deploy
+  #   runs-on: ubuntu-latest
+  #   needs: [container]
+  #   permissions:
+  #     contents: read
+  #     packages: read
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v6
+  #     - name: Install SSH Key
+  #       run: |
+  #         mkdir -p ~/.ssh
+  #         chmod 700 ~/.ssh
+  #         echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+  #         chmod 600 ~/.ssh/known_hosts
+  #         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/staging.key
+  #         chmod 600 ~/.ssh/staging.key
+  #         cat >>~/.ssh/config <<END
+  #         Host staging
+  #         HostName ${{ secrets.SSH_HOST}}
+  #         User ${{ secrets.SSH_USER }}
+  #         IdentityFile ~/.ssh/staging.key
+  #         END
+  #     - name: Start Container
+  #       run: |
+  #         ssh staging bash <<EOF
+  #         cd "${{ secrets.SSH_PATH }}/dev"
+  #         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
+  #         docker compose pull server
+  #         docker compose up -d --force-recreate server
+  #         EOF
