@@ -1,7 +1,7 @@
 import { HttpResourceRef } from '@angular/common/http';
 import { Component, computed, Signal } from '@angular/core';
 import { MarkdownComponent } from 'ngx-markdown';
-import { MarkdownContentProperties } from '../../../models/config/PageViews';
+import { MarkdownProps } from '../../../models/config/PageViews';
 import { AbstractContent } from '../abstract.content';
 import { ProgressSpinner } from 'primeng/progressspinner';
 
@@ -10,7 +10,7 @@ import { ProgressSpinner } from 'primeng/progressspinner';
   imports: [MarkdownComponent, ProgressSpinner],
   templateUrl: './markdown.content.html',
 })
-export class MarkdownContent extends AbstractContent<MarkdownContentProperties> {
+export class MarkdownContent extends AbstractContent<MarkdownProps> {
   protected readonly file: Signal<string | null> = computed((): string | null => this.properties()?.file ?? null);
   protected readonly $markdown: HttpResourceRef<string | undefined> = this.contentService.fetchMarkdown(this.file);
 

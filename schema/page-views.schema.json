@@ -91,11 +91,79 @@
         }
       }
     },
+    "linkedListItem": {
+      "type": "object",
+      "description": "Single linked list item. Internal path wins over external url if both are configured.",
+      "additionalProperties": false,
+      "required": ["label"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Static label or translation key rendered as the link text.",
+          "minLength": 1
+        },
+        "icon": {
+          "type": "string",
+          "description": "Optional icon name rendered before the label.",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "description": "Optional internal application path. If both path and url are configured, path takes precedence.",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "description": "Optional external URL. Used only when no internal path is configured.",
+          "minLength": 1
+        }
+      },
+      "anyOf": [
+        {
+          "required": ["path"]
+        },
+        {
+          "required": ["url"]
+        }
+      ]
+    },
+    "linkedListContentProperties": {
+      "type": "object",
+      "description": "Linked list content properties.",
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "type": "array",
+          "description": "Ordered linked list items.",
+          "items": {
+            "$ref": "#/$defs/linkedListItem"
+          },
+          "default": []
+        }
+      }
+    },
+    "linkedListContent": {
+      "type": "object",
+      "description": "Content block rendering a list of internal and external links.",
+      "additionalProperties": false,
+      "required": ["type", "properties"],
+      "properties": {
+        "type": {
+          "const": "link-list"
+        },
+        "properties": {
+          "$ref": "#/$defs/linkedListContentProperties"
+        }
+      }
+    },
     "content": {
       "description": "Content block rendered inside a content section.",
       "oneOf": [
         {
           "$ref": "#/$defs/markdownContent"
+        },
+        {
+          "$ref": "#/$defs/linkedListContent"
         }
       ]
     },

@@ -75,10 +75,17 @@ export class Markdown {
     const resolvedSrc: string = this.contentService.resolveAssetUrl(src);
     const safeSrc: string = this.escapeAttribute(resolvedSrc);
     const safeAlt: string = this.escapeAttribute(alt ?? '');
-    const titleAttribute: string = this.resolveOptionalAttribute('title', title);
     const previewAttribute: string = VECTOR_IMAGE.test(src) ? '' : ' preview';
 
-    return `<md-p-image appendTo="body" src="${safeSrc}" alt="${safeAlt}"${titleAttribute}${previewAttribute} />`;
+    const imageHtml: string = `<md-p-image append-to="body" src="${safeSrc}" alt="${safeAlt}"${previewAttribute}></md-p-image>`;
+    if (!title) return imageHtml;
+
+    return `
+      <figure class="my-4">
+        ${imageHtml}
+        <figcaption class="text-center mb-2 text-sm leading-snug tracking-tight">${title}</figcaption>
+      </figure>
+    `;
   }
 
   private renderHtmlLink(html: string, fallback: string): string {

@@ -58,7 +58,7 @@
       <i class="text-sm! {{ item.icon ?? 'pi pi-angle-double-right' }}"></i>
     </span>
 
-    <span class="min-w-0 flex-1 truncate tracking-wide">
+    <span class="min-w-0 flex-1 truncate tracking-wide" [title]="t(item.label)">
       {{ t(item.label) }}
     </span>
 

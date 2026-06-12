@@ -45,15 +45,27 @@ export interface HeroOptions {
 export type HeroAlign = 'left' | 'center' | 'right';
 export type HeroBackground = 'gradient' | 'soft' | 'dark' | 'light';
 
-export type Content = MarkdownContent;
+export type Content = MarkdownContent | LinkListContent;
 
 export interface ContentOf<TType extends string, TProperties> {
   type: TType;
   properties: TProperties;
 }
 
-export type MarkdownContent = ContentOf<'markdown', MarkdownContentProperties>;
+export type MarkdownContent = ContentOf<'markdown', MarkdownProps>;
+export type LinkListContent = ContentOf<'link-list', LinkListProps>;
 
-export interface MarkdownContentProperties {
+export interface MarkdownProps {
   file: string;
+}
+
+export interface LinkListProps {
+  items?: LinkListItem[];
+}
+
+export interface LinkListItem {
+  label: string;
+  icon?: string;
+  path?: string;
+  url?: string;
 }

@@ -5,18 +5,16 @@
         <ng-template #sidebar>
           <div class="border-surface-300 bg-surface-0 rounded-md border p-5">
             <shared-panel-menu [items]="menuItems()" />
-
-            @if (asideContent().length > 0) {
-              <aside class="mt-6 border-t pt-5">
-                <content-renderer [sections]="asideContent()" />
-              </aside>
-            }
           </div>
+
+          @if (asideContent().length > 0) {
+            <content-renderer [sections]="asideContent()" />
+          }
         </ng-template>
       }
 
       <ng-template #main>
-        <article class="flex flex-col gap-8">
+        <article class="animate__animated animate__fadeIn flex flex-col gap-8">
           @if (mainContent().length > 0) {
             <content-renderer [sections]="mainContent()" />
           } @else {
