@@ -28,8 +28,8 @@ export const appConfig: ApplicationConfig = {
     provideAppInitializer(initApplication),
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
-    provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })),
     providePrimeNG({ theme: { preset: SuitePreset, options: { darkModeSelector: '.dark' } }, zIndex }),
+    provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })),
 
     provideHttpClient(withInterceptors([withHttpCacheInterceptor()])),
     provideHttpCache(withLocalStorage()),

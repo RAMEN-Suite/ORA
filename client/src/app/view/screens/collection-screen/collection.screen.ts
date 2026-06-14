@@ -17,7 +17,6 @@ export class CollectionScreen extends AbstractDetailScreen<Collection> {
   protected readonly collection: Signal<Collection | null> = this.node;
 
   public constructor() {
-    super();
-    this.init('collection');
+    super('collection');
   }
 }

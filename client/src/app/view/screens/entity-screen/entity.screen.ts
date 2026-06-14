@@ -14,7 +14,6 @@ export class EntityScreen extends AbstractDetailScreen<Entity> {
   protected readonly entityView: Signal<DetailView | null> = this.detailView;
 
   public constructor() {
-    super();
-    this.init('entity');
+    super('entity');
   }
 }
