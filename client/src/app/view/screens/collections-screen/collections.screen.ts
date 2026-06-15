@@ -122,7 +122,7 @@ export class CollectionsScreen extends AbstractListScreen {
     const next: QueryOptions = { ...this.queryOptions(), ...change };
     const limit: number = PaginationUtils.parseLimit(next.limit);
     const page: number = PaginationUtils.skipToPage(next.skip, limit);
-    void this.navigationService.updateQuery(this.route, { page, limit }, { scroll: 'manual' });
+    void this.navigationService.updateQuery(this.route, { page, limit }, { scroll: 'manual', replaceUrl: false });
   }
 
   protected handleActiveItemChange(option: ListOption | undefined): void {
