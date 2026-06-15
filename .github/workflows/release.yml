@@ -85,9 +85,9 @@ jobs:
       matrix:
         include:
           - name: server
-            context: ./server
+            dockerfile: ./server/dockerfile
           - name: client
-            context: ./client
+            dockerfile: ./client/dockerfile
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -116,7 +116,8 @@ jobs:
         id: build
         uses: docker/build-push-action@v7
         with:
-          context: ${{ matrix.context }}
+          context: .
+          file: ${{ matrix.dockerfile }}
           push: false
           load: true
           tags: ${{ steps.meta.outputs.tags }}
