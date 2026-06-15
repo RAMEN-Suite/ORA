@@ -3,7 +3,7 @@
   "productName": "ORA - Graph-based Digital Edition Server",
   "description": "Server application for the ORA Graph-based Digital Edition based on RAMEN Suite.",
   "license": "Apache-2.0",
-  "version": "2026.0.1",
+  "version": "2026.0.2",
   "author": {
     "name": "Sebastian Enns",
     "email": "mail@sebenns.com",
