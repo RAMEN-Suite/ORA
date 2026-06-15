@@ -3,7 +3,7 @@
   "productName": "ORA – Graph-based Digital Edition",
   "description": "Tool for creating graph-based digital editions based on RAMEN Suite.",
   "license": "Apache-2.0",
-  "version": "2026.0.5",
+  "version": "2026.0.6",
   "author": {
     "name": "Sebastian Enns",
     "email": "sebastian.enns@mni.thm.de",
