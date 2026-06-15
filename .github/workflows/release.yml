@@ -36,7 +36,7 @@ jobs:
       - name: Determine version bump
         id: bump
         run: |
-          old_version=$(node -p "require('./package.json').version")
+          old_version=$(node -p "require('./server/package.json').version")
           IFS='.' read -r major minor patch <<< "$old_version"
           msg=$(git log -1 --pretty=%B)
 
@@ -50,13 +50,15 @@ jobs:
 
           echo "Old version: $old_version -> New version: $new_version"
           echo "version=$new_version" >> "$GITHUB_OUTPUT
-      - name: Update version in package.json
+      - name: Write new version to package.json files
         run: |
           node -e "
             const fs = require('fs');
-            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-            pkg.version = '${{ steps.bump.outputs.version }}';
-            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+            ['./server/package.json', './client/package.json'].forEach(p => {
+              const pkg = JSON.parse(fs.readFileSync(p, 'utf8'));
+              pkg.version = '${{ steps.bump.outputs.version }}';
+              fs.writeFileSync(p, JSON.stringify(pkg, null, 2) + '\n');
+            });
           "
       - name: Commit, push and tag
         run: |
