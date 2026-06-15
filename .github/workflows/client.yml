@@ -76,7 +76,7 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v7.1.0
         with:
-          context: client
+          context: .
           file: client/dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
