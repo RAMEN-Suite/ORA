@@ -40,7 +40,7 @@ jobs:
           output: trivy-config.json
           version: v0.70.0
       - name: Upload Trivy config report
-        if: failure()
+        if: always() # TODO: only on dev or main
         uses: actions/upload-artifact@v7
         with:
           name: trivy-config-${{ github.sha }}
@@ -66,7 +66,7 @@ jobs:
     container:
       image: semgrep/semgrep:latest
     needs: [lint]
-    if: (github.actor != 'dependabot[bot]') && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+    if: (github.actor != 'dependabot[bot]') && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/release_workflow')
     steps:
       - name: Checkout
         uses: actions/checkout@v6
