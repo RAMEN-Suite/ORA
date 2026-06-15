@@ -24,6 +24,8 @@ export class Markdown {
     renderer.link = (token: Tokens.Link): string => this.renderLink(token);
     renderer.image = (token: Tokens.Image): string => this.renderImage(token.href, token.title, token.text);
     renderer.html = (token: Tokens.HTML): string => this.renderHtml(token);
+    renderer.list = (token: Tokens.List): string => this.renderList(token);
+    renderer.listitem = (token: Tokens.ListItem): string => this.renderListItem(token);
 
     return { renderer };
   }
@@ -40,6 +42,28 @@ export class Markdown {
     const text: string = Parser.parseInline(tokens);
 
     return `<p class="my-3 leading-relaxed">${text}</p>`;
+  }
+
+  private renderList({ ordered, start, items }: Tokens.List): string {
+    const tag: string = ordered ? 'ol' : 'ul';
+    const startAttribute: string = ordered && start !== 1 ? ` start="${start}"` : '';
+    const classes: string = ordered ? 'my-3 ms-8 list-decimal space-y-2' : 'my-3 ms-6 list-none space-y-2';
+    const html: string = items.map((item: Tokens.ListItem): string => this.renderListItem(item)).join('');
+
+    return `<${tag}${startAttribute} class="${classes}">${html}</${tag}>`;
+  }
+
+  private renderListItem({ tokens }: Tokens.ListItem): string {
+    const html: string = Parser.parseInline(tokens);
+
+    return `
+    <li class="leading-relaxed">
+      <span class="inline-flex items-baseline gap-2">
+        <i class="pi pi-angle-double-right text-xs! shrink-0" aria-hidden="true"></i>
+        <span>${html}</span>
+      </span>
+    </li>
+  `;
   }
 
   private renderLink({ href, title, tokens }: Tokens.Link): string {
