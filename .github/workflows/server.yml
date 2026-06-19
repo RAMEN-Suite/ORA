@@ -96,6 +96,7 @@ jobs:
             grant list ${{ fromJSON(steps.meta.outputs.json).tags[0] }} | grep -i agpl
             exit 1
           fi
+          echo "No AGPL licenses found."
 
   # dev-deploy:
   #   name: dev deploy
