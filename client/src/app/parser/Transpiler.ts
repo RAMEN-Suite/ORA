@@ -28,7 +28,7 @@ export class Transpiler implements TranslocoTranspiler {
     let template: TemplateDelegate | undefined = this.cache.get(value);
 
     if (!template) {
-      template = this.handlebars.compile(value, { noEscape: true });
+      template = this.handlebars.compile(value);
       this.cache.set(value, template);
     }
 
