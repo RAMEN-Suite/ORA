@@ -91,7 +91,11 @@ jobs:
       - name: Check image licenses
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/grant/v0.6.7/install.sh | sh -s -- -b /usr/local/bin
-          grant check ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
+          if grant list ${{ fromJSON(steps.meta.outputs.json).tags[0] }} | grep -iq agpl; then
+            echo "::error::AGPL-licensed package found in image"
+            grant list ${{ fromJSON(steps.meta.outputs.json).tags[0] }} | grep -i agpl
+            exit 1
+          fi
 
   # dev-deploy:
   #   name: dev deploy
