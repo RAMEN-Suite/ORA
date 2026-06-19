@@ -163,25 +163,18 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Select primary scan tag
-        id: scanref
-        run: |
-          SCAN_TAG="$(printf '%s\n' "${{ steps.meta.outputs.tags }}" | head -n 1)"
-          echo "scan_tag=$SCAN_TAG" >> "$GITHUB_OUTPUT"
-          echo "Scanning: $SCAN_TAG"
       - name: Generate SBOM with Syft
         id: sbom
         uses: anchore/sbom-action@v0
         with:
-          image: ${{ steps.scanref.outputs.scan_tag }}
+          image: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
           format: cyclonedx-json
           output-file: sbom-${{ matrix.name }}.cdx.json
           upload-artifact: false
       - name: Scan image with trivy
         uses: aquasecurity/trivy-action@v0.36.0
         with:
-          image-ref: ${{ steps.scanref.outputs.scan_tag }}
+          image-ref: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
           format: sarif
           output: trivy-${{ matrix.name }}.sarif
           severity: "CRITICAL,HIGH"
@@ -202,7 +195,7 @@ jobs:
             docker push "${tag}"
           done <<< "${{ steps.meta.outputs.tags }}"
 
-          pushed_digest=$(docker inspect --format='{{index .RepoDigests 0}}' "${{ steps.scanref.outputs.scan_tag }}" | cut -d'@' -f2)
+          pushed_digest=$(docker inspect --format='{{index .RepoDigests 0}}' "${{ fromJSON(steps.meta.outputs.json).tags[0] }}" | cut -d'@' -f2)
           echo "digest=$pushed_digest" >> "$GITHUB_OUTPUT"
       - name: Attest build provenance
         uses: actions/attest@v4
