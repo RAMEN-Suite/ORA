@@ -39,10 +39,10 @@ jobs:
         working-directory: client
         run: npm ci
       - name: Generate server notices
-        woking-directory: server
+        working-directory: server
         run: npx generate-license-file --input package-lock.json --output THIRD-PARTY-NOTICES.md --overwrite
       - name: Generate client notices
-        woking-directory: client
+        working-directory: client
         run: npx generate-license-file --input package-lock.json --output THIRD-PARTY-NOTICES.md --overwrite
       - name: Commit notices
         run: |
