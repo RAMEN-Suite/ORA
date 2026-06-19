@@ -66,7 +66,9 @@ jobs:
     container:
       image: semgrep/semgrep:latest
     needs: [lint]
-    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
+    if: |
+      github.ref == 'refs/heads/main' ||
+      github.base_ref == 'dev' || github.base_ref == 'main'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -114,8 +116,8 @@ jobs:
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v2.3.8"
     with:
       upload-sarif: ${{ github.event.repository.visibility == 'public' }}
-      fail-on-vuln: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
-    if: github.event.name == 'pull_request'
+      fail-on-vuln: ${{ github.base_ref == 'main' || github.base_ref == 'dev' }}
+    if: github.event_name == 'pull_request'
     needs: [lint]
     permissions:
       contents: read
