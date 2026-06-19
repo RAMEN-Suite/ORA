@@ -92,6 +92,7 @@ jobs:
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/grant/v0.6.7/install.sh | sh -s -- -b /usr/local/bin
           grant check ${{ env.REGISTRY }}/${{ github.repository }}-server:${{ github.sha }} --epsilon "AGPL-3.0,AGPL-1.0"
+
   # dev-deploy:
   #   name: dev deploy
   #   runs-on: ubuntu-latest
