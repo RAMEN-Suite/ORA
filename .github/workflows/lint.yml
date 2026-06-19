@@ -103,7 +103,7 @@ jobs:
           category: sast
       - name: Upload SARIF
         uses: actions/upload-artifact@v4
-        if: always() && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/release_workflow')
+        if: always()
         with:
           name: semgrep-sarif
           path: semgrep.sarif
