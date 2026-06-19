@@ -80,7 +80,7 @@ jobs:
       - name: Build image
         uses: docker/build-push-action@v7.1.0
         with:
-          context: server
+          context: .
           file: server/dockerfile
           push: true
           load: true
