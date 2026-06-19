@@ -162,6 +162,7 @@ jobs:
           path: trivy.json
 
       - name: Write scan summary
+        working-directory: ${{ github.workspace }}
         if: always()
         run: |
           echo "### Trivy scan results" >> $GITHUB_STEP_SUMMARY
