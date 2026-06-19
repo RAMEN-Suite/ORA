@@ -51,7 +51,25 @@ jobs:
           {
             echo "## NPM Dependency Licenses"
             echo ""
+            echo "### Summary"
+            echo ""
+            echo "| License | Count |"
+            echo "|---|---|"
+            npx license-checker --production --json | jq -r '
+              [.[].licenses]
+              | flatten
+              | group_by(.)
+              | map({license: .[0], count: length})
+              | sort_by(-.count)
+              | .[]
+              | "| \(.license) | \(.count) |"
+            '
+            echo ""
+            echo "<details><summary>Full package list</summary>"
+            echo ""
             cat licenses-npm.md
+            echo ""
+            echo "</details>"
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Lint
         run: npm run lint
