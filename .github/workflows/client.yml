@@ -81,11 +81,15 @@ jobs:
           context: .
           file: client/dockerfile
           push: true
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
+      - name: Check image licenses
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/grant/v0.6.7/install.sh | sh -s -- -b /usr/local/bin
+          grant check ${{ env.REGISTRY }}/${{ github.repository }}-client:${{ github.sha }} --epsilon "AGPL-3.0,AGPL-1.0"
   # deploy:
   #   name: deploy
   #   runs-on: ubuntu-latest
