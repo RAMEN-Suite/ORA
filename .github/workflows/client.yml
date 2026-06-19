@@ -89,7 +89,7 @@ jobs:
       - name: Check image licenses
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/grant/v0.6.7/install.sh | sh -s -- -b /usr/local/bin
-          grant check ${{ env.REGISTRY }}/${{ github.repository }}-client:${{ github.sha }}
+          grant check ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
   # deploy:
   #   name: deploy
   #   runs-on: ubuntu-latest
