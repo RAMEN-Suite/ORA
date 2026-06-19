@@ -152,30 +152,30 @@ jobs:
         with:
           image-ref: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
           format: json
-          output: trivy-${{ matrix.name }}.json
+          output: trivy.json
           severity: "CRITICAL,HIGH"
           exit-code: "1"
           ignore-unfixed: true
       - name: Upload trivy scan results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
-          name: trivy-${{ matrix.name }}
-          path: trivy-${{ matrix.name }}.json
+          name: trivy
+          path: trivy.json
 
       - name: Write scan summary
         if: always()
         run: |
-          echo "### Trivy scan results: ${{ matrix.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "### Trivy scan results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Severity | Package | Installed | Fixed | Vulnerability |" >> $GITHUB_STEP_SUMMARY
           echo "|---|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
           jq -r '
             .Results[]?.Vulnerabilities[]? |
             "| \(.Severity) | \(.PkgName) | \(.InstalledVersion) | \(.FixedVersion // "-") | [\(.VulnerabilityID)](\(.PrimaryURL // "")) |"
-          ' trivy-${{ matrix.name }}.json >> $GITHUB_STEP_SUMMARY
+          ' trivy.json >> $GITHUB_STEP_SUMMARY
 
-          count=$(jq '[.Results[]?.Vulnerabilities[]?] | length' trivy-${{ matrix.name }}.json)
+          count=$(jq '[.Results[]?.Vulnerabilities[]?] | length' trivy.json)
           if [ "$count" -eq 0 ]; then
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "No CRITICAL/HIGH vulnerabilities found." >> $GITHUB_STEP_SUMMARY
