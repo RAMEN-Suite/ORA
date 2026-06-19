@@ -42,6 +42,17 @@ jobs:
         run: npm ci
       - name: Check dependency licenses
         run: npx license-checker --production --failOn "GPL-2.0;GPL-3.0;AGPL-3.0;AGPL-1.0"
+      - name: Generate license report
+        if: always()
+        run: npx license-checker --production --markdown --out licenses-npm.md
+      - name: Write license summary
+        if: always()
+        run: |
+          {
+            echo "## NPM Dependency Licenses"
+            echo ""
+            cat licenses-npm.md
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Lint
         run: npm run lint
       - name: Format Check
