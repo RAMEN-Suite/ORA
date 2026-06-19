@@ -38,9 +38,8 @@ jobs:
           severity: "CRITICAL,HIGH,MEDIUM"
           exit-code: "1"
           output: trivy-config.json
-          version: v0.70.0
       - name: Upload Trivy config report
-        if: always() # TODO: only on dev or main
+        if: always() && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
         uses: actions/upload-artifact@v7
         with:
           name: trivy-config-${{ github.sha }}
@@ -55,10 +54,11 @@ jobs:
             detect --source . --redact --report-format json --report-path gitleaks.json
       - name: Upload report
         uses: actions/upload-artifact@v7
-        if: always()
+        if: always() && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
         with:
           name: gitleaks-report
           path: gitleaks.json
+          retention-days: 14
 
   sast-scan:
     name: SAST scan
@@ -66,12 +66,10 @@ jobs:
     container:
       image: semgrep/semgrep:latest
     needs: [lint]
-    if: (github.actor != 'dependabot[bot]') && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/release_workflow')
+    if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-
-      # See below for rulesets
       - name: Run Semgrep
         run: |
           set -o pipefail
@@ -85,7 +83,6 @@ jobs:
           --error \
           --sarif \
           --output semgrep.sarif
-
       - name: Print Semgrep results
         if: failure()
         run: |
@@ -104,11 +101,23 @@ jobs:
         with:
           sarif_file: semgrep.sarif
           category: sast
-
       - name: Upload SARIF
         uses: actions/upload-artifact@v4
-        if: always()
+        if: always() && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/release_workflow')
         with:
           name: semgrep-sarif
           path: semgrep.sarif
           retention-days: 14
+
+  deps-osv:
+    name: Dependency vulnerabilities (OSV)
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v2.3.8"
+    with:
+      upload-sarif: ${{ github.event.repository.visibility == 'public' }}
+      fail-on-vuln: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
+    if: github.event.name == 'pull_request'
+    needs: [lint]
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
