@@ -115,6 +115,42 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Scan image with trivy
+        uses: aquasecurity/trivy-action@v0.36.0
+        continue-on-error: true
+        with:
+          image-ref: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
+          format: json
+          output: trivy.json
+          severity: "CRITICAL,HIGH"
+          exit-code: "1"
+          ignore-unfixed: true
+      - name: Upload trivy scan results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy
+          path: trivy.json
+      - name: Write scan summary
+        working-directory: ${{ github.workspace }}
+        if: always()
+        run: |
+          echo "### Trivy scan results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Severity | Package | Installed | Fixed | Vulnerability |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
+          jq -r '
+            .Results[]?.Vulnerabilities[]? |
+            "| \(.Severity) | \(.PkgName) | \(.InstalledVersion) | \(.FixedVersion // "-") | [\(.VulnerabilityID)](\(.PrimaryURL // "")) |"
+          ' trivy.json >> $GITHUB_STEP_SUMMARY
+
+          count=$(jq '[.Results[]?.Vulnerabilities[]?] | length' trivy.json)
+          if [ "$count" -eq 0 ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "No CRITICAL/HIGH vulnerabilities found." >> $GITHUB_STEP_SUMMARY
+          fi
+
       - name: Generate License Report
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/grant/v0.6.7/install.sh | sh -s -- -b /usr/local/bin
@@ -144,41 +180,6 @@ jobs:
               | "| \(.license) | \(.count) | \(.risk) |"
             ' licenses.json
           } >> "$GITHUB_STEP_SUMMARY"
-      - name: Scan image with trivy
-        uses: aquasecurity/trivy-action@v0.36.0
-        continue-on-error: true
-        with:
-          image-ref: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
-          format: json
-          output: trivy.json
-          severity: "CRITICAL,HIGH"
-          exit-code: "1"
-          ignore-unfixed: true
-      - name: Upload trivy scan results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy
-          path: trivy.json
-
-      - name: Write scan summary
-        working-directory: ${{ github.workspace }}
-        if: always()
-        run: |
-          echo "### Trivy scan results" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Severity | Package | Installed | Fixed | Vulnerability |" >> $GITHUB_STEP_SUMMARY
-          echo "|---|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
-          jq -r '
-            .Results[]?.Vulnerabilities[]? |
-            "| \(.Severity) | \(.PkgName) | \(.InstalledVersion) | \(.FixedVersion // "-") | [\(.VulnerabilityID)](\(.PrimaryURL // "")) |"
-          ' trivy.json >> $GITHUB_STEP_SUMMARY
-
-          count=$(jq '[.Results[]?.Vulnerabilities[]?] | length' trivy.json)
-          if [ "$count" -eq 0 ]; then
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "No CRITICAL/HIGH vulnerabilities found." >> $GITHUB_STEP_SUMMARY
-          fi
 
   # deploy:
   #   name: deploy
