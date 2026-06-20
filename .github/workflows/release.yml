@@ -164,6 +164,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
       - name: Generate SBOM with Syft
         id: sbom
         uses: anchore/sbom-action@v0
@@ -172,6 +173,7 @@ jobs:
           format: cyclonedx-json
           output-file: sbom-${{ matrix.name }}.cdx.json
           upload-artifact: false
+
       - name: Scan image with trivy
         uses: aquasecurity/trivy-action@v0.36.0
         with:
@@ -188,6 +190,37 @@ jobs:
         with:
           sarif_file: trivy-${{ matrix.name }}.sarif
           category: trivy-container
+
+      - name: Generate License Report
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/grant/v0.6.7/install.sh | sh -s -- -b /usr/local/bin
+          grant -f licenses.json list ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
+      - name: Check image licenses
+        run: |
+          if jq -e '[.run.targets[].evaluation.findings.packages[].licenses[]?.id // "" | select(test("AGPL"; "i"))] | length > 0' licenses.json > /dev/null; then
+            echo "::error::AGPL-licensed package found"
+            jq -r '.run.targets[].evaluation.findings.packages[] | select(.licenses[]?.id // "" | test("AGPL"; "i")) | "\(.name) \(.version)"' licenses.json
+            exit 1
+          fi
+          echo "No AGPL licenses found."
+      - name: Write license summary
+        if: always()
+        run: |
+          {
+            echo "## License Report"
+            echo ""
+            echo "| License | Packages | Risk |"
+            echo "|---|---|---|"
+            jq -r '
+              [.run.targets[].evaluation.findings.packages[].licenses[]? | select(.id != null)]
+              | group_by(.id)
+              | map({license: .[0].id, count: length, risk: (.[0].riskCategory // "Unknown")})
+              | sort_by(-.count)
+              | .[]
+              | "| \(.license) | \(.count) | \(.risk) |"
+            ' licenses.json
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Push image to registry
         id: push
         run: |
