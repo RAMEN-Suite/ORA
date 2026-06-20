@@ -112,6 +112,7 @@ jobs:
           context: .
           file: server/dockerfile
           push: true
+          pull: true
           load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
