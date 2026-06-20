@@ -113,7 +113,7 @@ jobs:
 
   deps-osv:
     name: Dependency vulnerabilities (OSV)
-    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v2.3.8"
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.3.8"
     with:
       upload-sarif: ${{ github.event.repository.visibility == 'public' }}
       fail-on-vuln: ${{ github.base_ref == 'main' || github.base_ref == 'dev' }}
