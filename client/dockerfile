@@ -26,6 +26,8 @@ RUN cat > /etc/caddy/Caddyfile <<'EOF'
 }
 EOF
 
+COPY client/THIRD-PARTY-NOTICES.md .
+
 RUN cat > /usr/local/bin/ora-entrypoint <<'EOF' \
   && chmod +x /usr/local/bin/ora-entrypoint
 #!/bin/sh

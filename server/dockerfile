@@ -24,6 +24,7 @@ COPY --from=deps --chown=nodeapp:nodeapp /app/node_modules ./node_modules
 COPY --from=build --chown=nodeapp:nodeapp /app/dist ./dist
 COPY --from=build --chown=nodeapp:nodeapp /app/package.json .
 COPY --chown=nodeapp:nodeapp schema /schema
+COPY server/THIRD-PARTY-NOTICES.md .
 
 EXPOSE 3000
 USER nodeapp
