@@ -74,6 +74,55 @@ jobs:
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: gitleaks.sarif
+      - name: "Write step summary from SARIF"
+        if: always()
+        run: |
+          total=$(jq '[.runs[0].results[]] | length' trivy-results.sarif)
+          {
+            echo "## 🔍 Trivy Scan Summary"
+            echo ""
+
+            if [ "$total" -eq 0 ]; then
+              echo "✅ No issues found."
+            else
+              echo "**Total findings: $total**"
+              echo ""
+              echo "| Severity | Count |"
+              echo "|---|---|"
+              jq -r '
+                (.runs[0].tool.driver.rules // []) as $rules |
+                .runs[0].results[] as $r |
+                ($rules[] | select(.id == $r.ruleId) | (.properties.tags[] | select(IN("CRITICAL","HIGH","MEDIUM","LOW","UNKNOWN")))) as $sev |
+                $sev
+              ' trivy-results.sarif | sort | uniq -c | sort -rn | while read -r count sev; do
+                [ -z "$sev" ] && continue
+                echo "| $sev | $count |"
+              done
+              echo ""
+
+              echo "<details>"
+              echo "<summary>Show all findings</summary>"
+              echo ""
+              echo "| Severity | Rule | File | Detail |"
+              echo "|---|---|---|---|"
+              jq -r '
+                (.runs[0].tool.driver.rules // []) as $rules |
+                .runs[0].results[] |
+                . as $r |
+                ($rules[] | select(.id == $r.ruleId) | (.properties.tags[] | select(IN("CRITICAL","HIGH","MEDIUM","LOW","UNKNOWN")))) as $sev |
+                [
+                  $sev,
+                  $r.ruleId,
+                  ($r.locations[0].physicalLocation.artifactLocation.uri // "unknown"),
+                  ($r.message.text // "" | gsub("\n"; " ") | .[0:90])
+                ] | @tsv
+              ' trivy-results.sarif | while IFS=$'\t' read -r sev rule file detail; do
+                echo "| $sev | $rule | $file | $detail |"
+              done
+              echo ""
+              echo "</details>"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
 
   sast-scan:
     name: SAST scan
