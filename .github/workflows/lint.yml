@@ -13,6 +13,8 @@ permissions: {}
 jobs:
   lint:
     name: config linting
+    permissions:
+      contents: read # required for actions/checkout to fetch repo contents if this repo is private
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -143,7 +145,7 @@ jobs:
     name: SAST scan
     runs-on: ubuntu-latest
     container:
-      image: semgrep/semgrep:1.167.0
+      image: semgrep/semgrep@sha256:06938c1f365d3f67b8cedd8bc117607ae64253f88a0e768e9da9408548927dd6 # 1.167.0
     needs: [lint]
     if: |
       github.ref == 'refs/heads/main' ||

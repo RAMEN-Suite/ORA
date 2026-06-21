@@ -25,12 +25,12 @@ jobs:
     name: Generate Third-Party Notices
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: write # required to commit and push the generated THIRD-PARTY-NOTICES.md files back to the repo
     steps:
       - name: Checkout code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          persist-credentials: false
+          persist-credentials: true # zizmor: ignore[artipacked] -- required for git push in a later step
       - name: Setup node
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
@@ -68,20 +68,22 @@ jobs:
     outputs:
       version: ${{ steps.bump.outputs.version }}
     permissions:
-      contents: write
+      contents: write # required to commit and push the updated package.json and tags
     steps:
       - name: Checkout code
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           ref: ${{ github.ref }}
           fetch-depth: 0
-          persist-credentials: false
+          persist-credentials: true # zizmor: ignore[artipacked] -- required for git push in a later step
       - name: Determine version bump
         id: bump
+        env:
+          COMMIT_SHA: ${{ github.sha }}
         run: |
           old_version=$(node -p "require('./server/package.json').version")
           IFS='.' read -r major minor patch <<< "$old_version"
-          msg=$(git log -1 --pretty=%B "${{ github.sha }}")
+          msg=$(git log -1 --pretty=%B "$COMMIT_SHA")
 
           if echo "$msg" | grep -iq "#major"; then
             new_version="$((major + 1)).0.0"
@@ -122,12 +124,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [create-tag]
     permissions:
-      contents: read
-      packages: write
-      id-token: write
-      security-events: write
-      attestations: write
-      artifact-metadata: write
+      contents: read # required for actions/checkout to fetch repo contents if this repo is private
+      packages: write # required to push the built image to the Container registry (docker/login-action + build-push-action)
+      id-token: write # required for actions/attest to mint a Sigstore OIDC token for keyless signing
+      security-events: write # required to upload Trivy's SARIF report to the Security tab (public repos only)
+      attestations: write # required for actions/attest to persist build provenance + SBOM attestations
+      artifact-metadata: write # required for actions/attest's push-to-registry to create the artifact storage record
     strategy:
       matrix:
         include:
@@ -275,8 +277,8 @@ jobs:
     environment: production
     needs: [container]
     permissions:
-      contents: read
-      packages: read
+      contents: read # required for actions/checkout to fetch repo contents if this repo is private
+      packages: read # required for docker login + docker compose pull to authenticate against and pull from the registry
     strategy:
       matrix:
         include:

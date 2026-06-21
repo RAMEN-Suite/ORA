@@ -30,6 +30,8 @@ jobs:
   node-ci:
     name: node checks
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # required for actions/checkout to fetch repo contents if this repo is private
 
     steps:
       - name: Checkout
@@ -88,9 +90,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
     permissions:
-      id-token: write
-      contents: read
-      packages: write
+      contents: read # required for actions/checkout to fetch repo contents if this repo is private
+      packages: write # required to push the built image to the Container registry (docker/login-action + build-push-action)
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -185,8 +186,8 @@ jobs:
     environment: development
     needs: [dev-container]
     permissions:
-      contents: read
-      packages: read
+      contents: read # required for actions/checkout to fetch repo contents if this repo is private
+      packages: read # required for docker login + docker compose pull to authenticate against and pull from the registry
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
