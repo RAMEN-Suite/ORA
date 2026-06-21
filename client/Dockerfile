@@ -4,7 +4,7 @@ ENV NPM_CONFIG_UPDATE_NOTIFIER=false \
   NPM_CONFIG_FUND=false
 
 FROM base AS build
-COPY . .
+COPY client .
 RUN cp src/index.docker.html src/index.html \
   && npm ci \
   && npm run build
@@ -25,6 +25,8 @@ RUN cat > /etc/caddy/Caddyfile <<'EOF'
     file_server
 }
 EOF
+
+COPY client/THIRD-PARTY-NOTICES.md .
 
 RUN cat > /usr/local/bin/ora-entrypoint <<'EOF' \
   && chmod +x /usr/local/bin/ora-entrypoint
