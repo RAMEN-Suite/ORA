@@ -28,6 +28,8 @@ jobs:
   node-ci:
     name: Node checks
     runs-on: ubuntu-latest
+    permissions:
+      contents: read # required for actions/checkout to fetch repo contents if this repo is private
 
     steps:
       - name: Checkout
