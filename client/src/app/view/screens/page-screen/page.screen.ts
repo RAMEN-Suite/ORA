@@ -12,6 +12,7 @@ import { ContentRendererComponent } from '../../shared/renderer/content-renderer
 import { ScreenShellComponent } from '../../shared/layout/screen-shell/screen-shell.component';
 import { PanelMenuComponent } from '../../shared/interfaces/panel-menu/panel-menu.component';
 import { NotFoundScreen } from '../not-found-screen/not-found.screen';
+import { TitleService } from '../../../services/title.service';
 
 interface Match {
   page: Page;
@@ -32,6 +33,7 @@ interface Match {
 })
 export class PageScreen {
   private readonly navigationService: NavigationService = inject(NavigationService);
+  private readonly titleService: TitleService = inject(TitleService);
   private readonly configService: ConfigService = inject(ConfigService);
   private readonly route: ActivatedRoute = inject(ActivatedRoute);
 
@@ -67,7 +69,9 @@ export class PageScreen {
       if (!match) return void this.navigationService.toNotFound();
 
       const target: string | null = this.findRedirectPath(match.page, match.view);
-      if (target) void this.navigationService.toPath(target);
+      if (target) return void this.navigationService.toPath(target);
+
+      this.titleService.set(match.view?.title ?? match.page.title);
     });
   }
 

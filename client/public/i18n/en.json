@@ -37,7 +37,7 @@
       },
       "textView": {
         "copyUuid": "Copy UUID",
-        "references": "Referenced by:",
+        "references": "References:",
         "empty": "No further information.",
         "error": "The annotation could not be loaded.",
         "externalLink": "Open external link",

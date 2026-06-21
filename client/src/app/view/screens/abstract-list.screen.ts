@@ -1,17 +1,18 @@
-import { Component, computed, inject, linkedSignal, Signal, signal, WritableSignal } from '@angular/core';
+import { computed, effect, inject, linkedSignal, Signal, signal, WritableSignal } from '@angular/core';
 import { ConfigService } from '../../services/config.service';
 import { ListService } from '../../services/list.service';
 import { Registry } from '../../helper/Registry';
 import { FilterOption, ListOption, ListView, Option, OptionGroup, Property } from '../../models/config/ListViews';
 import { Utils } from '../../utils/Utils';
 import { PreviousLinkedValue } from '../../../types/global';
+import { TitleService } from '../../services/title.service';
 
-@Component({ template: '' })
 export abstract class AbstractListScreen<TOption extends ListOption = ListOption> {
   protected readonly configService: ConfigService = inject(ConfigService);
+  protected readonly titleService: TitleService = inject(TitleService);
   protected readonly listService: ListService = inject(ListService);
-  protected readonly config: Registry = this.configService.config();
 
+  protected readonly config: Registry = this.configService.config();
   protected readonly listView: WritableSignal<ListView<TOption> | undefined> = signal(undefined);
   protected readonly listOptions: Signal<TOption[]> = computed((): TOption[] => [
     ...(this.listView()?.options ?? []),
@@ -24,9 +25,15 @@ export abstract class AbstractListScreen<TOption extends ListOption = ListOption
     return option ? this.mergedProperties(option) : [];
   });
 
-  protected init(listView: ListView<TOption>): void {
+  protected constructor(listView: ListView<TOption>) {
     this.listView.set(listView);
     this.activeOption.set(this.getInitialOption());
+
+    effect((): void => {
+      const option: Option | undefined = this.activeOption();
+      if (!option) return this.titleService.reset();
+      this.titleService.set(option.label);
+    });
   }
 
   protected additionalListOptions(): TOption[] {

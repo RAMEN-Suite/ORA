@@ -3,7 +3,6 @@ import { TableModule } from 'primeng/table';
 import { PaginatedListComponent } from '../../shared/interfaces/paginated-list/paginated-list.component';
 import { List, Listable, QueryOptions } from '../../../models/List';
 import { HttpResourceRef } from '@angular/common/http';
-import { NavigationService } from '../../../services/navigation.service';
 import { ActivatedRoute, Params } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationUtils } from '../../../utils/PaginationUtils';
@@ -23,6 +22,9 @@ import { TranslocoDirective } from '@jsverse/transloco';
 import { ROUTES } from '../../../app.routes';
 import { ParseUtils } from '../../../utils/ParseUtils';
 import { ScreenShellComponent } from '../../shared/layout/screen-shell/screen-shell.component';
+import { Registry } from '../../../helper/Registry';
+import { ConfigService } from '../../../services/config.service';
+import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
   selector: 'screen-collections',
@@ -88,8 +90,9 @@ export class CollectionsScreen extends AbstractListScreen {
   );
 
   public constructor() {
-    super();
-    this.init(this.config.getListView('collections'));
+    const config: Registry = inject(ConfigService).config();
+    super(config.getListView('collections'));
+
     this.initPageState();
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(this.applyQueryParams.bind(this));
   }
@@ -119,7 +122,7 @@ export class CollectionsScreen extends AbstractListScreen {
     const next: QueryOptions = { ...this.queryOptions(), ...change };
     const limit: number = PaginationUtils.parseLimit(next.limit);
     const page: number = PaginationUtils.skipToPage(next.skip, limit);
-    void this.navigationService.updateQuery(this.route, { page, limit }, { scroll: 'manual' });
+    void this.navigationService.updateQuery(this.route, { page, limit }, { scroll: 'manual', replaceUrl: false });
   }
 
   protected handleActiveItemChange(option: ListOption | undefined): void {

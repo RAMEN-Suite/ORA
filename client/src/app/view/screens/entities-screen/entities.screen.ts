@@ -22,6 +22,8 @@ import { ListIndexService } from '../../../services/list-index/list-index.servic
 import { ListIndex } from '../../../models/ListIndex';
 import { CharacterListComponent } from '../../shared/interfaces/character-list/character-list.component';
 import { ScreenShellComponent } from '../../shared/layout/screen-shell/screen-shell.component';
+import { ConfigService } from '../../../services/config.service';
+import { Registry } from '../../../helper/Registry';
 
 const DEFAULT_OPTION: EntityListOption = {
   icon: 'pi pi-folder-open',
@@ -96,8 +98,8 @@ export class EntitiesScreen extends AbstractListScreen<EntityListOption> {
   );
 
   public constructor() {
-    super();
-    this.init(this.config.getListView('entities'));
+    const config: Registry = inject(ConfigService).config();
+    super(config.getListView('entities'));
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe(this.applyQueryParams.bind(this));
   }
 
