@@ -188,7 +188,7 @@ jobs:
     name: dev deploy
     runs-on: ubuntu-latest
     environment: development
-    needs: [container]
+    needs: [dev-container]
     permissions:
       contents: read
       packages: read
