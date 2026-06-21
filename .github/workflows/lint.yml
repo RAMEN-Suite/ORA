@@ -149,7 +149,7 @@ jobs:
     container:
       image: semgrep/semgrep@sha256:06938c1f365d3f67b8cedd8bc117607ae64253f88a0e768e9da9408548927dd6 # 1.167.0
     if: |
-      github.ref == 'refs/heads/main' ||
+      github.ref_name == 'main' || github.ref_name == 'dev' ||
       github.base_ref == 'dev' || github.base_ref == 'main'
     steps:
       - name: Checkout
