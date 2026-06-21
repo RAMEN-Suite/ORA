@@ -20,13 +20,13 @@ jobs:
       - name: Lint Client Dockerfile
         uses: hadolint/hadolint-action@v3.3.0
         with:
-          dockerfile: client/dockerfile
+          dockerfile: client/Dockerfile
           config: .hadolint.yml
           format: tty
       - name: Lint Server Dockerfile
         uses: hadolint/hadolint-action@v3.3.0
         with:
-          dockerfile: server/dockerfile
+          dockerfile: server/Dockerfile
           config: .hadolint.yml
           format: tty
       - name: Determine exit code
@@ -77,6 +77,15 @@ jobs:
       - name: "Write step summary from SARIF"
         if: always()
         run: |
+          if [ ! -f trivy-results.sarif ]; then
+            {
+              echo "## 🔍 Trivy Scan Summary"
+              echo ""
+              echo "⚠️ \`trivy-results.sarif\` was not found — the scan step may have failed before producing output. Check the scan step's logs above."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
           total=$(jq '[.runs[0].results[]] | length' trivy-results.sarif)
           {
             echo "## 🔍 Trivy Scan Summary"
