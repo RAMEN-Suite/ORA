@@ -1,4 +1,4 @@
-FROM node:latest AS base
+FROM node:24-alpine AS base
 WORKDIR /app
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false \
   NPM_CONFIG_FUND=false
@@ -11,7 +11,7 @@ FROM base AS build
 COPY server .
 RUN npm ci && npm run build
 
-FROM node:24-alpine3.23 AS runtime
+FROM node:24-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production \
   PORT=3000
@@ -29,8 +29,8 @@ COPY server/THIRD-PARTY-NOTICES.md .
 EXPOSE 3000
 USER nodeapp
 
-# HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-#   CMD wget -qO- http://127.0.0.1:${PORT}/api/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget -qO- http://127.0.0.1:${PORT}/api/health || exit 1
 
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["node", "dist/ora.api.js"]
