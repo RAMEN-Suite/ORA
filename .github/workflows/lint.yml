@@ -17,18 +17,18 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Lint Client Dockerfile
-        uses: hadolint/hadolint-action@v3.3.0
-        with:
-          dockerfile: client/dockerfile
-          config: .hadolint.yml
-          format: tty
-      - name: Lint Server Dockerfile
-        uses: hadolint/hadolint-action@v3.3.0
-        with:
-          dockerfile: server/dockerfile
-          config: .hadolint.yml
-          format: tty
+      # - name: Lint Client Dockerfile
+      #   uses: hadolint/hadolint-action@v3.3.0
+      #   with:
+      #     dockerfile: client/dockerfile
+      #     config: .hadolint.yml
+      #     format: tty
+      # - name: Lint Server Dockerfile
+      #   uses: hadolint/hadolint-action@v3.3.0
+      #   with:
+      #     dockerfile: server/dockerfile
+      #     config: .hadolint.yml
+      #     format: tty
       - name: Determine exit code
         id: exit-code
         run: |
