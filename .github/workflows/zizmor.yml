@@ -2,6 +2,7 @@ name: GitHub Actions Security Analysis with zizmor 🌈
 
 on:
   push:
+    branches: [dev, main]
     paths:
       - ".github/workflows/**"
   pull_request:
@@ -10,7 +11,7 @@ on:
       - ".github/workflows/**"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
 permissions: {}
@@ -19,6 +20,7 @@ jobs:
   zizmor:
     name: Run Zizmor
     runs-on: ubuntu-latest
+    if: github.head_ref != 'dev' && github.head_ref != 'main'
     permissions:
       security-events: write # required for uploading results to code scanning
       contents: read # only needed for private repos — needed to clone the repo

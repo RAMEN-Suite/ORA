@@ -6,6 +6,7 @@ on:
       - "client/**"
       - ".github/workflows/client.yml"
   push:
+    branches: [dev, main]
     paths:
       - "client/**"
       - ".github/workflows/client.yml"
@@ -19,7 +20,7 @@ defaults:
     working-directory: client
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+  group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
 permissions: {}
@@ -30,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read # required for actions/checkout to fetch repo contents if this repo is private
-
+    if: github.head_ref != 'dev' && github.head_ref != 'main'
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -126,13 +127,12 @@ jobs:
 
       - name: Scan image with trivy
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-        continue-on-error: true
         with:
           image-ref: ${{ fromJSON(steps.meta.outputs.json).tags[0] }}
           format: sarif
           output: trivy.sarif
           severity: "CRITICAL,HIGH"
-          exit-code: "1"
+          exit-code: "0"
           ignore-unfixed: true
       - name: Upload trivy scan results
         if: always()
