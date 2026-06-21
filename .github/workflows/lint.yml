@@ -118,7 +118,7 @@ jobs:
       upload-sarif: ${{ github.event.repository.visibility == 'public' }}
       fail-on-vuln: ${{ github.base_ref == 'main' || github.base_ref == 'dev' || github.ref_name == 'main' || github.ref_name == 'dev' }}
       scan-args: |-
-        --no-dev
+        --config=.github/osv-scanner.toml
         --recursive
         ./
     needs: [lint]
