@@ -40,7 +40,7 @@ jobs:
           BASE_REF: ${{ github.base_ref }}
           HEAD_REF: ${{ github.ref }}
         run: |
-          if [[ "$BASE_REF" == "dev" || "$BASE_REF" == "main" || "$HEAD_REF" == "refs/heads/dev" || "$HEAD_REF" == "refs/heads/main" ]]; then
+          if [[ "$BASE_REF" == "main" || "$HEAD_REF" == "refs/heads/main" ]]; then
             echo "code=1" >> "$GITHUB_OUTPUT"
           else
             echo "code=0" >> "$GITHUB_OUTPUT"
