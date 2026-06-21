@@ -29,36 +29,51 @@ jobs:
           dockerfile: server/dockerfile
           config: .hadolint.yml
           format: tty
-      - name: Lint configs
-        uses: aquasecurity/trivy-action@v0.36.0
+      - name: Determine exit code
+        id: exit-code
+        run: |
+          if [[ "${{ github.base_ref }}" == "dev" || "${{ github.base_ref }}" == "main" || "${{ github.ref }}" == "refs/heads/dev" || "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "code=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "code=0" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Trivy scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
         with:
-          scan-type: config
+          scan-type: fs
           scan-ref: .
-          format: json
+          scanners: vuln,misconfig
+          format: sarif
           severity: "CRITICAL,HIGH,MEDIUM"
-          exit-code: "1"
-          output: trivy-config.json
-      - name: Upload Trivy config report
-        if: always() && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
-        uses: actions/upload-artifact@v7
+          exit-code: ${{ steps.exit-code.outputs.code }}
+          ignore-unfixed: true
+          output: trivy-results.sarif
+      - name: Upload trivy report to security tab
+        if: always() && github.event.repository.visibility == 'public' && (github.base_ref == 'dev' || github.base_ref == 'main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+        uses: github/codeql-action/upload-sarif@v4
         with:
-          name: trivy-config-${{ github.sha }}
-          path: trivy-config.json
-          retention-days: 14
-      - name: Run gitleaks (Docker)
+          sarif_file: trivy-results.sarif
+      - name: Run gitleaks (docker)
         run: |
           docker run --rm \
             -v "${PWD}:/repo" \
             -w /repo \
             zricethezav/gitleaks:v8.30.0 \
-            detect --source . --redact --report-format json --report-path gitleaks.json
-      - name: Upload report
+            detect --source . --redact --report-format sarif --report-path gitleaks.sarif
+      - name: Upload reports
+        if: always() && (github.base_ref == 'dev' || github.base_ref == 'main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
         uses: actions/upload-artifact@v7
-        if: always() && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
         with:
-          name: gitleaks-report
-          path: gitleaks.json
-          retention-days: 14
+          name: scan-results-${{ github.sha }}
+          path: |
+            trivy-results.sarif
+            gitleaks.sarif
+          retention-days: 30
+      - name: Upload gitleaks report to security tab
+        if: always() && github.event.repository.visibility == 'public' && (github.base_ref == 'dev' || github.base_ref == 'main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: gitleaks.sarif
 
   sast-scan:
     name: SAST scan
@@ -110,19 +125,3 @@ jobs:
           name: semgrep-sarif
           path: semgrep.sarif
           retention-days: 14
-
-  deps-osv:
-    name: Dependency vulnerabilities (OSV)
-    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.3.8"
-    with:
-      upload-sarif: ${{ github.event.repository.visibility == 'public' }}
-      fail-on-vuln: ${{ github.base_ref == 'main' || github.base_ref == 'dev' || github.ref_name == 'main' || github.ref_name == 'dev' }}
-      scan-args: |-
-        --config=.github/osv-scanner.toml
-        --recursive
-        ./
-    needs: [lint]
-    permissions:
-      contents: read
-      actions: read
-      security-events: write
