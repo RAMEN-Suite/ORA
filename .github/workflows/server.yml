@@ -44,7 +44,7 @@ jobs:
         run: npx license-checker --production --failOn "GPL-2.0;GPL-3.0;AGPL-3.0;AGPL-1.0"
       - name: Generate license report
         if: always()
-        run: npx license-checker --production --markdown --out licenses-npm.md
+        run: npx license-checker --excludePrivatePackages --production --markdown --out licenses-npm.md
       - name: Write license summary
         if: always()
         run: |
@@ -55,7 +55,7 @@ jobs:
             echo ""
             echo "| License | Count |"
             echo "|---|---|"
-            npx license-checker --production --json | jq -r '
+            npx license-checker --excludePrivatePackages --production --json | jq -r '
               [.[].licenses]
               | flatten
               | group_by(.)
