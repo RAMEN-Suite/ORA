@@ -123,9 +123,9 @@ jobs:
       matrix:
         include:
           - name: server
-            dockerfile: ./server/dockerfile
+            dockerfile: ./server/Dockerfile
           - name: client
-            dockerfile: ./client/dockerfile
+            dockerfile: ./client/Dockerfile
     steps:
       - name: Checkout code
         uses: actions/checkout@v6

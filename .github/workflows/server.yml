@@ -110,7 +110,7 @@ jobs:
         uses: docker/build-push-action@v7.1.0
         with:
           context: .
-          file: server/dockerfile
+          file: server/Dockerfile
           push: true
           pull: true
           load: true
