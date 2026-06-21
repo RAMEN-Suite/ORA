@@ -266,38 +266,45 @@ jobs:
       matrix:
         include:
           - name: antjebrons-publications-environment
-            known_hosts: ${{ secrets.ANTJEBRONS_SSH_KNOWN_HOSTS }}
-            private_key: ${{ secrets.ANTJEBRONS_SSH_PRIVATE_KEY }}
-            host: ${{ secrets.ANTJEBRONS_SSH_HOST }}
-            user: ${{ secrets.ANTJEBRONS_SSH_USER }}
-            path: ${{ secrets.ANTJEBRONS_PUB_SSH_PATH }}
+            known_hosts: ANTJEBRONS_SSH_KNOWN_HOSTS
+            private_key: ANTJEBRONS_SSH_PRIVATE_KEY
+            host: ANTJEBRONS_SSH_HOST
+            user: ANTJEBRONS_SSH_USER
+            path: ANTJEBRONS_PUB_SSH_PATH
           - name: antjebrons-editions-environment
-            known_hosts: ${{ secrets.ANTJEBRONS_SSH_KNOWN_HOSTS }}
-            private_key: ${{ secrets.ANTJEBRONS_SSH_PRIVATE_KEY }}
-            host: ${{ secrets.ANTJEBRONS_SSH_HOST }}
-            user: ${{ secrets.ANTJEBRONS_SSH_USER }}
-            path: ${{ secrets.ANTJEBRONS_EDI_SSH_PATH }}
+            known_hosts: ANTJEBRONS_SSH_KNOWN_HOSTS
+            private_key: ANTJEBRONS_SSH_PRIVATE_KEY
+            host: ANTJEBRONS_SSH_HOST
+            user: ANTJEBRONS_SSH_USER
+            path: ANTJEBRONS_EDI_SSH_PATH
     steps:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Install SSH Key
+        env:
+          KNOWN_HOSTS: ${{ secrets[matrix.known_hosts] }}
+          PRIVATE_KEY: ${{ secrets[matrix.private_key] }}
+          HOST: ${{ secrets[matrix.host] }}
+          USER: ${{ secrets[matrix.user] }}
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          echo "${{ matrix.known_hosts }}" > ~/.ssh/known_hosts
+          echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
-          echo "${{ matrix.private_key }}" > ~/.ssh/staging.key
+          echo "$PRIVATE_KEY" > ~/.ssh/staging.key
           chmod 600 ~/.ssh/staging.key
           cat >>~/.ssh/config <<END
           Host staging
-          HostName ${{ matrix.host }}
-          User ${{ matrix.user }}
+          HostName $HOST
+          User $USER
           IdentityFile ~/.ssh/staging.key
           END
       - name: Start Container
+        env:
+          REMOTE_PATH: ${{ secrets[matrix.path] }}
         run: |
           ssh staging bash <<EOF
-          cd "${{ matrix.path }}"
+          cd "$REMOTE_PATH"
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY }} -u ${{ github.actor }} --password-stdin
           docker compose pull server client
           docker compose up -d --force-recreate server client
