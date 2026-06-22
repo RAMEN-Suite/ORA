@@ -1282,7 +1282,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - dompurify@3.4.8
+ - dompurify@3.4.11
 
 This package contains the following license:
 
