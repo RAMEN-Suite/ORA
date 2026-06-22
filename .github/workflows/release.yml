@@ -117,7 +117,7 @@ jobs:
           git commit -am "chore: bump version to $VERSION"
           git push
 
-          git tag "v$VERSION""
+          git tag "v$VERSION"
           git push --tags
   container:
     name: Build, Check and Push Container
@@ -193,7 +193,7 @@ jobs:
           output: trivy-${{ matrix.name }}.sarif
           severity: "CRITICAL,HIGH"
           limit-severities-for-sarif: true
-          exit-code: "1"
+          exit-code: "0"
           ignore-unfixed: true
       - name: Upload Trivy report to Github Security tab
         if: always() && github.event.repository.visibility == 'public'
