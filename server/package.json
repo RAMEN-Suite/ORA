@@ -3,16 +3,17 @@
   "productName": "ORA - Graph-based Digital Edition Server",
   "description": "Server application for the ORA Graph-based Digital Edition based on RAMEN Suite.",
   "license": "Apache-2.0",
-  "version": "2026.0.1",
+  "version": "0.0.0",
   "author": {
     "name": "Sebastian Enns",
-    "email": "sebastian.enns@mni.thm.de",
+    "email": "mail@sebenns.com",
     "url": "https://www.sebenns.com"
   },
   "private": true,
   "type": "module",
   "scripts": {
-    "docs": "node openapi/generator.js",
+    "docs:dev": "node --env-file=.env openapi/generator.js ",
+    "docs:prod": "node openapi/generator.js",
     "build": "webpack",
     "ora:dev": "tsx watch --env-file=.env src/ora.api.ts | pino-pretty",
     "ora:prod": "node dist/ora.api.js",
@@ -26,6 +27,7 @@
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
     "helmet": "^8.1.0",
+    "jsonschema": "^1.5.0",
     "neo4j-driver": "^6.0.1",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0"

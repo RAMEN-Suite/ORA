@@ -2,14 +2,14 @@ import { inject, Injectable } from '@angular/core';
 import { Translation, TranslocoLoader } from '@jsverse/transloco';
 import { HttpClient } from '@angular/common/http';
 import { catchError, forkJoin, map, Observable, of } from 'rxjs';
-import { environment } from '../environments/environment';
+import { environment } from '../envs/environment';
 import { deepmerge } from 'deepmerge-ts';
 
 @Injectable({ providedIn: 'root' })
 export class TranslocoHttpLoader implements TranslocoLoader {
   private readonly http: HttpClient = inject(HttpClient);
 
-  getTranslation(lang: string): Observable<Translation> {
+  public getTranslation(lang: string): Observable<Translation> {
     return forkJoin({
       app: this.loadAppTranslations(lang),
       custom: this.loadCustomTranslations(lang),

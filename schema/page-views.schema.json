@@ -1,0 +1,333 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ramen-schema.org/ora/2026.1/page-views.schema.json",
+  "title": "ORA Page Views",
+  "description": "Configuration for static application page views such as the home page and CMS-like pages.",
+  "$ref": "#/$defs/pageViews",
+  "$defs": {
+    "pathSegment": {
+      "type": "string",
+      "description": "URL-safe path segment.",
+      "minLength": 1,
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "rootPagePathSegment": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/pathSegment"
+        },
+        {
+          "not": {
+            "enum": ["entities", "collections", "id", "error", "not-found"]
+          }
+        }
+      ],
+      "description": "Top-level URL-safe page segment. Must not collide with reserved application routes."
+    },
+    "heroAlign": {
+      "type": "string",
+      "description": "Horizontal alignment of the hero content.",
+      "enum": ["left", "center", "right"]
+    },
+    "heroBackground": {
+      "type": "string",
+      "description": "Predefined hero background style. Ignored or overlaid when a hero image is configured, depending on the frontend implementation.",
+      "enum": ["gradient", "soft", "dark", "light"]
+    },
+    "heroOptions": {
+      "type": "object",
+      "description": "Optional hero configuration for a page view.",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Optional static title or translation key rendered as the hero title.",
+          "minLength": 1
+        },
+        "subTitle": {
+          "type": "string",
+          "description": "Optional static subtitle or translation key rendered below the hero title.",
+          "minLength": 1
+        },
+        "align": {
+          "$ref": "#/$defs/heroAlign",
+          "description": "Optional horizontal alignment of the hero content. Defaults to center."
+        },
+        "background": {
+          "$ref": "#/$defs/heroBackground",
+          "description": "Optional predefined background style for the hero. Defaults to light."
+        },
+        "image": {
+          "type": "string",
+          "description": "Optional hero background image source resolved through the content service.",
+          "minLength": 1
+        }
+      }
+    },
+    "markdownContentProperties": {
+      "type": "object",
+      "description": "Markdown content properties.",
+      "additionalProperties": false,
+      "required": ["file"],
+      "properties": {
+        "file": {
+          "type": "string",
+          "description": "Markdown file path loaded through the content service.",
+          "minLength": 1
+        }
+      }
+    },
+    "markdownContent": {
+      "type": "object",
+      "description": "Content block rendering a markdown file.",
+      "additionalProperties": false,
+      "required": ["type", "properties"],
+      "properties": {
+        "type": {
+          "const": "markdown"
+        },
+        "properties": {
+          "$ref": "#/$defs/markdownContentProperties"
+        }
+      }
+    },
+    "linkedListItem": {
+      "type": "object",
+      "description": "Single linked list item. Internal path wins over external url if both are configured.",
+      "additionalProperties": false,
+      "required": ["label"],
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Static label or translation key rendered as the link text.",
+          "minLength": 1
+        },
+        "icon": {
+          "type": "string",
+          "description": "Optional icon name rendered before the label.",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "description": "Optional internal application path. If both path and url are configured, path takes precedence.",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string",
+          "description": "Optional external URL. Used only when no internal path is configured.",
+          "minLength": 1
+        }
+      },
+      "anyOf": [
+        {
+          "required": ["path"]
+        },
+        {
+          "required": ["url"]
+        }
+      ]
+    },
+    "linkedListContentProperties": {
+      "type": "object",
+      "description": "Linked list content properties.",
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "type": "array",
+          "description": "Ordered linked list items.",
+          "items": {
+            "$ref": "#/$defs/linkedListItem"
+          },
+          "default": []
+        }
+      }
+    },
+    "linkedListContent": {
+      "type": "object",
+      "description": "Content block rendering a list of internal and external links.",
+      "additionalProperties": false,
+      "required": ["type", "properties"],
+      "properties": {
+        "type": {
+          "const": "link-list"
+        },
+        "properties": {
+          "$ref": "#/$defs/linkedListContentProperties"
+        }
+      }
+    },
+    "content": {
+      "description": "Content block rendered inside a content section.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/markdownContent"
+        },
+        {
+          "$ref": "#/$defs/linkedListContent"
+        }
+      ]
+    },
+    "contentBlockList": {
+      "type": "array",
+      "description": "Ordered content blocks rendered together inside one content section.",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/content"
+      }
+    },
+    "contentSection": {
+      "type": "object",
+      "description": "Grouped content section. Blocks inside one section belong together and are rendered as one visual section by the content renderer.",
+      "additionalProperties": false,
+      "required": ["blocks"],
+      "properties": {
+        "blocks": {
+          "$ref": "#/$defs/contentBlockList",
+          "description": "Content blocks belonging to this section."
+        }
+      }
+    },
+    "contentSectionList": {
+      "type": "array",
+      "description": "Ordered content sections rendered in a page area.",
+      "items": {
+        "$ref": "#/$defs/contentSection"
+      },
+      "default": []
+    },
+    "pageContent": {
+      "type": "object",
+      "description": "Content areas for a CMS-like page.",
+      "additionalProperties": false,
+      "properties": {
+        "main": {
+          "$ref": "#/$defs/contentSectionList",
+          "description": "Content sections rendered in the main page area."
+        },
+        "aside": {
+          "$ref": "#/$defs/contentSectionList",
+          "description": "Optional content sections rendered in the aside area. In menu pages this is rendered below the side menu; in one-pagers it can be rendered below or beside the main content depending on the frontend."
+        }
+      }
+    },
+    "pageView": {
+      "type": "object",
+      "description": "Nested CMS-like page view. Can contain content and further nested child views.",
+      "additionalProperties": false,
+      "required": ["path", "title"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/pathSegment",
+          "description": "URL path segment for this page view."
+        },
+        "title": {
+          "type": "string",
+          "description": "Static title or translation key for this page view.",
+          "minLength": 1
+        },
+        "icon": {
+          "type": "string",
+          "description": "Optional icon name rendered in the side navigation.",
+          "minLength": 1
+        },
+        "content": {
+          "$ref": "#/$defs/pageContent",
+          "description": "Optional content rendered by this page view."
+        },
+        "views": {
+          "type": "array",
+          "description": "Nested child page views.",
+          "items": {
+            "$ref": "#/$defs/pageView"
+          },
+          "default": []
+        }
+      }
+    },
+    "page": {
+      "type": "object",
+      "description": "Top-level CMS-like page. Can be a one-pager with content or a page area with nested views and side navigation.",
+      "additionalProperties": false,
+      "required": ["path", "title"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/rootPagePathSegment",
+          "description": "Top-level URL path segment for this page."
+        },
+        "title": {
+          "type": "string",
+          "description": "Static title or translation key for this page.",
+          "minLength": 1
+        },
+        "icon": {
+          "type": "string",
+          "description": "Optional icon name rendered in the page navigation header.",
+          "minLength": 1
+        },
+        "content": {
+          "$ref": "#/$defs/pageContent",
+          "description": "Optional content rendered directly by this top-level page. Useful for one-pagers such as imprint or privacy pages."
+        },
+        "views": {
+          "type": "array",
+          "description": "Nested page views belonging to this top-level page. If configured, they are rendered as the side navigation menu.",
+          "items": {
+            "$ref": "#/$defs/pageView"
+          },
+          "default": []
+        }
+      },
+      "anyOf": [
+        {
+          "required": ["content"]
+        },
+        {
+          "required": ["views"]
+        }
+      ]
+    },
+    "pageList": {
+      "type": "array",
+      "description": "CMS-like pages rendered through the catch-all page route.",
+      "items": {
+        "$ref": "#/$defs/page"
+      },
+      "default": []
+    },
+    "homeOptions": {
+      "type": "object",
+      "description": "Home page view configuration.",
+      "additionalProperties": false,
+      "properties": {
+        "hero": {
+          "$ref": "#/$defs/heroOptions",
+          "description": "Optional hero section rendered on the home page."
+        },
+        "main": {
+          "$ref": "#/$defs/contentSectionList",
+          "description": "Content sections rendered in the main home page area."
+        },
+        "aside": {
+          "$ref": "#/$defs/contentSectionList",
+          "description": "Content sections rendered in the home page aside area."
+        }
+      }
+    },
+    "pageViews": {
+      "type": "object",
+      "description": "Page view configuration.",
+      "additionalProperties": false,
+      "required": ["home"],
+      "properties": {
+        "home": {
+          "$ref": "#/$defs/homeOptions",
+          "description": "Home page view options."
+        },
+        "pages": {
+          "$ref": "#/$defs/pageList",
+          "description": "Configured CMS-like pages."
+        }
+      }
+    }
+  }
+}

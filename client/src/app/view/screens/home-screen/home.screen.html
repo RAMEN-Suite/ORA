@@ -1,0 +1,25 @@
+<ng-container *transloco="let t">
+  @if (options.hero; as hero) {
+    <shared-hero
+      [title]="hero.title"
+      [subTitle]="hero.subTitle"
+      [align]="hero.align ?? 'center'"
+      [background]="hero.background ?? 'light'"
+      [image]="hero.image"
+    />
+  }
+
+  <shared-screen-shell sidebarPosition="right" [isFullWidth]="false">
+    @if (mainContent().length > 0) {
+      <ng-template #main>
+        <content-renderer [sections]="mainContent()" />
+      </ng-template>
+    }
+
+    @if (asideContent().length > 0) {
+      <ng-template #sidebar>
+        <content-renderer [sections]="asideContent()" />
+      </ng-template>
+    }
+  </shared-screen-shell>
+</ng-container>

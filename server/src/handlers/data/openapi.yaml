@@ -1,0 +1,507 @@
+openapi: 3.0.1
+info:
+  title: ORA View API
+  version: 1.0.0
+
+paths:
+  /api/view/entities:
+    get:
+      summary: List entities
+      operationId: listEntities
+      tags:
+        - Entities
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Skip"
+        - $ref: "#/components/parameters/OrderBy"
+        - $ref: "#/components/parameters/Label"
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Field"
+        - $ref: "#/components/parameters/Filters"
+      responses:
+        "200":
+          description: Entity list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/view/entities/facets:
+    get:
+      summary: Get entity facets
+      operationId: getEntityFacets
+      tags:
+        - Entities
+      parameters:
+        - $ref: "#/components/parameters/Label"
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Field"
+        - $ref: "#/components/parameters/Facets"
+        - $ref: "#/components/parameters/Filters"
+      responses:
+        "200":
+          description: Entity facets.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FacetGroupList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/view/collections:
+    get:
+      summary: List collections
+      operationId: listCollections
+      tags:
+        - Collections
+      parameters:
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Skip"
+        - $ref: "#/components/parameters/OrderBy"
+        - $ref: "#/components/parameters/Label"
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Field"
+        - $ref: "#/components/parameters/Filters"
+      responses:
+        "200":
+          description: Collection list.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/view/collections/facets:
+    get:
+      summary: Get collection facets
+      operationId: getCollectionFacets
+      tags:
+        - Collections
+      parameters:
+        - $ref: "#/components/parameters/Label"
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Field"
+        - $ref: "#/components/parameters/Facets"
+        - $ref: "#/components/parameters/Filters"
+      responses:
+        "200":
+          description: Collection facets.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FacetGroupList"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/view/{uuid}:
+    get:
+      summary: Get node view
+      operationId: getView
+      tags:
+        - View
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          description: Node identifier.
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 128
+            pattern: "^[A-Za-z0-9_-]{1,128}$"
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        - name: paths
+          in: query
+          required: false
+          description: >
+            RAMEN access paths whose values should be included in the response.
+            A path can be a direct field, a nested access path, or a node access
+            path ending with `*`.
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              $ref: "#/components/schemas/AccessPathString"
+          style: form
+          explode: true
+          examples:
+            directFields:
+              value:
+                - title
+                - date
+            nestedValues:
+              value:
+                - annotation[type].label
+                - refers[Person].name
+                - parents[Collection].title
+                - children[Content].*
+      responses:
+        "200":
+          description: Node view.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ViewNodeOnlyResponse"
+                  - $ref: "#/components/schemas/ViewNodeWithValuesResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+  parameters:
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: Maximum number of items to return. Defaults to 25. A value of 0 disables the LIMIT clause.
+      schema:
+        type: integer
+        minimum: 0
+        maximum: 500
+        default: 25
+      example: 25
+
+    Skip:
+      name: skip
+      in: query
+      required: false
+      description: Number of items to skip. Defaults to 0.
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      example: 0
+
+    OrderBy:
+      name: orderBy
+      in: query
+      required: false
+      description: >
+        RAMEN access paths used for sorting. This parameter may be repeated
+        to sort by multiple fields. Prefix a path with `-` to sort descending.
+        Without prefix, ascending order is used.
+      schema:
+        type: array
+        maxItems: 5
+        items:
+          $ref: "#/components/schemas/SortPathString"
+      style: form
+      explode: true
+      examples:
+        singleAscending:
+          value:
+            - label
+        singleDescending:
+          value:
+            - -label
+        multipleAscending:
+          value:
+            - status
+            - annotation[sent].dateStart
+        multipleMixed:
+          value:
+            - status
+            - -annotation[sent].dateStart
+
+    Label:
+      name: label
+      in: query
+      required: false
+      description: Optional additional Neo4j label restriction.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 48
+        pattern: "^[A-Za-z_][A-Za-z0-9_]*$"
+      examples:
+        entity:
+          value: Person
+        collection:
+          value: Archive
+
+    Search:
+      name: search
+      in: query
+      required: false
+      description: Free-text search value. The selected field is cleaned using APOC text cleaning before matching.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 512
+      example: Hamburg
+
+    Field:
+      name: field
+      in: query
+      required: false
+      description: RAMEN access path used as search field or facet field. Defaults to label for search when omitted.
+      schema:
+        $ref: "#/components/schemas/AccessPathString"
+      examples:
+        directField:
+          value: label
+        nestedField:
+          value: annotation[type].label
+
+    Facets:
+      name: facets
+      in: query
+      required: false
+      description: RAMEN access paths for which facet groups should be calculated.
+      schema:
+        type: array
+        maxItems: 10
+        items:
+          $ref: "#/components/schemas/AccessPathString"
+      style: form
+      explode: true
+      examples:
+        directFacets:
+          value:
+            - type
+            - status
+        nestedFacets:
+          value:
+            - annotation[type].label
+            - parents[Collection].title
+
+    Filters:
+      name: filters
+      in: query
+      required: false
+      description: >
+        Serialized filter expressions. Supported formats are equality filters
+        `<field>~<value>`, closed ranges `<field>~<min>..<max>`, lower-bounded
+        ranges `<field>~<min>..`, and upper-bounded ranges `<field>~..<max>`.
+        The field part is a RAMEN access path.
+      schema:
+        type: array
+        maxItems: 10
+        items:
+          $ref: "#/components/schemas/FilterString"
+      style: form
+      explode: true
+      examples:
+        equal:
+          value:
+            - label~Hamburg
+        range:
+          value:
+            - date~1600..1700
+        openRanges:
+          value:
+            - date~1600..
+            - date~..1700
+        nested:
+          value:
+            - annotation[type].label~Place
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters.
+
+    NotFound:
+      description: Resource not found.
+
+    InternalError:
+      description: Internal server error.
+
+  schemas:
+    AccessPathString:
+      type: string
+      minLength: 1
+      maxLength: 512
+      description: >
+        RAMEN access path. Supported forms are direct field access such as
+        `label`, nested access such as `annotation[type].label`,
+        `refers[Person].name`, `parents[Collection].title`,
+        `children[Content].label`, and node access such as `children[Content].*`.
+        Supported access steps are `annotation`, `refers`, `parents`, and
+        `children`.
+      pattern: "^(?:(?:annotation|refers|parents|children)(?:\\[[^\\]]+\\])?\\.)*(?:[A-Za-z_]\\w*|\\*)$"
+      examples:
+        - label
+        - annotation[type].label
+        - refers[Person].name
+        - parents[Collection].title
+        - children[Content].*
+
+    SortPathString:
+      type: string
+      minLength: 1
+      maxLength: 512
+      description: >
+        RAMEN access path used for sorting. Prefix with `-` for descending order.
+        Without prefix, ascending order is used.
+      pattern: "^-?(?:(?:annotation|refers|parents|children)(?:\\[[^\\]]+\\])?\\.)*(?:[A-Za-z_]\\w*|\\*)$"
+      examples:
+        - label
+        - -label
+        - annotation[sent].dateStart
+        - -annotation[sent].dateStart
+
+    FilterString:
+      type: string
+      minLength: 1
+      maxLength: 512
+      description: >
+        Serialized filter. Equality: `<field>~<value>`.
+        Range: `<field>~<min>..<max>`.
+        Open range: `<field>~<min>..` or `<field>~..<max>`.
+      pattern: "^(?:(?:annotation|refers|parents|children)(?:\\[[^\\]]+\\])?\\.)*(?:[A-Za-z_]\\w*|\\*)~.+$"
+      examples:
+        - label~Hamburg
+        - date~1600..1700
+        - date~1600..
+        - date~..1700
+        - annotation[type].label~Place
+
+    ListResponse:
+      type: object
+      required:
+        - data
+        - pagination
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Node"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+
+    Pagination:
+      type: object
+      required:
+        - skip
+        - limit
+        - count
+        - total
+        - hasNext
+        - hasPrevious
+      properties:
+        skip:
+          type: integer
+          minimum: 0
+          example: 0
+        limit:
+          type: integer
+          minimum: 0
+          maximum: 500
+          example: 25
+        count:
+          type: integer
+          minimum: 0
+          example: 25
+        total:
+          type: integer
+          minimum: 0
+          example: 132
+        hasNext:
+          type: boolean
+          example: true
+        hasPrevious:
+          type: boolean
+          example: false
+
+    FacetGroupList:
+      type: array
+      items:
+        $ref: "#/components/schemas/FacetGroup"
+
+    FacetGroup:
+      type: object
+      required:
+        - field
+        - values
+      properties:
+        field:
+          type: string
+          description: Facet field.
+          example: category
+        values:
+          type: array
+          items:
+            $ref: "#/components/schemas/FacetValue"
+
+    FacetValue:
+      type: object
+      required:
+        - value
+        - count
+      properties:
+        value:
+          type: string
+          example: Hamburg
+        count:
+          type: integer
+          minimum: 0
+          example: 42
+
+    ViewNodeOnlyResponse:
+      type: object
+      required:
+        - node
+      properties:
+        node:
+          $ref: "#/components/schemas/Node"
+
+    ViewNodeWithValuesResponse:
+      type: object
+      required:
+        - node
+        - values
+      properties:
+        node:
+          $ref: "#/components/schemas/Node"
+        values:
+          type: object
+          description: >
+            Map of requested access path strings to their resolved values.
+            A value can be a scalar, an object node, an array, or null-like
+            JSON value depending on the requested path and database result.
+          additionalProperties: true
+          example:
+            annotation[type].label: Place
+            children[Content].*:
+              _labels:
+                - Content
+              uuid: content-123
+              label: Example content
+
+    Node:
+      type: object
+      required:
+        - uuid
+        - _labels
+      properties:
+        uuid:
+          type: string
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        _labels:
+          type: array
+          items:
+            type: string
+            enum:
+              - Collection
+              - Entity
+              - Content
+              - Annotation
+          example:
+            - Entity
+      additionalProperties: true
+      description: Neo4j node projection with all node properties and an additional `_labels` array.

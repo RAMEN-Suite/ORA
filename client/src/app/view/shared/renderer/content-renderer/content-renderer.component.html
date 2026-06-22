@@ -1,0 +1,18 @@
+<div class="flex flex-col gap-5 print:gap-2">
+  @for (section of sections(); track $index) {
+    <section class="border-surface-300 bg-surface-0 rounded-md border p-5 print:border-0 print:bg-transparent print:p-0">
+      <div class="flex flex-col">
+        @for (block of section.blocks; track block.type + "-" + $index) {
+          @switch (block.type) {
+            @case ("markdown") {
+              <content-markdown [properties]="block.properties" />
+            }
+            @case ("link-list") {
+              <content-link-list [properties]="block.properties" />
+            }
+          }
+        }
+      </div>
+    </section>
+  }
+</div>

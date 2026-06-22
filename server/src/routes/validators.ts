@@ -17,8 +17,8 @@ export const filter: ValidationChain[] = [
 export const list: ValidationChain[] = [
   query("limit").optional().isInt({ min: 0, max: 500 }),
   query("skip").optional().isInt({ min: 0 }),
-  query("orderBy").optional().isString().isLength({ min: 1, max: 96 }).trim().escape().matches(REGEXP.QUERY),
-  query("asc").optional().isBoolean(),
+  query("orderBy").optional().customSanitizer(Utils.parseArray).isArray({ max: 5 }),
+  query("orderBy.*").isString().isLength({ min: 1, max: 512 }).trim().escape().matches(REGEXP.QUERY),
   ...filter,
 ];
 
@@ -28,4 +28,6 @@ export const view: ValidationChain[] = [
   query("paths.*").isString().isLength({ min: 1, max: 512 }).trim(),
 ];
 
-export const chains = { filter, list, view };
+export const language: ValidationChain[] = [param("language").matches(REGEXP.LANGUAGE)];
+
+export const chains = { filter, list, view, language };

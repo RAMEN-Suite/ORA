@@ -1,0 +1,35 @@
+<ng-container *transloco="let t">
+  @if (match()) {
+    <shared-screen-shell sidebarPosition="left" [isFullWidth]="!hasMenu()">
+      @if (hasMenu()) {
+        <ng-template #sidebar>
+          <div class="border-surface-300 bg-surface-0 rounded-md border p-5">
+            <shared-panel-menu [items]="menuItems()" />
+          </div>
+
+          @if (asideContent().length > 0) {
+            <content-renderer [sections]="asideContent()" />
+          }
+        </ng-template>
+      }
+
+      <ng-template #main>
+        <article class="animate__animated animate__fadeIn flex flex-col gap-8">
+          @if (mainContent().length > 0) {
+            <content-renderer [sections]="mainContent()" />
+          } @else {
+            <div class="border-surface-300 bg-surface-0 rounded-md border p-5">
+              <screen-not-found />
+            </div>
+          }
+
+          @if (!hasMenu() && asideContent().length > 0) {
+            <aside class="border-t pt-6">
+              <content-renderer [sections]="asideContent()" />
+            </aside>
+          }
+        </article>
+      </ng-template>
+    </shared-screen-shell>
+  }
+</ng-container>

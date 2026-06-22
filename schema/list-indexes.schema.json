@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ramen-schema.org/ora/2026.1/index.schema.json",
+  "title": "ORA Indexes",
+  "description": "Configuration for reusable list indexes used by the ORA application.",
+  "$ref": "#/$defs/indexes",
+  "$defs": {
+    "indexType": {
+      "type": "string",
+      "description": "The implementation type used to build the list index.",
+      "enum": ["character", "alias-list", "bible"]
+    },
+    "indexItem": {
+      "type": "object",
+      "description": "Configuration entry for one indexed alias group.",
+      "additionalProperties": false,
+      "required": ["key", "aliases"],
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Canonical key used internally and as translation key."
+        },
+        "aliases": {
+          "type": "array",
+          "description": "Alternative names, abbreviations, or spellings that should resolve to this key.",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "index": {
+      "type": "object",
+      "description": "Configuration for one named list index.",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/indexType"
+        },
+        "items": {
+          "type": "array",
+          "description": "Configured alias groups used by alias-list and bible indexes.",
+          "items": {
+            "$ref": "#/$defs/indexItem"
+          }
+        },
+        "unknownLabel": {
+          "type": "string",
+          "description": "Translation key used for entries that cannot be assigned to any configured alias group."
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "enum": ["alias-list", "bible"]
+              }
+            },
+            "required": ["type"]
+          },
+          "then": {
+            "required": ["items"]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "character"
+              }
+            },
+            "required": ["type"]
+          },
+          "then": {
+            "not": {
+              "required": ["items"]
+            }
+          }
+        }
+      ]
+    },
+    "indexes": {
+      "type": "object",
+      "description": "Named list indexes addressable from list view configuration.",
+      "additionalProperties": {
+        "$ref": "#/$defs/index"
+      }
+    }
+  }
+}

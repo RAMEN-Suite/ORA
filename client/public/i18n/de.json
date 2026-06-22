@@ -1,5 +1,12 @@
 {
   "app": {
+    "languages": {
+      "de": "Deutsch",
+      "en": "English",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano"
+    },
     "screens": {
       "collections": {
         "available": "Insgesamt {{ count }} Einträge verfügbar",
@@ -7,9 +14,9 @@
         "search": "Sammlung durchsuchen:",
         "sort": "Sortieren nach:",
         "tooltips": {
-          "reset": "zurücksetzen",
-          "ascending": "aufsteigend",
-          "descending": "absteigend"
+          "reset": "Zurücksetzen",
+          "ascending": "Aufsteigend",
+          "descending": "Absteigend"
         }
       },
       "entities": {
@@ -21,100 +28,36 @@
       }
     },
     "shared": {
+      "index": {
+        "unknown": "Keine Einsortierung"
+      },
       "searchableList": {
         "search": "Liste durchsuchen:",
         "empty": "Keine Einträge vorhanden."
+      },
+      "textView": {
+        "copyUuid": "UUID kopieren",
+        "references": "Referenziert:",
+        "empty": "Keine weiteren Informationen.",
+        "error": "Die Annotation konnte nicht geladen werden.",
+        "externalLink": "Externen Link öffnen (#{{ source }})",
+        "jumpTo": "Zur Annotation springen"
+      },
+      "citation": {
+        "currentVersion": "Link zur aktuellen Version:",
+        "copyLink": "Link kopieren",
+        "print": "PDF speichern",
+        "usage": "Nutzungshinweis",
+        "usageSoftware": "Die Darstellung erfolgt mit *[ORA](https://ramen-schema.org)*, einer unter Apache 2.0 lizenzierten Editionssoftware."
+      },
+      "footer": {
+        "software": "Präsentiert mit <b>[ORA]({{ url }})</b>."
       }
     },
     "blocks": {
       "attributes": {
         "missing": "–"
       }
-    },
-    "features": {
-      "bibleList": {
-        "search": "Nach Buch suchen:",
-        "unknown": "Keine Einsortierung"
-      }
     }
-  },
-  "bible": {
-    "genesis": "Das erste Buch Mose (Genesis)",
-    "exodus": "Das zweite Buch Mose (Exodus)",
-    "leviticus": "Das dritte Buch Mose (Levitikus)",
-    "numbers": "Das vierte Buch Mose (Numeri)",
-    "deuteronomy": "Das fünfte Buch Mose (Deuteronomium)",
-    "joshua": "Das Buch Josua",
-    "judges": "Das Buch der Richter",
-    "ruth": "Das Buch Rut",
-    "1samuel": "Das erste Buch Samuel",
-    "2samuel": "Das zweite Buch Samuel",
-    "1kings": "Das erste Buch der Könige",
-    "2kings": "Das zweite Buch der Könige",
-    "1chronicles": "Das erste Buch der Chronik",
-    "2chronicles": "Das zweite Buch der Chronik",
-    "ezra": "Das Buch Esra",
-    "nehemiah": "Das Buch Nehemia",
-    "esther": "Das Buch Ester",
-    "job": "Das Buch Hiob",
-    "psalms": "Die Psalmen",
-    "proverbs": "Die Sprüche Salomos",
-    "ecclesiastes": "Der Prediger Salomo",
-    "songofsolomon": "Das Hohelied Salomos",
-    "isaiah": "Das Buch Jesaja",
-    "jeremiah": "Das Buch Jeremia",
-    "lamentations": "Die Klagelieder Jeremias",
-    "ezekiel": "Das Buch Hesekiel",
-    "daniel": "Das Buch Daniel",
-    "hosea": "Das Buch Hosea",
-    "joel": "Das Buch Joel",
-    "amos": "Das Buch Amos",
-    "obadiah": "Das Buch Obadja",
-    "jonah": "Das Buch Jona",
-    "micah": "Das Buch Micha",
-    "nahum": "Das Buch Nahum",
-    "habakkuk": "Das Buch Habakuk",
-    "zephaniah": "Das Buch Zefanja",
-    "haggai": "Das Buch Haggai",
-    "zechariah": "Das Buch Sacharja",
-    "malachi": "Das Buch Maleachi",
-    "judith": "Das Buch Judit",
-    "wisdom": "Das Buch der Weisheit",
-    "tobit": "Das Buch Tobit",
-    "sirach": "Das Buch Jesus Sirach",
-    "baruch": "Das Buch Baruch",
-    "letterofjeremiah": "Der Brief des Jeremia",
-    "1maccabees": "Das erste Buch der Makkabäer",
-    "2maccabees": "Das zweite Buch der Makkabäer",
-    "additionstoesther": "Die Zusätze zum Buch Ester",
-    "additionstodaniel": "Die Zusätze zum Buch Daniel",
-    "prayerofmanasseh": "Das Gebet des Manasse",
-    "matthew": "Das Evangelium nach Matthäus",
-    "mark": "Das Evangelium nach Markus",
-    "luke": "Das Evangelium nach Lukas",
-    "john": "Das Evangelium nach Johannes",
-    "acts": "Die Apostelgeschichte",
-    "romans": "Der Brief des Paulus an die Römer",
-    "1corinthians": "Der erste Brief des Paulus an die Korinther",
-    "2corinthians": "Der zweite Brief des Paulus an die Korinther",
-    "galatians": "Der Brief des Paulus an die Galater",
-    "ephesians": "Der Brief des Paulus an die Epheser",
-    "philippians": "Der Brief des Paulus an die Philipper",
-    "colossians": "Der Brief des Paulus an die Kolosser",
-    "1thessalonians": "Der erste Brief des Paulus an die Thessalonicher",
-    "2thessalonians": "Der zweite Brief des Paulus an die Thessalonicher",
-    "1timothy": "Der erste Brief des Paulus an Timotheus",
-    "2timothy": "Der zweite Brief des Paulus an Timotheus",
-    "titus": "Der Brief des Paulus an Titus",
-    "philemon": "Der Brief des Paulus an Philemon",
-    "hebrews": "Der Brief an die Hebräer",
-    "james": "Der Brief des Jakobus",
-    "1peter": "Der erste Brief des Petrus",
-    "2peter": "Der zweite Brief des Petrus",
-    "1john": "Der erste Brief des Johannes",
-    "2john": "Der zweite Brief des Johannes",
-    "3john": "Der dritte Brief des Johannes",
-    "jude": "Der Brief des Judas",
-    "revelation": "Die Offenbarung des Johannes"
   }
 }

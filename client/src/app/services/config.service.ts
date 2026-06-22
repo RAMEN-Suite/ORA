@@ -1,10 +1,10 @@
 import { computed, inject, Injectable, Signal, signal, WritableSignal } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { environment } from '../../envs/environment';
 import { Config } from '../models/config/Config';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { withCache } from '@ngneat/cashew';
 import { firstValueFrom } from 'rxjs';
-import { Registry } from '../models/Registry';
+import { Registry } from '../helper/Registry';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +27,7 @@ export class ConfigService {
 
   public async init(): Promise<void> {
     try {
-      const context: HttpContext = withCache({ storage: 'localStorage', ttl: 1 });
+      const context: HttpContext = withCache({ storage: 'localStorage', ttl: environment.cache.configTtl });
       const config: Config = await firstValueFrom(this.http.get<Config>(this.baseUrl, { context }));
       this.configState.set(config);
     } catch (error: unknown) {

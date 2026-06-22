@@ -1,11 +1,11 @@
-import { Utils } from './Utils';
+import { ParseUtils } from './ParseUtils';
 
 export const PAGE_LIMITS = [25, 50, 100] as const;
 export type PageLimit = (typeof PAGE_LIMITS)[number];
 
 export class PaginationUtils {
   public static parseLimit(value: unknown, fallback: PageLimit = 25): PageLimit {
-    const limit: number | undefined = Utils.parseNumber(value);
+    const limit: number | undefined = ParseUtils.parseNumber(value);
     if (limit === undefined || limit <= 0) return fallback;
 
     return PAGE_LIMITS.reduce((closest: PageLimit, current: PageLimit): PageLimit => {
@@ -14,7 +14,7 @@ export class PaginationUtils {
   }
 
   public static parsePage(value: unknown, fallback: number = 1): number {
-    const page: number | undefined = Utils.parseNumber(value);
+    const page: number | undefined = ParseUtils.parseNumber(value);
     return page !== undefined && Number.isInteger(page) && page > 0 ? page : fallback;
   }
 

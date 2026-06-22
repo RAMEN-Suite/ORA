@@ -1,0 +1,7 @@
+@if ($markdown.isLoading()) {
+  <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+    <p-progress-spinner class="spinner-base" />
+  </div>
+} @else {
+  <markdown class="max-w-none" [data]="markdown()" />
+}

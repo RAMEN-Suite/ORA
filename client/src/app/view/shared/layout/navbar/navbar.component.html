@@ -1,0 +1,73 @@
+<p-menubar [model]="navItems()" *transloco="let t" #menubar class="min-h-navbar! md:px-6!">
+  <ng-template #start>
+    @if (navImage(); as image) {
+      <div class="pe-5">
+        <a routerLink="/" class="flex items-center">
+          <img [src]="image" class="h-10" alt="" />
+        </a>
+      </div>
+    }
+  </ng-template>
+
+  <ng-template #item let-item>
+    <div class="flex cursor-pointer items-center tracking-wide select-none">
+      @if (item.href && isExternal(item)) {
+        <a
+          class="block w-full rounded-md"
+          [href]="item.href"
+          [target]="item.target ?? '_blank'"
+          rel="noopener noreferrer"
+          [ngClass]="item.linkClass"
+        >
+          <ng-container [ngTemplateOutlet]="navItem" [ngTemplateOutletContext]="{ item }" />
+        </a>
+      } @else if (item.href) {
+        <a
+          class="block w-full rounded-md"
+          [routerLink]="item.href"
+          routerLinkActive="p-menuitem-link-active"
+          [routerLinkActiveOptions]="{ exact: item.isExactMatch ?? item.href === '/' }"
+          [ngClass]="item.linkClass"
+        >
+          <ng-container [ngTemplateOutlet]="navItem" [ngTemplateOutletContext]="{ item }" />
+        </a>
+      } @else {
+        <a tabindex="0" class="block w-full rounded-md" [ngClass]="item.linkClass">
+          <ng-container [ngTemplateOutlet]="navItem" [ngTemplateOutletContext]="{ item }" />
+        </a>
+      }
+    </div>
+  </ng-template>
+
+  <ng-template #navItem let-item="item">
+    <div class="mx-4 px-2.5 py-2">
+      <span [ngClass]="item.textClass">{{ t(item.label) }}</span>
+    </div>
+  </ng-template>
+
+  <ng-template #end>
+    @if (languages().length > 0) {
+      <div class="flex items-center gap-2 px-3">
+        <p-button icon="pi pi-language" rounded size="small" severity="primary" (onClick)="handleOpenLanguages(popover, $event)" />
+
+        <p-popover #popover [appendTo]="menubar" styleClass="print:hidden">
+          <div class="flex min-w-44 flex-col gap-2 p-2">
+            @for (key of languages(); track key) {
+              @let isActiveLanguage = key === activeLanguage();
+
+              <p-button
+                [label]="t('app.languages.' + key)"
+                [icon]="isActiveLanguage ? 'pi pi-check' : 'fi fi-' + key"
+                [severity]="isActiveLanguage ? 'primary' : 'secondary'"
+                [outlined]="!isActiveLanguage"
+                size="small"
+                styleClass="w-full justify-start"
+                (onClick)="handleLanguageChange(key, popover)"
+              />
+            }
+          </div>
+        </p-popover>
+      </div>
+    }
+  </ng-template>
+</p-menubar>

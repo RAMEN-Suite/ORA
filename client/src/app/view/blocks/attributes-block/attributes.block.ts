@@ -1,12 +1,12 @@
-import { Component, computed, Signal } from '@angular/core';
+import { Component, computed, inject, Signal } from '@angular/core';
 import { Fieldset } from 'primeng/fieldset';
 import { Node } from '../../../models/Node';
-import { Utils } from '../../../utils/Utils';
-import { ROUTES } from '../../../app.routes';
 import { RouterLink } from '@angular/router';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { AbstractBlock } from '../abstract.block';
 import { AttributesItem, AttributesNodeItem, AttributesProps, AttributesValueItem } from '../../../models/config/DetailViews';
+import { ParseUtils } from '../../../utils/ParseUtils';
+import { NavigationService } from '../../../services/navigation.service';
 
 interface Attribute {
   label: string;
@@ -25,7 +25,8 @@ interface AttributeValue {
   templateUrl: './attributes.block.html',
 })
 export class AttributesBlock extends AbstractBlock<AttributesProps> {
-  protected readonly title: Signal<string> = computed((): string => this.resolveRequiredString('title'));
+  private readonly navigationService: NavigationService = inject(NavigationService);
+  protected readonly title: Signal<string> = computed((): string => this.properties()?.title ?? '');
 
   protected readonly attributes: Signal<Attribute[]> = computed((): Attribute[] => {
     const items: AttributesItem[] = this.properties()?.items ?? [];
@@ -45,7 +46,7 @@ export class AttributesBlock extends AbstractBlock<AttributesProps> {
   }
 
   private resolveValueItem(item: AttributesValueItem): Attribute {
-    const value: string = this.resolveString(item.value);
+    const value: string = this.resolveText(item.value);
     if (value.trim()) return { label: item.label, values: [{ value }] };
 
     const values: AttributeValue[] = item.isEmptyVisible ? [this.resolveEmptyValue(item)] : [];
@@ -69,7 +70,7 @@ export class AttributesBlock extends AbstractBlock<AttributesProps> {
   }
 
   private resolveNodeValue(node: Node, item: AttributesNodeItem): AttributeValue {
-    const value: string = Utils.parseString(node[item.property]) ?? '';
+    const value: string = ParseUtils.parseString(node[item.property]) ?? '';
     const href: string[] | undefined = item.isLinked ? this.resolveHref(node) : undefined;
     return { value, href };
   }
@@ -79,12 +80,12 @@ export class AttributesBlock extends AbstractBlock<AttributesProps> {
   }
 
   private resolveHref(node: Node): string[] {
-    const uuid: string | undefined = Utils.parseString(node['uuid']);
+    const uuid: string | undefined = ParseUtils.parseString(node['uuid']);
     if (!uuid) return [];
 
-    if (node._labels.includes('Collection')) return ['/', ROUTES.COLLECTION, uuid];
-    if (node._labels.includes('Entity')) return ['/', ROUTES.ENTITY, uuid];
-    return ['/', ROUTES.IDENTIFIER, uuid];
+    if (node._labels.includes('Collection')) return this.navigationService.collectionLink(uuid);
+    if (node._labels.includes('Entity')) return this.navigationService.entityLink(uuid);
+    return this.navigationService.nodeLink(uuid);
   }
 
   private readonly EMPTY_LABEL: string = 'app.blocks.attributes.missing';

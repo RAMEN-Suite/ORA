@@ -25,10 +25,28 @@ export default defineConfig(
       },
     },
     rules: {
+      "@typescript-eslint/restrict-template-expressions": [
+        "error",
+        {
+          allowBoolean: true,
+          allowNullish: true,
+          allowNumber: true,
+        },
+      ],
+      "@angular-eslint/no-output-on-prefix": "off",
       "@typescript-eslint/no-inferrable-types": "off",
       "@typescript-eslint/no-extraneous-class": "off",
       "@typescript-eslint/no-confusing-void-expression": "off",
       "@typescript-eslint/unbound-method": "off",
+      "@typescript-eslint/explicit-member-accessibility": [
+        "error",
+        {
+          accessibility: "explicit",
+          overrides: {
+            constructors: "explicit",
+          },
+        },
+      ],
 
       "@typescript-eslint/no-unused-vars": [
         "error",
@@ -42,7 +60,7 @@ export default defineConfig(
         "error",
         {
           type: "attribute",
-          prefix: "app",
+          prefix: "on",
           style: "camelCase",
         },
       ],
@@ -50,7 +68,7 @@ export default defineConfig(
         "error",
         {
           type: "element",
-          prefix: ["root", "shared", "feature", "screen", "block"],
+          prefix: ["root", "screen", "shared", "block", "content", "annotation", "element"],
           style: "kebab-case",
         },
       ],

@@ -1,4 +1,5 @@
 import { BindingPath } from './Config';
+import { ListIndexType } from './IndexOptions';
 
 export interface ListViews {
   entities: ListView<EntityListOption>;
@@ -12,12 +13,11 @@ export interface ListView<TOption extends Option = ListOption> {
 }
 
 export type SortDirection = 'asc' | 'desc';
-export type EntityIndex = 'character' | 'bible';
 
 export interface Option {
   icon?: string;
   label: string;
-  value: string;
+  value: BindingPath;
 }
 
 export interface ListOption extends Option {
@@ -28,7 +28,7 @@ export interface ListOption extends Option {
 
 export interface EntityListOption extends ListOption {
   properties?: Property[];
-  index?: EntityIndex;
+  index?: ListIndexType;
 }
 
 export interface FilterOption extends Option {
@@ -37,8 +37,18 @@ export interface FilterOption extends Option {
   valueMap?: Record<string, string>;
 }
 
-export interface SortOption extends Option {
-  value: BindingPath;
+export type SortValue = BindingPath | SortField[];
+
+export interface SortOption {
+  identifier: string;
+  icon?: string;
+  label: string;
+  value: SortValue;
+}
+
+export interface SortField {
+  field: BindingPath;
+  direction?: SortDirection;
 }
 
 export interface OptionGroup<TOption extends Option = Option> {
@@ -46,8 +56,10 @@ export interface OptionGroup<TOption extends Option = Option> {
   options: TOption[];
 }
 
-export interface SortOptionGroup extends OptionGroup<SortOption> {
+export interface SortOptionGroup {
+  initial: string;
   direction: SortDirection;
+  options: SortOption[];
 }
 
 export interface Property {

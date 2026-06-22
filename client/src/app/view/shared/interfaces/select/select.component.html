@@ -1,0 +1,22 @@
+<p-ifta-label *transloco="let t">
+  <p-select inputId="select" optionLabel="label" [options]="items()" [(ngModel)]="activeItem" scrollHeight="230px" fluid>
+    <ng-template #item let-item>
+      <div class="flex flex-row items-center gap-4 px-1 py-1">
+        @if (item.icon) {
+          <i class="pi {{ item.icon }}"></i>
+        }
+        <span>{{ t(item.label) }}</span>
+      </div>
+    </ng-template>
+
+    <ng-template #selectedItem let-item>
+      <div class="flex flex-row items-center gap-4 px-1">
+        @if (item.icon) {
+          <i class="pi {{ item.icon }}"></i>
+        }
+        <span>{{ t(item.label) }}</span>
+      </div>
+    </ng-template>
+  </p-select>
+  <label for="select">{{ t(label()) }}</label>
+</p-ifta-label>

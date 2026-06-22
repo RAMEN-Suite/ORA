@@ -1,0 +1,353 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ramen-schema.org/ora/2026.1/site.schema.json",
+  "title": "ORA Site",
+  "description": "Configuration for site-level options such as language, content loading, navbar and footer.",
+  "$ref": "#/$defs/siteOptions",
+  "$defs": {
+    "languageKey": {
+      "type": "string",
+      "description": "Supported application language key.",
+      "enum": ["de", "en", "fr", "es", "it"]
+    },
+    "languageOptions": {
+      "type": "object",
+      "description": "Language configuration for the application.",
+      "additionalProperties": false,
+      "required": ["initial", "available"],
+      "properties": {
+        "initial": {
+          "$ref": "#/$defs/languageKey",
+          "description": "Initial application language."
+        },
+        "available": {
+          "type": "array",
+          "description": "Languages available for selection in the application.",
+          "items": {
+            "$ref": "#/$defs/languageKey"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "contentOptions": {
+      "type": "object",
+      "description": "Content loading configuration for markdown files and related static content.",
+      "additionalProperties": false,
+      "properties": {
+        "isLocalized": {
+          "type": "boolean",
+          "description": "Whether content files are resolved below a language folder such as markdown/en/home.md.",
+          "default": false
+        }
+      },
+      "default": {}
+    },
+    "navTarget": {
+      "type": "string",
+      "description": "Browsing context used when opening the item.",
+      "enum": ["_blank", "_self", "_parent", "_top"]
+    },
+    "classes": {
+      "type": "array",
+      "description": "Additional CSS classes applied to the rendered item.",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true,
+      "default": []
+    },
+    "menuItem": {
+      "type": "object",
+      "description": "Single menu item used in navigation or footer links.",
+      "additionalProperties": false,
+      "dependentRequired": {
+        "target": ["href"]
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Static label or translation key shown for the item.",
+          "minLength": 1
+        },
+        "href": {
+          "type": "string",
+          "description": "Link target. Can be an internal application route or an external URL.",
+          "minLength": 1
+        },
+        "target": {
+          "$ref": "#/$defs/navTarget"
+        },
+        "classes": {
+          "$ref": "#/$defs/classes"
+        }
+      }
+    },
+    "navItem": {
+      "type": "object",
+      "description": "Single navigation item. Items can either link to a target or contain nested child items.",
+      "additionalProperties": false,
+      "required": ["label"],
+      "anyOf": [
+        {
+          "required": ["href"]
+        },
+        {
+          "required": ["items"]
+        }
+      ],
+      "dependentRequired": {
+        "target": ["href"],
+        "isExactMatch": ["href"]
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Static label or translation key shown for the nav item.",
+          "minLength": 1
+        },
+        "href": {
+          "type": "string",
+          "description": "Link target for the nav item. Can be an internal application route or an external URL.",
+          "minLength": 1
+        },
+        "target": {
+          "$ref": "#/$defs/navTarget"
+        },
+        "classes": {
+          "$ref": "#/$defs/classes"
+        },
+        "isExactMatch": {
+          "type": "boolean",
+          "description": "Whether active matching should require an exact href match.",
+          "default": false
+        },
+        "items": {
+          "type": "array",
+          "description": "Nested child navigation items.",
+          "items": {
+            "$ref": "#/$defs/menuItem"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "navbarOptions": {
+      "type": "object",
+      "description": "Navbar configuration.",
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "type": "string",
+          "description": "Optional image source used in the navbar.",
+          "minLength": 1
+        },
+        "items": {
+          "type": "array",
+          "description": "Items rendered in the navbar.",
+          "items": {
+            "$ref": "#/$defs/navItem"
+          },
+          "default": []
+        }
+      }
+    },
+    "imageItem": {
+      "type": "object",
+      "description": "Image item used in footer cooperation blocks.",
+      "additionalProperties": false,
+      "required": ["src"],
+      "dependentRequired": {
+        "target": ["href"]
+      },
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Static label or translation key shown for the image item.",
+          "minLength": 1
+        },
+        "href": {
+          "type": "string",
+          "description": "Optional link target for the image item.",
+          "minLength": 1
+        },
+        "target": {
+          "$ref": "#/$defs/navTarget"
+        },
+        "classes": {
+          "$ref": "#/$defs/classes"
+        },
+        "src": {
+          "type": "string",
+          "description": "Image source used for the rendered image.",
+          "minLength": 1
+        },
+        "alt": {
+          "type": "string",
+          "description": "Static alt text or translation key for the image. Falls back to label when omitted.",
+          "minLength": 1
+        }
+      }
+    },
+    "footerSpace": {
+      "type": "object",
+      "description": "Empty footer column used as layout spacer.",
+      "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {
+        "kind": {
+          "const": "empty"
+        },
+        "classes": {
+          "$ref": "#/$defs/classes"
+        }
+      }
+    },
+    "footerLinks": {
+      "type": "object",
+      "description": "Footer column containing a caption and a list of links.",
+      "additionalProperties": false,
+      "required": ["kind", "caption", "items"],
+      "properties": {
+        "kind": {
+          "const": "links"
+        },
+        "caption": {
+          "type": "string",
+          "description": "Static caption or translation key shown above the column.",
+          "minLength": 1
+        },
+        "classes": {
+          "$ref": "#/$defs/classes"
+        },
+        "items": {
+          "type": "array",
+          "description": "Links rendered below the caption.",
+          "items": {
+            "$ref": "#/$defs/menuItem"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "footerMarkdown": {
+      "type": "object",
+      "description": "Footer column containing markdown loaded from a content file.",
+      "additionalProperties": false,
+      "required": ["kind", "caption", "file"],
+      "properties": {
+        "kind": {
+          "const": "markdown"
+        },
+        "caption": {
+          "type": "string",
+          "description": "Static caption or translation key shown above the column.",
+          "minLength": 1
+        },
+        "classes": {
+          "$ref": "#/$defs/classes"
+        },
+        "file": {
+          "type": "string",
+          "description": "Markdown file path loaded through the content service.",
+          "minLength": 1
+        }
+      }
+    },
+    "footerColumn": {
+      "description": "Footer column. A footer column can contain links, markdown content or an empty layout spacer.",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/footerSpace"
+        },
+        {
+          "$ref": "#/$defs/footerLinks"
+        },
+        {
+          "$ref": "#/$defs/footerMarkdown"
+        }
+      ]
+    },
+    "footerCooperation": {
+      "type": "object",
+      "description": "Optional cooperation block rendered below the footer columns.",
+      "additionalProperties": false,
+      "required": ["items"],
+      "properties": {
+        "caption": {
+          "type": "string",
+          "description": "Optional static caption or translation key shown above the cooperation block.",
+          "minLength": 1
+        },
+        "items": {
+          "type": "array",
+          "description": "Images rendered in the cooperation block.",
+          "items": {
+            "$ref": "#/$defs/imageItem"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "footerOptions": {
+      "type": "object",
+      "description": "Footer configuration.",
+      "additionalProperties": false,
+      "required": ["columns"],
+      "properties": {
+        "notice": {
+          "type": "string",
+          "description": "Optional static notice or translation key rendered in the footer bottom bar.",
+          "minLength": 1
+        },
+        "columns": {
+          "type": "array",
+          "description": "Footer columns.",
+          "items": {
+            "$ref": "#/$defs/footerColumn"
+          },
+          "minItems": 0,
+          "default": []
+        },
+        "cooperation": {
+          "$ref": "#/$defs/footerCooperation",
+          "description": "Optional cooperation block rendered below the footer columns."
+        },
+        "links": {
+          "type": "array",
+          "description": "Footer bottom bar links rendered next to the notice.",
+          "items": {
+            "$ref": "#/$defs/navItem"
+          },
+          "default": []
+        }
+      }
+    },
+    "siteOptions": {
+      "type": "object",
+      "description": "Site-level configuration.",
+      "additionalProperties": false,
+      "required": ["language", "navbar", "footer"],
+      "properties": {
+        "language": {
+          "$ref": "#/$defs/languageOptions",
+          "description": "Language options for the application."
+        },
+        "content": {
+          "$ref": "#/$defs/contentOptions",
+          "description": "Content loading options for markdown files and static content."
+        },
+        "navbar": {
+          "$ref": "#/$defs/navbarOptions",
+          "description": "Navbar options for the application."
+        },
+        "footer": {
+          "$ref": "#/$defs/footerOptions",
+          "description": "Footer options for the application."
+        }
+      }
+    }
+  }
+}

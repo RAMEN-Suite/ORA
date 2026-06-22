@@ -1,0 +1,19 @@
+<div [class]="classes()">
+  @for (item of segment().items; track item.annotation.uuid; let index = $index) {
+    <p-panel class="mb-2!">
+      <div class="flex gap-3">
+        <div class="text-surface-500 flex w-6 shrink-0 justify-end pt-0.5 font-medium">
+          @if (isOrdered()) {
+            <span class="tabular-nums">{{ index + 1 }}.</span>
+          } @else {
+            <i class="pi pi-circle-fill text-[0.45rem] leading-6"></i>
+          }
+        </div>
+
+        <div class="min-w-0 flex-1" [class]="itemClasses(item)">
+          <annotation-text-view-segments [segments]="item.children" />
+        </div>
+      </div>
+    </p-panel>
+  }
+</div>

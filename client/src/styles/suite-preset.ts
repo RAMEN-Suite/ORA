@@ -1,21 +1,23 @@
-import { Preset } from '@primeuix/themes/types';
 import { definePreset } from '@primeuix/themes';
+import type { Preset } from '@primeuix/themes/types';
 import Aura from '@primeuix/themes/aura';
+import { ZIndex } from 'primeng/config';
 
+export const zIndex: ZIndex = { modal: 10000, overlay: 9000, menu: 9000, tooltip: 11000 };
 export const SuitePreset: Preset = definePreset(Aura, {
   semantic: {
     primary: {
-      50: '#f2f4f8',
-      100: '#d6dce8',
-      200: '#b3bfd4',
-      300: '#8f9fc1',
-      400: '#6b7fad',
-      500: '#4a5f8f',
-      600: '#37486e',
-      700: '#25314d',
-      800: '#1b2438',
-      900: '#161b2c',
-      950: '#0f121d',
+      50: '#f8f1f1',
+      100: '#ead7d6',
+      200: '#d8b8b6',
+      300: '#c59a98',
+      400: '#a76b72',
+      500: '#8f4556',
+      600: '#782f43',
+      700: '#642538',
+      800: '#531d2e',
+      900: '#481722',
+      950: '#2a0912',
     },
     colorScheme: {
       light: {
@@ -45,13 +47,10 @@ export const SuitePreset: Preset = definePreset(Aura, {
           color: '#ffffff',
           focusColor: '#ffffff',
         },
-        ground: {
-          background: '{surface.50}',
-        },
       },
       dark: {
         surface: {
-          0: '#f6f2ec',
+          0: '#ffffff',
           50: '{neutral.50}',
           100: '{neutral.100}',
           200: '{neutral.200}',
@@ -62,7 +61,7 @@ export const SuitePreset: Preset = definePreset(Aura, {
           700: '{neutral.700}',
           800: '{neutral.800}',
           900: '{neutral.900}',
-          950: '#0f121d',
+          950: '{neutral.950}',
         },
         primary: {
           color: '{primary.100}',
@@ -76,17 +75,93 @@ export const SuitePreset: Preset = definePreset(Aura, {
           color: '#ffffff',
           focusColor: '#ffffff',
         },
-        ground: {
-          background: '{surface.950}',
-        },
       },
     },
   },
   components: {
+    button: {
+      colorScheme: {
+        light: {
+          outlined: {
+            secondary: {
+              borderColor: '{surface.400}',
+              color: '{surface.800}',
+              hoverBackground: '{surface.50}',
+              activeBackground: '{surface.100}',
+            },
+          },
+        },
+        dark: {
+          outlined: {
+            secondary: {
+              borderColor: '{surface.100}',
+              color: '{surface.100}',
+              hoverBackground: '{surface.900}',
+              activeBackground: '{surface.800}',
+            },
+          },
+        },
+      },
+    },
     fieldset: {
       legend: {
         background: 'transparent',
         fontWeight: '300',
+      },
+    },
+    menubar: {
+      root: {
+        background: '{primary.900}',
+        borderColor: '{primary.950}',
+        color: '{primary.50}',
+        borderRadius: '0',
+        gap: '0.5rem',
+      },
+      item: {
+        color: '{primary.50}',
+        focusColor: '{primary.50}',
+        activeColor: '{primary.50}',
+        focusBackground: '{primary.700}',
+        activeBackground: '{primary.950}',
+        borderRadius: '{border.radius.sm}',
+        padding: '0.625rem 0.875rem',
+        gap: '0.5rem',
+        icon: {
+          color: '{primary.100}',
+          focusColor: '{primary.50}',
+          activeColor: '{primary.50}',
+        },
+      },
+      submenu: {
+        background: '{primary.900}',
+        borderColor: '{primary.950}',
+        borderRadius: '{border.radius.sm}',
+        padding: '0.75rem',
+        gap: '0.25rem',
+        shadow: '0 12px 32px rgba(15, 18, 29, 0.18)',
+        icon: {
+          color: '{primary.100}',
+          focusColor: '{primary.50}',
+          activeColor: '{primary.50}',
+          size: '0.875rem',
+        },
+      },
+      separator: {
+        borderColor: '{primary.700}',
+      },
+      mobileButton: {
+        color: '{primary.50}',
+        hoverColor: '{primary.50}',
+        hoverBackground: '{primary.700}',
+        borderRadius: '{border.radius.sm}',
+        size: '2.25rem',
+        focusRing: {
+          width: '1px',
+          style: 'solid',
+          color: '{primary.200}',
+          offset: '2px',
+          shadow: 'none',
+        },
       },
     },
   },

@@ -8,8 +8,12 @@ export class BlockPathResolver {
   }
 
   private static collectPaths(value: unknown, paths: Set<string>): void {
-    if (this.isBinding(value)) return void paths.add(value.path);
-    if (Array.isArray(value)) return value.forEach((item: unknown): void => this.collectPaths(item, paths));
+    if (this.isBinding(value)) paths.add(value.path);
+
+    if (Array.isArray(value)) {
+      value.forEach((item: unknown): void => this.collectPaths(item, paths));
+      return;
+    }
 
     if (typeof value === 'object' && value !== null) {
       Object.values(value).forEach((item: unknown): void => this.collectPaths(item, paths));

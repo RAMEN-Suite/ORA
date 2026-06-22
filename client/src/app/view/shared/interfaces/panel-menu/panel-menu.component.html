@@ -1,0 +1,69 @@
+<ng-container *transloco="let t">
+  <p-panel-menu
+    class="select-none"
+    [model]="items()"
+    [multiple]="true"
+    [pt]="{
+      panel: { class: 'border-b-1! border-0! rounded-none! last:border-b-0!' },
+      root: { class: 'gap-1!' },
+    }"
+  >
+    <ng-template #item let-item>
+      @let isChild = item.data?.level > 0;
+
+      <div class="flex">
+        @if (isChild) {
+          <span
+            class="border-surface-300 ms-3 self-stretch border-l"
+            [routerLink]="item.route"
+            routerLinkActive="border-primary-950!"
+            [routerLinkActiveOptions]="{ exact: true }"
+          ></span>
+        }
+
+        @if (item.url) {
+          <a
+            [href]="item.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-md px-3 py-2 transition"
+            [ngClass]="{ 'text-sm': isChild, 'text-base tracking-tight': !isChild }"
+          >
+            <ng-container [ngTemplateOutlet]="menuItemContent" [ngTemplateOutletContext]="{ item: item }" />
+          </a>
+        } @else if (item.route) {
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="font-semibold text-primary-950"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-md px-3 py-2 transition"
+            [ngClass]="{ 'text-sm': isChild, 'text-base tracking-tight': !isChild }"
+          >
+            <ng-container [ngTemplateOutlet]="menuItemContent" [ngTemplateOutletContext]="{ item: item }" />
+          </a>
+        } @else {
+          <span
+            class="flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-md px-3 py-2 transition"
+            [ngClass]="{ 'text-sm': isChild, 'text-base tracking-tight': !isChild }"
+          >
+            <ng-container [ngTemplateOutlet]="menuItemContent" [ngTemplateOutletContext]="{ item: item }" />
+          </span>
+        }
+      </div>
+    </ng-template>
+  </p-panel-menu>
+
+  <ng-template #menuItemContent let-item="item">
+    <span class="flex size-7 items-center justify-center">
+      <i class="text-sm! {{ item.icon ?? 'pi pi-angle-double-right' }}"></i>
+    </span>
+
+    <span class="min-w-0 flex-1 tracking-wide" [title]="t(item.label)">
+      {{ t(item.label) }}
+    </span>
+
+    @if (item.items?.length) {
+      <i class="pi pi-chevron-down shrink-0 text-sm! opacity-50"></i>
+    }
+  </ng-template>
+</ng-container>

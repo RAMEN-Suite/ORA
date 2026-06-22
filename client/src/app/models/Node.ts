@@ -1,5 +1,3 @@
-export type IdentifiableNode = Node & { uuid: string };
-
 export interface Node {
   _labels: string[];
   [key: string]: unknown;

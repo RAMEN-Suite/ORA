@@ -1,2 +1,17 @@
-<router-outlet />
-<p-scroll-top threshold="100" />
+<div class="flex flex-col">
+  @if (hasConfig()) {
+    <div class="h-navbar fixed top-0 right-0 left-0 z-9999 print:hidden">
+      <shared-navbar />
+    </div>
+  }
+
+  <main class="pt-navbar min-h-dvh flex-1">
+    <router-outlet />
+  </main>
+
+  @if (hasConfig()) {
+    <div class="print:hidden">
+      <shared-footer />
+    </div>
+  }
+</div>

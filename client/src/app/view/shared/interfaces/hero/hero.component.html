@@ -1,0 +1,25 @@
+<ng-container *transloco="let t">
+  <section
+    class="relative flex min-h-70 flex-col justify-center overflow-hidden border-b px-8 select-none md:min-h-105 md:px-30"
+    [ngClass]="heroClasses()"
+    [ngStyle]="heroStyles()"
+  >
+    @if (heroImage()) {
+      <div class="bg-primary-950/25 absolute inset-0"></div>
+    }
+
+    <div class="relative z-10 flex max-w-3/4 flex-col gap-3 text-shadow-lg">
+      @if (title()) {
+        <h3 class="text-4xl font-extralight tracking-wide drop-shadow-xl md:text-6xl lg:text-7xl">
+          {{ t(title()!) }}
+        </h3>
+      }
+
+      @if (subTitle()) {
+        <p class="tracking-wide drop-shadow-lg md:text-2xl">
+          {{ t(subTitle()!) }}
+        </p>
+      }
+    </div>
+  </section>
+</ng-container>

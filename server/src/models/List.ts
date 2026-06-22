@@ -17,9 +17,13 @@ export interface Pagination {
 export interface ListOptions {
   limit: number;
   skip: number;
-  orderBy?: string;
-  asc?: boolean;
+  orderBy?: SortField[];
   search?: string;
   field?: string;
   filters?: Filter[];
+}
+
+export interface SortField {
+  field: string;
+  asc: boolean;
 }

@@ -1,60 +1,62 @@
-import lists from "../../config/lists.config.json";
-import details from "../../config/details.config.json";
-import features from "../../config/features.config.json";
+import path from "node:path";
+import { ValidationError, Validator, ValidatorResult } from "jsonschema";
 import { ServiceError } from "../models/utility/Error";
 import { ERROR_CODE } from "../constants/ERROR_CODE";
 import { logger } from "../utils/logger";
-import path from "node:path";
-import fs from "fs/promises";
-import { ConfigUtils } from "../utils/ConfigUtils";
+import { FileUtils, JSONObject } from "../utils/FileUtils";
+import { EnvironmentUtils } from "../utils/EnvironmentUtils";
 
-export type JSON = Record<string, unknown>;
+export type Config = JSONObject;
 
-const DEFAULT_CONFIG: Record<string, unknown> = { lists, details, features };
-const CONFIG_FILES: string[] = ["lists.config.json", "details.config.json", "features.config.json"];
+const SCHEMA_DIR: string = path.resolve(process.cwd(), "../schema");
+const CONFIG_FILES = [
+  { key: "listViews", prefix: "list-views" },
+  { key: "listIndexes", prefix: "list-indexes" },
+  { key: "detailViews", prefix: "detail-views" },
+  { key: "annotations", prefix: "annotations" },
+  { key: "pageViews", prefix: "page-views" },
+  { key: "site", prefix: "site" },
+] as const;
 
 export class ConfigService {
-  private static overridesPath: string | undefined;
+  private static configPath: string | undefined;
+  private static readonly validator: Validator = new Validator();
 
   public static async initService(): Promise<void> {
-    const overridesPath: string | undefined = process.env.CONFIGURATION_PATH;
-    if (!overridesPath) throw new ServiceError(ERROR_CODE.MISSING_ENV_VAR, "Missing OVERRIDES_PATH");
-    this.overridesPath = path.resolve(process.cwd(), overridesPath);
-
-    const isOverrideAccessible: boolean = await this.exists(this.overridesPath);
-    if (!isOverrideAccessible) logger.warn({ path: this.overridesPath }, "ConfigService: Are you missing overrides?");
+    this.configPath = EnvironmentUtils.resolveEnvironmentPath("CONFIGURATION_PATH");
+    await FileUtils.requirePath(this.configPath);
+    await this.validateConfigFiles();
   }
 
-  public static async fetchConfig(): Promise<JSON> {
-    if (!this.overridesPath) throw new ServiceError(ERROR_CODE.NOT_INITIALIZED, "ConfigService not initialized");
-    const config: JSON = { ...DEFAULT_CONFIG };
+  public static async fetchConfig(): Promise<Config> {
+    if (!this.configPath) throw new ServiceError(ERROR_CODE.NOT_INITIALIZED, "ConfigService not initialized");
+    const config: Config = {};
 
     for (const file of CONFIG_FILES) {
-      const key: string = file.replace(".config.json", "");
-      const override: JSON = await this.accessJSON(path.join(this.overridesPath, file));
-      config[key] = ConfigUtils.merge(config[key], override);
+      config[file.key] = await FileUtils.readJSON(path.join(this.configPath, `${file.prefix}.config.json`));
     }
 
     return config;
   }
 
-  private static async readJSON(filePath: string): Promise<JSON> {
-    const data: string = await fs.readFile(filePath, "utf-8");
-    return JSON.parse(data) as JSON;
-  }
+  private static async validateConfigFiles(): Promise<void> {
+    if (!this.configPath) throw new ServiceError(ERROR_CODE.NOT_INITIALIZED, "ConfigService not initialized");
 
-  private static async accessJSON(filePath: string): Promise<JSON> {
-    const isAccessible: boolean = await this.exists(filePath);
-    return isAccessible ? this.readJSON(filePath) : {};
-  }
+    for (const file of CONFIG_FILES) {
+      const configPath: string = path.join(this.configPath, `${file.prefix}.config.json`);
+      const schemaPath: string = path.join(SCHEMA_DIR, `${file.prefix}.schema.json`);
 
-  private static async exists(filePath: string): Promise<boolean> {
-    try {
-      await fs.access(filePath);
-      return true;
-    } catch (error: unknown) {
-      logger.debug(error, "ConfigService: Failed to access.");
-      return false;
+      const config: Config = await FileUtils.readJSON(configPath);
+      const schema: Config = await FileUtils.readJSON(schemaPath);
+      const result: ValidatorResult = this.validator.validate(config, schema);
+
+      if (!result.valid) {
+        const message: string = result.errors.map((error: ValidationError): string => error.stack).join("; ");
+        logger.error({ file: configPath, schema: schemaPath, errors: result.errors }, "ConfigService: Invalid configuration.");
+        throw new ServiceError(ERROR_CODE.INVALID_CONFIG, `Invalid config against "${file.prefix}.config.json": ${message}`);
+      }
+
+      logger.debug({ file: configPath, schema: schemaPath }, "ConfigService: Configuration file validated.");
     }
   }
 }
