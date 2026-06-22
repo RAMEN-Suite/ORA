@@ -274,7 +274,7 @@ jobs:
   deploy:
     name: deploy
     runs-on: ubuntu-latest
-    environment: production
+    environment: ${{ matrix.environment }}
     needs: [container]
     permissions:
       contents: read # required for actions/checkout to fetch repo contents if this repo is private
@@ -282,8 +282,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - environment: publication
-          - environment: edition
+          - environment: antjebrons
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -312,13 +311,17 @@ jobs:
         env:
           ACTOR: ${{ github.actor }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REMOTE_PATH: ${{ secrets.SSH_PATH }}
+          PUB_PATH: ${{ secrets.SSH_PUB_PATH }}
+          WORK_PATH: ${{ secrets.SSH_WORK_PATH }}
           REGISTRY: ${{ env.REGISTRY }}
         run: |
           ssh staging bash <<EOF
           set -euo pipefail
-          cd "$REMOTE_PATH"
           echo "$GH_TOKEN" | docker login $REGISTRY -u $ACTOR --password-stdin
+          cd "$PUB_PATH"
+          docker compose pull server client
+          docker compose up -d --force-recreate server client
+          cd "$WORK_PATH"
           docker compose pull server client
           docker compose up -d --force-recreate server client
           EOF
