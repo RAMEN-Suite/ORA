@@ -214,15 +214,5 @@ jobs:
           END
       - name: Start Container
         env:
-          ACTOR: ${{ github.actor }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REMOTE_PATH: ${{ secrets.SSH_PATH }}
-          REGISTRY: ${{ env.REGISTRY }}
-        run: |
-          ssh staging bash <<EOF
-          set -euo pipefail
-          cd "$REMOTE_PATH"
-          echo "$GH_TOKEN" | docker login $REGISTRY -u $ACTOR --password-stdin
-          docker compose pull server
-          docker compose up -d --force-recreate server
-          EOF
+        run: printf '%s' "${{ secrets.GITHUB_TOKEN }}" | ssh staging deploy-ora-dev-server
