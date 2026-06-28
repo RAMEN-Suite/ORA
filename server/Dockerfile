@@ -5,6 +5,7 @@ ENV NPM_CONFIG_UPDATE_NOTIFIER=false \
 
 FROM base AS deps
 COPY server/package*.json .
+COPY server/.npmrc .
 RUN npm ci --omit=dev
 
 FROM base AS build
