@@ -1,9 +1,31 @@
-<shared-screen-shell sidebarPosition="left">
-  <ng-template #sidebar>
-    <!-- Sidebar content -->
-  </ng-template>
+@if ($view.isLoading()) {
+  <div class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+    <p-progress-spinner class="spinner-base" />
+  </div>
+} @else {
+  <shared-screen-shell sidebarPosition="left">
+    <ng-template #sidebar>
+      <!-- Sidebar content -->
+    </ng-template>
 
-  <ng-template #main>
-    <div class="border-surface-300 bg-surface-0 rounded-md border p-5">work in progress..</div>
-  </ng-template>
-</shared-screen-shell>
+    <ng-template #main>
+      <div class="animate__animated animate__fadeIn border-surface-300 bg-surface-0 rounded-md border py-10 print:border-0 print:p-0">
+        <div class="flex flex-col gap-6 print:gap-2">
+          @for (block of blocks(); track block.type + "-" + $index) {
+            @switch (block.type) {
+              @case ("headline") {
+                <block-headline [properties]="block.properties" [values]="resolvedValues()" />
+              }
+              @case ("attributes") {
+                <block-attributes [properties]="block.properties" [values]="resolvedValues()" />
+              }
+              @case ("text") {
+                <block-text [properties]="block.properties" [values]="resolvedValues()" />
+              }
+            }
+          }
+        </div>
+      </div>
+    </ng-template>
+  </shared-screen-shell>
+}
