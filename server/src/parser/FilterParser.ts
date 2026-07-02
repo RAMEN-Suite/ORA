@@ -1,5 +1,5 @@
-import { REGEXP } from "../constants/REGEXP";
-import { Filter } from "../models/Filter";
+import { REGEXP } from '../constants/REGEXP';
+import { Filter } from '../models/Filter';
 
 /**
  * Parses serialized query filters.
@@ -17,13 +17,13 @@ import { Filter } from "../models/Filter";
  */
 
 export class FilterParser {
-  private static readonly SEPARATOR: "~" = "~" as const;
-  private static readonly RANGE: ".." = ".." as const;
+  private static readonly SEPARATOR: '~' = '~' as const;
+  private static readonly RANGE: '..' = '..' as const;
 
   public static parse(value: string): Filter {
     const [field, rawValue] = this.parseFilterParts(value);
     if (rawValue.includes(this.RANGE)) return this.parseRange(value, field, rawValue);
-    return { kind: "equal", field, value: rawValue };
+    return { kind: 'equal', field, value: rawValue };
   }
 
   public static parseMany(values: string[]): Filter[] {
@@ -51,7 +51,7 @@ export class FilterParser {
     const [rawMin, rawMax] = this.parseRangeParts(value, rawValue);
     const min: number | undefined = this.parseRangeBoundary(value, rawMin);
     const max: number | undefined = this.parseRangeBoundary(value, rawMax);
-    return { kind: "range", field, min, max };
+    return { kind: 'range', field, min, max };
   }
 
   private static parseRangeParts(value: string, rawValue: string): [min: string | undefined, max: string | undefined] {
@@ -59,13 +59,13 @@ export class FilterParser {
     if (parts.length !== 2) throw new Error(`Invalid range filter: ${value}`);
 
     const [min, max] = parts;
-    if (min === "" && max === "") throw new Error(`Invalid range filter: ${value}`);
+    if (min === '' && max === '') throw new Error(`Invalid range filter: ${value}`);
 
     return [min, max];
   }
 
   private static parseRangeBoundary(value: string, raw: string | undefined): number | undefined {
-    if (raw === "" || raw === undefined) return undefined;
+    if (raw === '' || raw === undefined) return undefined;
     const parsed: number = Number(raw);
 
     if (!Number.isFinite(parsed)) throw new Error(`Invalid range filter: ${value}`);

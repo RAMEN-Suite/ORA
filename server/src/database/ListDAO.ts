@@ -1,10 +1,10 @@
-import { QueryResult } from "neo4j-driver";
-import { Neo4jService } from "../services/Neo4jService";
-import { ListOptions } from "../models/List";
-import { BuiltQuery, QueryAssembler } from "./cypher/QueryAssembler";
-import { CypherUtils } from "../utils/CypherUtils";
-import { Utils } from "../utils/Utils";
-import { RESOURCE } from "../constants/RESOURCE";
+import { QueryResult } from 'neo4j-driver';
+import { Neo4jService } from '../services/Neo4jService';
+import { ListOptions } from '../models/List';
+import { BuiltQuery, QueryAssembler } from './cypher/QueryAssembler';
+import { CypherUtils } from '../utils/CypherUtils';
+import { Utils } from '../utils/Utils';
+import { RESOURCE } from '../constants/RESOURCE';
 
 export class ListDAO {
   public static async getList(resource: RESOURCE, label: string | undefined, options: ListOptions): Promise<unknown[]> {
@@ -22,7 +22,7 @@ export class ListDAO {
 
     const query: BuiltQuery = assembler.build();
     const result: QueryResult | null = await Neo4jService.run(query.cypher, query.params);
-    const value: unknown = result?.records[0]?.get("resource");
+    const value: unknown = result?.records[0]?.get('resource');
 
     return Utils.parseArray(value);
   }
@@ -39,7 +39,7 @@ export class ListDAO {
 
     const query: BuiltQuery = assembler.build();
     const result: QueryResult | null = await Neo4jService.run(query.cypher, query.params);
-    const value: unknown = result?.records[0]?.get("total");
+    const value: unknown = result?.records[0]?.get('total');
 
     return CypherUtils.parseNumber(value);
   }

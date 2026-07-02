@@ -1,11 +1,11 @@
-import { QueryResult, Record as Neo4jRecord } from "neo4j-driver";
-import { Neo4jService } from "../services/Neo4jService";
-import { FacetGroup, FacetOptions, FacetValue } from "../models/Facet";
-import { AccessPattern } from "./cypher/AccessPattern";
-import { BuiltQuery, QueryAssembler } from "./cypher/QueryAssembler";
-import { Utils } from "../utils/Utils";
-import { CypherUtils } from "../utils/CypherUtils";
-import { RESOURCE } from "../constants/RESOURCE";
+import { QueryResult, Record as Neo4jRecord } from 'neo4j-driver';
+import { Neo4jService } from '../services/Neo4jService';
+import { FacetGroup, FacetOptions, FacetValue } from '../models/Facet';
+import { AccessPattern } from './cypher/AccessPattern';
+import { BuiltQuery, QueryAssembler } from './cypher/QueryAssembler';
+import { Utils } from '../utils/Utils';
+import { CypherUtils } from '../utils/CypherUtils';
+import { RESOURCE } from '../constants/RESOURCE';
 
 export class FacetDAO {
   public static async getFacets(resource: RESOURCE, label: string | undefined, options: FacetOptions): Promise<FacetGroup[]> {
@@ -40,25 +40,25 @@ export class FacetDAO {
 
   private static applyFacet(assembler: QueryAssembler, field: string): void {
     const alias: string = assembler.getAlias();
-    const pattern: AccessPattern = assembler.access(field, "facet");
+    const pattern: AccessPattern = assembler.access(field, 'facet');
 
     assembler.append(`WITH DISTINCT ${alias}`);
     assembler.append(...pattern.match());
 
     const expression: string = pattern.expression();
     assembler.append(`WITH ${expression} AS value, ${alias}`);
-    assembler.append("WHERE value IS NOT NULL");
+    assembler.append('WHERE value IS NOT NULL');
     assembler.append(`RETURN value, count(DISTINCT ${alias}) AS count`);
-    assembler.append("ORDER BY count DESC, value ASC");
+    assembler.append('ORDER BY count DESC, value ASC');
   }
 
   private static mapFacetValues(result: QueryResult | null): FacetValue[] {
     if (!result) return [];
 
     return result.records.map((record: Neo4jRecord): FacetValue => {
-      const value: unknown = record.get("value");
-      const count: unknown = record.get("count");
-      return { value: Utils.parseString(value) ?? "", count: CypherUtils.parseNumber(count) };
+      const value: unknown = record.get('value');
+      const count: unknown = record.get('count');
+      return { value: Utils.parseString(value) ?? '', count: CypherUtils.parseNumber(count) };
     });
   }
 }
