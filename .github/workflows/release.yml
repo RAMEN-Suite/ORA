@@ -310,8 +310,8 @@ jobs:
       - name: Start Edition Container
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: printf '%s' "$GH_TOKEN" | ssh staging deploy-ora-ed
+        run: printf '%s' "$GH_TOKEN" | ssh staging deploy-ora-ed-full
       - name: Start Publication Container
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: printf '%s' "$GH_TOKEN" | ssh staging deploy-ora-pub
+        run: printf '%s' "$GH_TOKEN" | ssh staging deploy-ora-pub-full
