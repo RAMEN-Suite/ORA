@@ -279,7 +279,7 @@ MIT License
 
 The following npm package may be included in this product:
 
- - js-yaml@4.2.0
+ - js-yaml@4.3.0
 
 This package contains the following license:
 
@@ -983,7 +983,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 The following npm packages may be included in this product:
 
- - @jsverse/transloco-utils@8.3.0
+ - @jsverse/transloco-utils@8.4.0
  - @jsverse/utils@1.0.0-beta.5
  - @ngneat/cashew@5.3.0
 
@@ -1088,7 +1088,7 @@ SOFTWARE.
 
 The following npm package may be included in this product:
 
- - @jsverse/transloco@8.3.0
+ - @jsverse/transloco@8.4.0
 
 This package contains the following license:
 
@@ -1222,7 +1222,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 The following npm package may be included in this product:
 
- - tailwindcss@4.3.0
+ - tailwindcss@4.3.2
 
 This package contains the following license:
 
@@ -1664,13 +1664,13 @@ Exhibit B - "Incompatible With Secondary Licenses" Notice
 
 The following npm packages may be included in this product:
 
- - @angular/common@21.2.15
- - @angular/compiler@21.2.15
- - @angular/core@21.2.15
- - @angular/elements@21.2.15
- - @angular/forms@21.2.15
- - @angular/platform-browser@21.2.15
- - @angular/router@21.2.15
+ - @angular/common@21.2.17
+ - @angular/compiler@21.2.17
+ - @angular/core@21.2.17
+ - @angular/elements@21.2.17
+ - @angular/forms@21.2.17
+ - @angular/platform-browser@21.2.17
+ - @angular/router@21.2.17
 
 These packages each contain the following license:
 
