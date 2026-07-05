@@ -1,4 +1,4 @@
-export type StepName = "annotation" | "refers" | "parents" | "children";
+export type StepName = 'annotation' | 'refers' | 'parents' | 'children';
 
 export interface AccessStep {
   name: StepName;
@@ -31,11 +31,11 @@ interface Segment {
  */
 export class AccessParser {
   private static readonly SEGMENT_EXP: RegExp = /^(?<name>[A-Za-z_]\w*)(?:\[(?<filter>[^\]]+)])?$/;
-  private static readonly STEP_NAMES: ReadonlySet<string> = new Set(["annotation", "refers", "parents", "children"]);
+  private static readonly STEP_NAMES: ReadonlySet<string> = new Set(['annotation', 'refers', 'parents', 'children']);
 
   public static parse(value: string): AccessPath {
-    if (!value.trim()) throw new Error("Invalid query path: empty value");
-    const segments: Segment[] = value.split(".").map((segment: string): Segment => this.parseSegment(segment));
+    if (!value.trim()) throw new Error('Invalid query path: empty value');
+    const segments: Segment[] = value.split('.').map((segment: string): Segment => this.parseSegment(segment));
 
     const accessor: Segment | undefined = segments.pop();
     if (!accessor || accessor.filter) throw new Error(`Invalid query path: ${value}`);
@@ -49,7 +49,7 @@ export class AccessParser {
   }
 
   private static parseSegment(value: string): Segment {
-    if (value === "*") return { name: "*" };
+    if (value === '*') return { name: '*' };
 
     const match: RegExpMatchArray | null = value.match(this.SEGMENT_EXP);
     const name: string | undefined = match?.groups?.name;

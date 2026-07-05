@@ -1,6 +1,6 @@
-import { ERROR_CODE } from "../constants/ERROR_CODE";
-import { ServiceError } from "../models/utility/Error";
-import path from "node:path";
+import { ERROR_CODE } from '../constants/ERROR_CODE';
+import { ServiceError } from '../models/utility/Error';
+import path from 'node:path';
 
 export class EnvironmentUtils {
   public static resolveEnvironment(name: string): string {

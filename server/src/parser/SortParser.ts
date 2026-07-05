@@ -1,5 +1,5 @@
-import { SortField } from "../models/List";
-import { Utils } from "../utils/Utils";
+import { SortField } from '../models/List';
+import { Utils } from '../utils/Utils';
 
 export class SortParser {
   public static parseMany(values: string[]): SortField[] {
@@ -10,7 +10,7 @@ export class SortParser {
     const trimmed: string = value.trim();
     if (!trimmed) return undefined;
 
-    const asc: boolean = !trimmed.startsWith("-");
+    const asc: boolean = !trimmed.startsWith('-');
     const field: string | undefined = Utils.parseString(asc ? trimmed : trimmed.slice(1));
     if (!field) return undefined;
 

@@ -1,9 +1,9 @@
-import neo4j from "neo4j-driver";
-import { AccessPattern } from "./AccessPattern";
-import { AccessParser, AccessPath } from "../../parser/AccessParser";
-import { Filter } from "../../models/Filter";
-import { RESOURCE } from "../../constants/RESOURCE";
-import { SortField } from "../../models/List";
+import neo4j from 'neo4j-driver';
+import { AccessPattern } from './AccessPattern';
+import { AccessParser, AccessPath } from '../../parser/AccessParser';
+import { Filter } from '../../models/Filter';
+import { RESOURCE } from '../../constants/RESOURCE';
+import { SortField } from '../../models/List';
 
 export interface BuiltQuery {
   cypher: string;
@@ -16,7 +16,7 @@ export class QueryAssembler {
   private readonly params: Record<string, unknown> = {};
   private readonly conditions: string[] = [];
 
-  public constructor(resource: RESOURCE, label?: string, alias: string = "r") {
+  public constructor(resource: RESOURCE, label?: string, alias: string = 'r') {
     this.alias = alias;
     this.match(resource, label);
   }
@@ -27,7 +27,7 @@ export class QueryAssembler {
 
   public search(field: string | undefined, search: string | undefined): this {
     if (!search) return this;
-    const pattern: AccessPattern = this.access(field ?? "label", "search");
+    const pattern: AccessPattern = this.access(field ?? 'label', 'search');
 
     this.query.push(...pattern.match());
     this.conditions.push(`apoc.text.clean(${pattern.expression()}) CONTAINS apoc.text.clean($search)`);
@@ -44,7 +44,7 @@ export class QueryAssembler {
       const expression: string = pattern.expression();
       this.query.push(...pattern.match());
 
-      if (filter.kind === "equal") {
+      if (filter.kind === 'equal') {
         this.equal(prefix, expression, filter.value);
         continue;
       }
@@ -56,7 +56,7 @@ export class QueryAssembler {
   }
 
   public where(): this {
-    if (this.conditions.length > 0) this.query.push(`WHERE ${this.conditions.join(" AND ")}`);
+    if (this.conditions.length > 0) this.query.push(`WHERE ${this.conditions.join(' AND ')}`);
     return this;
   }
 
@@ -66,19 +66,19 @@ export class QueryAssembler {
 
     for (const [index, sort] of orderBy.entries()) {
       const pattern: AccessPattern = this.access(sort.field, `sort${index}`);
-      const direction: string = sort.asc ? "ASC" : "DESC";
+      const direction: string = sort.asc ? 'ASC' : 'DESC';
 
       this.query.push(...pattern.match());
       orderings.push(`${pattern.expression()} ${direction}`);
     }
 
-    this.query.push(`ORDER BY ${orderings.join(", ")}`);
+    this.query.push(`ORDER BY ${orderings.join(', ')}`);
     return this;
   }
 
   public skip(skip: number | undefined): this {
     if (!skip || skip <= 0) return this;
-    this.query.push("SKIP $skip");
+    this.query.push('SKIP $skip');
     this.params.skip = neo4j.int(skip);
 
     return this;
@@ -86,7 +86,7 @@ export class QueryAssembler {
 
   public limit(limit: number | undefined): this {
     if (!limit || limit <= 0) return this;
-    this.query.push("LIMIT $limit");
+    this.query.push('LIMIT $limit');
     this.params.limit = neo4j.int(limit);
 
     return this;
@@ -98,7 +98,7 @@ export class QueryAssembler {
   }
 
   public build(): BuiltQuery {
-    return { cypher: this.query.join(" "), params: this.params };
+    return { cypher: this.query.join(' '), params: this.params };
   }
 
   public access(field: string, prefix: string, isOptional: boolean = true): AccessPattern {

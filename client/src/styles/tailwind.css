@@ -1,29 +1,29 @@
-@import "tailwindcss";
-@import "tailwindcss-primeui";
-@import "primeicons/primeicons.css";
+@import 'tailwindcss';
+@import 'tailwindcss-primeui';
+@import 'primeicons/primeicons.css';
 
-@source inline("{block,inline,inline-block}");
-@source inline("{underline,line-through,italic,font-bold,font-semibold,font-medium,font-serif,font-sans,tracking-wide,uppercase,align-super}");
-@source inline("{text-xs,text-sm,text-base,text-lg,text-xl}");
-@source inline("{opacity-60,opacity-70,opacity-80,select-none,cursor-pointer,cursor-help}");
-@source inline("{rounded,rounded-sm,rounded-md,px-0.5,px-1,py-0.5}");
+@source inline('{block,inline,inline-block}');
+@source inline('{underline,line-through,italic,font-bold,font-semibold,font-medium,font-serif,font-sans,tracking-wide,uppercase,align-super}');
+@source inline('{text-xs,text-sm,text-base,text-lg,text-xl}');
+@source inline('{opacity-60,opacity-70,opacity-80,select-none,cursor-pointer,cursor-help}');
+@source inline('{rounded,rounded-sm,rounded-md,px-0.5,px-1,py-0.5}');
 
-@source inline("underline-offset-{1,2,4,8}");
-@source inline("decoration-{solid,dotted,dashed,wavy}");
-@source inline("decoration-{1,2,4,8}");
+@source inline('underline-offset-{1,2,4,8}');
+@source inline('decoration-{solid,dotted,dashed,wavy}');
+@source inline('decoration-{1,2,4,8}');
 
-@source inline("text-{red,green,blue,yellow,rose,emerald,sky,amber,slate,gray,purple,orange,violet,zinc,neutral}-{50,100,200,300,400,500,600,700,800,900}");
-@source inline("bg-{red,green,blue,yellow,rose,emerald,sky,amber,slate,gray,purple,orange,violet,zinc,neutral}-{50,100,200,300,400,500,600,700,800,900}");
-@source inline("border-{red,green,blue,yellow,rose,emerald,sky,amber,slate,gray,purple,orange,violet,zinc,neutral}-{50,100,200,300,400,500,600,700,800,900}");
-@source inline("decoration-{red,green,blue,yellow,rose,emerald,sky,amber,slate,gray,purple,orange,violet,zinc,neutral}-{50,100,200,300,400,500,600,700,800,900}");
+@source inline('text-{red,green,blue,yellow,rose,emerald,sky,amber,slate,gray,purple,orange,violet,zinc,neutral}-{50,100,200,300,400,500,600,700,800,900}');
+@source inline('bg-{red,green,blue,yellow,rose,emerald,sky,amber,slate,gray,purple,orange,violet,zinc,neutral}-{50,100,200,300,400,500,600,700,800,900}');
+@source inline('border-{red,green,blue,yellow,rose,emerald,sky,amber,slate,gray,purple,orange,violet,zinc,neutral}-{50,100,200,300,400,500,600,700,800,900}');
+@source inline('decoration-{red,green,blue,yellow,rose,emerald,sky,amber,slate,gray,purple,orange,violet,zinc,neutral}-{50,100,200,300,400,500,600,700,800,900}');
 
-@source inline("border-b");
-@source inline("border-b-{1,2,4,8}");
-@source inline("mt-{1,2,3,4,5,6,8}");
-@source inline("mb-{1,2,3,4,5,6,8}");
-@source inline("my-{1,2,3,4,5,6,8}");
-@source inline("ms-{1,2,3,4,5,6,8}");
-@source inline("ps-{1,2,3,4,5,6,8}");
+@source inline('border-b');
+@source inline('border-b-{1,2,4,8}');
+@source inline('mt-{1,2,3,4,5,6,8}');
+@source inline('mb-{1,2,3,4,5,6,8}');
+@source inline('my-{1,2,3,4,5,6,8}');
+@source inline('ms-{1,2,3,4,5,6,8}');
+@source inline('ps-{1,2,3,4,5,6,8}');
 
 @custom-variant dark (&:where(.dark, .dark *));
 

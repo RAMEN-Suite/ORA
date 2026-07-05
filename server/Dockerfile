@@ -5,6 +5,7 @@ ENV NPM_CONFIG_UPDATE_NOTIFIER=false \
 
 FROM base AS deps
 COPY server/package*.json .
+COPY server/.npmrc .
 RUN npm ci --omit=dev
 
 FROM base AS build
@@ -24,7 +25,7 @@ COPY --from=deps --chown=nodeapp:nodeapp /app/node_modules ./node_modules
 COPY --from=build --chown=nodeapp:nodeapp /app/dist ./dist
 COPY --from=build --chown=nodeapp:nodeapp /app/package.json .
 COPY --chown=nodeapp:nodeapp schema /schema
-COPY server/THIRD-PARTY-NOTICES.md .
+COPY server/NOTICES.md .
 
 EXPOSE 3000
 USER nodeapp

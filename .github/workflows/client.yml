@@ -40,7 +40,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
         with:
-          node-version: "24"
+          node-version-file: .nvmrc
           cache: "npm"
           cache-dependency-path: client/package-lock.json
       - name: Install dependencies
@@ -91,6 +91,7 @@ jobs:
     permissions:
       contents: read # required for actions/checkout to fetch repo contents if this repo is private
       packages: write # required to push the built image to the Container registry (docker/login-action + build-push-action)
+      security-events: write # required for uploading results to code scanning
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -135,13 +136,13 @@ jobs:
           exit-code: "0"
           ignore-unfixed: true
       - name: Upload trivy scan results
-        if: always()
+        if: always() && github.ref == 'refs/heads/dev'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: trivy
           path: trivy.sarif
       - name: Upload trivy report to security tab
-        if: always() && github.event.repository.visibility == 'public'
+        if: always() && github.event.repository.visibility == 'public' && github.ref == 'refs/heads/dev'
         uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
         with:
           sarif_file: trivy.sarif
@@ -161,7 +162,7 @@ jobs:
           fi
           echo "No AGPL licenses found."
       - name: Write license summary
-        if: always()
+        if: always() && github.ref == 'refs/heads/dev'
         run: |
           {
             echo "## License Report"
@@ -212,14 +213,5 @@ jobs:
           END
       - name: Start Container
         env:
-          ACTOR: ${{ github.actor }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REMOTE_PATH: ${{ secrets.SSH_PATH }}
-          REGISTRY: ${{ env.REGISTRY }}
-        run: |
-          ssh staging bash <<EOF
-          cd "$REMOTE_PATH"
-          echo "$GH_TOKEN" | docker login $REGISTRY -u $ACTOR --password-stdin
-          docker compose pull client
-          docker compose up -d --force-recreate client
-          EOF
+        run: printf '%s' "$GH_TOKEN" | ssh staging deploy-ora-client

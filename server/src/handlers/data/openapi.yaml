@@ -11,24 +11,24 @@ paths:
       tags:
         - Entities
       parameters:
-        - $ref: "#/components/parameters/Limit"
-        - $ref: "#/components/parameters/Skip"
-        - $ref: "#/components/parameters/OrderBy"
-        - $ref: "#/components/parameters/Label"
-        - $ref: "#/components/parameters/Search"
-        - $ref: "#/components/parameters/Field"
-        - $ref: "#/components/parameters/Filters"
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Skip'
+        - $ref: '#/components/parameters/OrderBy'
+        - $ref: '#/components/parameters/Label'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Field'
+        - $ref: '#/components/parameters/Filters'
       responses:
-        "200":
+        '200':
           description: Entity list.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ListResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/InternalError"
+                $ref: '#/components/schemas/ListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/view/entities/facets:
     get:
@@ -37,22 +37,22 @@ paths:
       tags:
         - Entities
       parameters:
-        - $ref: "#/components/parameters/Label"
-        - $ref: "#/components/parameters/Search"
-        - $ref: "#/components/parameters/Field"
-        - $ref: "#/components/parameters/Facets"
-        - $ref: "#/components/parameters/Filters"
+        - $ref: '#/components/parameters/Label'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Field'
+        - $ref: '#/components/parameters/Facets'
+        - $ref: '#/components/parameters/Filters'
       responses:
-        "200":
+        '200':
           description: Entity facets.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FacetGroupList"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/InternalError"
+                $ref: '#/components/schemas/FacetGroupList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/view/collections:
     get:
@@ -61,24 +61,24 @@ paths:
       tags:
         - Collections
       parameters:
-        - $ref: "#/components/parameters/Limit"
-        - $ref: "#/components/parameters/Skip"
-        - $ref: "#/components/parameters/OrderBy"
-        - $ref: "#/components/parameters/Label"
-        - $ref: "#/components/parameters/Search"
-        - $ref: "#/components/parameters/Field"
-        - $ref: "#/components/parameters/Filters"
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Skip'
+        - $ref: '#/components/parameters/OrderBy'
+        - $ref: '#/components/parameters/Label'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Field'
+        - $ref: '#/components/parameters/Filters'
       responses:
-        "200":
+        '200':
           description: Collection list.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ListResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/InternalError"
+                $ref: '#/components/schemas/ListResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/view/collections/facets:
     get:
@@ -87,22 +87,22 @@ paths:
       tags:
         - Collections
       parameters:
-        - $ref: "#/components/parameters/Label"
-        - $ref: "#/components/parameters/Search"
-        - $ref: "#/components/parameters/Field"
-        - $ref: "#/components/parameters/Facets"
-        - $ref: "#/components/parameters/Filters"
+        - $ref: '#/components/parameters/Label'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/Field'
+        - $ref: '#/components/parameters/Facets'
+        - $ref: '#/components/parameters/Filters'
       responses:
-        "200":
+        '200':
           description: Collection facets.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FacetGroupList"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/InternalError"
+                $ref: '#/components/schemas/FacetGroupList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/view/{uuid}:
     get:
@@ -119,8 +119,8 @@ paths:
             type: string
             minLength: 1
             maxLength: 128
-            pattern: "^[A-Za-z0-9_-]{1,128}$"
-          example: "550e8400-e29b-41d4-a716-446655440000"
+            pattern: '^[A-Za-z0-9_-]{1,128}$'
+          example: '550e8400-e29b-41d4-a716-446655440000'
         - name: paths
           in: query
           required: false
@@ -132,7 +132,7 @@ paths:
             type: array
             maxItems: 50
             items:
-              $ref: "#/components/schemas/AccessPathString"
+              $ref: '#/components/schemas/AccessPathString'
           style: form
           explode: true
           examples:
@@ -147,20 +147,20 @@ paths:
                 - parents[Collection].title
                 - children[Content].*
       responses:
-        "200":
+        '200':
           description: Node view.
           content:
             application/json:
               schema:
                 oneOf:
-                  - $ref: "#/components/schemas/ViewNodeOnlyResponse"
-                  - $ref: "#/components/schemas/ViewNodeWithValuesResponse"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "404":
-          $ref: "#/components/responses/NotFound"
-        "500":
-          $ref: "#/components/responses/InternalError"
+                  - $ref: '#/components/schemas/ViewNodeOnlyResponse'
+                  - $ref: '#/components/schemas/ViewNodeWithValuesResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
 components:
   parameters:
@@ -199,7 +199,7 @@ components:
         type: array
         maxItems: 5
         items:
-          $ref: "#/components/schemas/SortPathString"
+          $ref: '#/components/schemas/SortPathString'
       style: form
       explode: true
       examples:
@@ -227,7 +227,7 @@ components:
         type: string
         minLength: 1
         maxLength: 48
-        pattern: "^[A-Za-z_][A-Za-z0-9_]*$"
+        pattern: '^[A-Za-z_][A-Za-z0-9_]*$'
       examples:
         entity:
           value: Person
@@ -251,7 +251,7 @@ components:
       required: false
       description: RAMEN access path used as search field or facet field. Defaults to label for search when omitted.
       schema:
-        $ref: "#/components/schemas/AccessPathString"
+        $ref: '#/components/schemas/AccessPathString'
       examples:
         directField:
           value: label
@@ -267,7 +267,7 @@ components:
         type: array
         maxItems: 10
         items:
-          $ref: "#/components/schemas/AccessPathString"
+          $ref: '#/components/schemas/AccessPathString'
       style: form
       explode: true
       examples:
@@ -293,7 +293,7 @@ components:
         type: array
         maxItems: 10
         items:
-          $ref: "#/components/schemas/FilterString"
+          $ref: '#/components/schemas/FilterString'
       style: form
       explode: true
       examples:
@@ -380,9 +380,9 @@ components:
         data:
           type: array
           items:
-            $ref: "#/components/schemas/Node"
+            $ref: '#/components/schemas/Node'
         pagination:
-          $ref: "#/components/schemas/Pagination"
+          $ref: '#/components/schemas/Pagination'
 
     Pagination:
       type: object
@@ -421,7 +421,7 @@ components:
     FacetGroupList:
       type: array
       items:
-        $ref: "#/components/schemas/FacetGroup"
+        $ref: '#/components/schemas/FacetGroup'
 
     FacetGroup:
       type: object
@@ -436,7 +436,7 @@ components:
         values:
           type: array
           items:
-            $ref: "#/components/schemas/FacetValue"
+            $ref: '#/components/schemas/FacetValue'
 
     FacetValue:
       type: object
@@ -458,7 +458,7 @@ components:
         - node
       properties:
         node:
-          $ref: "#/components/schemas/Node"
+          $ref: '#/components/schemas/Node'
 
     ViewNodeWithValuesResponse:
       type: object
@@ -467,7 +467,7 @@ components:
         - values
       properties:
         node:
-          $ref: "#/components/schemas/Node"
+          $ref: '#/components/schemas/Node'
         values:
           type: object
           description: >
@@ -491,7 +491,7 @@ components:
       properties:
         uuid:
           type: string
-          example: "550e8400-e29b-41d4-a716-446655440000"
+          example: '550e8400-e29b-41d4-a716-446655440000'
         _labels:
           type: array
           items:

@@ -3,10 +3,14 @@ import { AbstractDetailScreen } from '../abstract-detail.screen';
 import { Entity } from '../../../models/Node';
 import { DetailView } from '../../../models/config/DetailViews';
 import { ScreenShellComponent } from '../../shared/layout/screen-shell/screen-shell.component';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { HeadlineBlock } from '../../blocks/headline-block/headline.block';
+import { TextBlock } from '../../blocks/text-block/text.block';
+import { AttributesBlock } from '../../blocks/attributes-block/attributes.block';
 
 @Component({
   selector: 'screen-entity',
-  imports: [ScreenShellComponent],
+  imports: [ScreenShellComponent, ProgressSpinner, HeadlineBlock, TextBlock, AttributesBlock],
   templateUrl: './entity.screen.html',
 })
 export class EntityScreen extends AbstractDetailScreen<Entity> {

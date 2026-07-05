@@ -11,14 +11,14 @@ paths:
       tags:
         - Config
       responses:
-        "200":
+        '200':
           description: Application configuration.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Config"
-        "500":
-          $ref: "#/components/responses/InternalError"
+                $ref: '#/components/schemas/Config'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
   /api/i18n/{language}.json:
     get:
@@ -33,23 +33,23 @@ paths:
           description: Language code.
           schema:
             type: string
-            pattern: "^[a-z]{2}(-[A-Z]{2})?$"
+            pattern: '^[a-z]{2}(-[A-Z]{2})?$'
           examples:
             german:
               value: de
             englishUnitedStates:
               value: en-US
       responses:
-        "200":
+        '200':
           description: Translation for the requested language.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Translation"
-        "400":
-          $ref: "#/components/responses/BadRequest"
-        "500":
-          $ref: "#/components/responses/InternalError"
+                $ref: '#/components/schemas/Translation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalError'
 
 components:
   responses:

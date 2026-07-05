@@ -1,10 +1,10 @@
-import { ERROR_CODE } from "../../constants/ERROR_CODE.js";
+import { ERROR_CODE } from '../../constants/ERROR_CODE.js';
 
 abstract class AbstractError extends Error {
   public errorCode: ERROR_CODE;
 
   protected constructor(errorCode: ERROR_CODE, context?: string) {
-    super(`[${errorCode}] ${context ?? ""}`);
+    super(`[${errorCode}] ${context ?? ''}`);
     this.errorCode = errorCode;
   }
 }

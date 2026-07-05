@@ -1,7 +1,7 @@
-import fs from "fs/promises";
-import { logger } from "./logger";
-import { ServiceError } from "../models/utility/Error";
-import { ERROR_CODE } from "../constants/ERROR_CODE";
+import fs from 'fs/promises';
+import { logger } from './logger';
+import { ServiceError } from '../models/utility/Error';
+import { ERROR_CODE } from '../constants/ERROR_CODE';
 
 export type JSONObject = Record<string, unknown>;
 
@@ -21,7 +21,7 @@ export class FileUtils {
   }
 
   public static async readJSON<T extends JSONObject>(filePath: string): Promise<T> {
-    const data: string = await fs.readFile(filePath, "utf-8");
+    const data: string = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(data) as T;
   }
 
