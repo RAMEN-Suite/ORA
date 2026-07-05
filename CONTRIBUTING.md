@@ -124,6 +124,7 @@ Only the package you touched is checked: a change under `client/` runs Client CI
 **Dependencies must be permissively licensed.** CI rejects copyleft licenses (GPL, AGPL) in production dependencies — both in the npm tree and in the built container image. Before adding a dependency, check its license; if it's GPL/AGPL, find an alternative or raise it in the pull request.
 
 **Never commit secrets.** API keys, tokens, private keys, or `.env` contents will be caught by the secret scanner and block your PR — and a leaked secret then has to be rotated. Keep them in environment variables or GitHub Secrets.
+
 ---
 
 ## Merging
