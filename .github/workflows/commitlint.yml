@@ -1,7 +1,8 @@
 name: Commitlint
 
 on:
-  pull_request:
+  push:
+    branches: [dev, main]
 
 permissions: {}
 
@@ -11,7 +12,7 @@ concurrency:
 
 jobs:
   commitlint:
-    name: Lint PR commits
+    name: Lint commits
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -29,8 +30,13 @@ jobs:
           cache-dependency-path: package-lock.json
       - name: Install tooling
         run: npm ci
-      - name: Validate commit messages
+      - name: Lint pushed commits
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-        run: npx commitlint --from "$BASE_SHA" --to "$HEAD_SHA" --verbose
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          if git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
+            npx commitlint --from "$BEFORE" --to "$AFTER" --verbose
+          else
+            npx commitlint --from "${AFTER}~1" --to "$AFTER" --verbose
+          fi
