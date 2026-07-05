@@ -31,12 +31,4 @@ jobs:
       - name: Install tooling
         run: npm ci
       - name: Lint pushed commits
-        env:
-          BEFORE: ${{ github.event.before }}
-          AFTER: ${{ github.sha }}
-        run: |
-          if git cat-file -e "${BEFORE}^{commit}" 2>/dev/null; then
-            npx commitlint --from "$BEFORE" --to "$AFTER" --verbose
-          else
-            npx commitlint --from "${AFTER}~1" --to "$AFTER" --verbose
-          fi
+        run: npx commitlint --from origin/main --to HEAD --verbose
