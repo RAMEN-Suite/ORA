@@ -5,6 +5,7 @@ Thanks for contributing! Here are the important things to know:
 - [How you contribute](#how-you-contribute)
 - [Branching strategy](#branching-strategy)
 - [Pull request titles](#pull-request-titles)
+- [Passing CI](#passing-ci)
 - [Merging](#merging)
 - [How releases work](#how-releases-work)
 - [Maintainers: commit schema & local hooks](#maintainers-commit-schema--local-hooks)
