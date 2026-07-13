@@ -1,4 +1,4 @@
-FROM node:24-alpine3.23 AS base
+FROM node:24-alpine AS base
 WORKDIR /app
 ENV NPM_CONFIG_UPDATE_NOTIFIER=false \
   NPM_CONFIG_FUND=false
@@ -9,7 +9,7 @@ RUN cp src/index.docker.html src/index.html \
   && npm ci \
   && npm run build
 
-FROM caddy:2.11.2-alpine AS runtime
+FROM caddy:2.11.4-alpine AS runtime
 WORKDIR /app
 
 RUN addgroup -S webuser \
